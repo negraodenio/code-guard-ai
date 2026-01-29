@@ -79,7 +79,7 @@ Responda APENAS em JSON válido:
       grade: result.score >= 90 ? 'A' : result.score >= 80 ? 'B' : result.score >= 70 ? 'C' : 'F',
       violations: result.violations || [],
       summary: result.summary || 'Análise completada',
-      frameworks: frameworks.map(f => ({
+      frameworks: frameworks.map((f: any) => ({
         ...f,
         violations: (result.violations || []).filter((v: any) =>
           v.framework?.includes(f.id) || v.framework?.includes(f.name)
@@ -99,7 +99,7 @@ Responda APENAS em JSON válido:
 
 // Fallback regex (corrigido e mais abrangente)
 function analyzeWithRegex(code: string, frameworks: any[]) {
-  const violations = [];
+  const violations: any[] = [];
 
   // Padrões mais abrangentes
   if (/console\.log.*(password|senha|cpf|email|creditCard|cartao)/i.test(code)) {
@@ -149,10 +149,10 @@ function analyzeWithRegex(code: string, frameworks: any[]) {
     grade: score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : 'F',
     violations,
     summary: violations.length === 0 ? 'Código limpo' : `${violations.length} violações críticas`,
-    frameworks: frameworks.map(f => ({
+    frameworks: frameworks.map((f: any) => ({
       ...f,
-      violations: violations.filter(v => v.framework === f.id).length,
-      passed: !violations.some(v => v.framework === f.id)
+      violations: violations.filter((v: any) => v.framework === f.id).length,
+      passed: !violations.some((v: any) => v.framework === f.id)
     }))
   };
 }
