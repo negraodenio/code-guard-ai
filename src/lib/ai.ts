@@ -189,6 +189,28 @@ function analyzeWithRegex(code: string, frameworks: any[]) {
     });
   }
 
+  // CCPA (California)
+  if (/california|ccpa|do.*not.*sell/i.test(code) && !/link|button|opt-out/i.test(code)) {
+    violations.push({
+      severity: 'medium',
+      framework: 'CCPA',
+      code: 'CCPA-001',
+      message: 'Ausência de link "Do Not Sell My Personal Information"',
+      fix: 'Adicionar mecanismo de opt-out para venda de dados'
+    });
+  }
+
+  // ISO27001/Information Security
+  if (/access.*control|auth|permission/i.test(code) && !/verify|check|guard/i.test(code)) {
+    violations.push({
+      severity: 'high',
+      framework: 'ISO27001',
+      code: 'ISO-SEC-001',
+      message: 'Controle de acesso fraco ou inexistente',
+      fix: 'Implementar Middleware de autorização robusto'
+    });
+  }
+
   const score = Math.max(0, 100 - (violations.length * 10));
 
   return {
