@@ -20,7 +20,10 @@ export default function ReportPage() {
         <div className="min-h-screen bg-white text-black p-8 print:p-4">
             <div className="max-w-4xl mx-auto">
                 {/* Header Profissional */}
-                <div className="border-b-2 border-blue-600 pb-4 mb-6">
+                <div className="border-b-2 border-blue-600 pb-4 mb-6 relative">
+                    <div className="absolute top-0 right-0 text-xs font-mono text-gray-400 bg-gray-50 px-2 py-1 rounded">
+                        v1.0.5-PRO
+                    </div>
                     <h1 className="text-3xl font-bold text-blue-900">Relatório de Auditoria de Compliance</h1>
                     <p className="text-gray-600 mt-2">Gerado em: {new Date(report.timestamp).toLocaleString('pt-BR')}</p>
                     <p className="text-sm text-gray-500">Ferramenta: Compliance Scanner Professional</p>

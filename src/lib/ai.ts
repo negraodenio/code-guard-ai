@@ -134,17 +134,62 @@ function analyzeWithRegex(code: string, frameworks: any[]) {
     });
   }
 
-  if (/findOne.*\{.*username.*req\.body|password.*req\.body/i.test(code)) {
+  // GDPR (Similar to LGPD)
+  if (/cookie.*consent|gdpr|privacy.*policy/i.test(code) && !/accept|agree|valid/i.test(code)) {
     violations.push({
-      severity: 'high',
-      framework: 'OWASP',
-      code: 'OWASP-INJ-001',
-      message: 'Possível NoSQL Injection (direto do req.body)',
-      fix: 'Validar e sanitizar inputs antes da query'
+      severity: 'medium',
+      framework: 'GDPR',
+      code: 'GDPR-CONS-001',
+      message: 'Ausência de política de consentimento de cookies/privacidade',
+      fix: 'Implementar banner de consentimento e política de privacidade'
     });
   }
 
-  const score = Math.max(0, 100 - (violations.length * 15));
+  // Pix/BACEN
+  if (/pix|transferencia/i.test(code) && !/idempotency|idempotencia/i.test(code)) {
+    violations.push({
+      severity: 'high',
+      framework: 'PIX-BACEN',
+      code: 'PIX-001',
+      message: 'Operação Pix sem chave de idempotência',
+      fix: 'Adicionar header x-idempotency-key'
+    });
+  }
+
+  // FAPI-BR
+  if (/jwt|token/i.test(code) && !/PS256/i.test(code) && /RS256|HS256/i.test(code)) {
+    violations.push({
+      severity: 'medium',
+      framework: 'FAPI-BR',
+      code: 'FAPI-001',
+      message: 'Algoritmo JWT não conforme (deve ser PS256)',
+      fix: 'Alterar para PS256 em conformidade com Open Banking/Finance'
+    });
+  }
+
+  // HIPAA/Health Data
+  if (/patient|medical|health|paciente/i.test(code) && !/encrypt|tls|ssl/i.test(code)) {
+    violations.push({
+      severity: 'critical',
+      framework: 'HIPAA',
+      code: 'HIPAA-001',
+      message: 'Dados de saúde transmitidos ou armazenados sem criptografia',
+      fix: 'Garantir criptografia de ponta a ponta e em repouso'
+    });
+  }
+
+  // AI-ACT
+  if (/ai|model|deepseek|gpt|openai/i.test(code) && !/logging|audit|explanation/i.test(code)) {
+    violations.push({
+      severity: 'low',
+      framework: 'AI-ACT',
+      code: 'AI-ACT-001',
+      message: 'Falta de logs de transparência no uso de IA',
+      fix: 'Registrar entradas/saídas do modelo para fins de auditoria'
+    });
+  }
+
+  const score = Math.max(0, 100 - (violations.length * 10));
 
   return {
     score,
