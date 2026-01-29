@@ -79,6 +79,8 @@ Responda APENAS em JSON válido:
       grade: result.score >= 90 ? 'A' : result.score >= 80 ? 'B' : result.score >= 70 ? 'C' : 'F',
       violations: result.violations || [],
       summary: result.summary || 'Análise completada',
+      analysisMethod: 'AI',
+      analysisDetails: 'DeepSeek-V3 via SiliconFlow',
       frameworks: frameworks.map((f: any) => ({
         ...f,
         violations: (result.violations || []).filter((v: any) =>
@@ -149,6 +151,8 @@ function analyzeWithRegex(code: string, frameworks: any[]) {
     grade: score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : 'F',
     violations,
     summary: violations.length === 0 ? 'Código limpo' : `${violations.length} violações críticas`,
+    analysisMethod: 'REGEX',
+    analysisDetails: 'Regras locais (Fallback)',
     frameworks: frameworks.map((f: any) => ({
       ...f,
       violations: violations.filter((v: any) => v.framework === f.id).length,

@@ -43,8 +43,40 @@ export default function ReportPage() {
                     <h2 className="font-bold text-lg mb-2">Resumo Executivo</h2>
                     <p className="text-gray-700">{report.summary}</p>
                     <p className="mt-2 text-sm text-gray-600">
-                        Total de violações encontradas: <strong>{report.issues.length}</strong>
+                        Total de violações encontradas: <strong>{(report.issues || []).length}</strong>
                     </p>
+                </div>
+
+                {/* Indicador do Método de Análise */}
+                <div className={`p-3 rounded-lg mb-6 border ${report.analysisMethod === 'AI'
+                    ? 'bg-blue-50 border-blue-200 text-blue-800'
+                    : 'bg-yellow-50 border-yellow-200 text-yellow-800'
+                    }`}>
+                    <div className="flex items-center gap-2 font-semibold">
+                        {report.analysisMethod === 'AI' ? (
+                            <>
+                                <span className="text-xl">🤖</span>
+                                <span>Análise por Inteligência Artificial</span>
+                            </>
+                        ) : (
+                            <>
+                                <span className="text-xl">⚡</span>
+                                <span>Análise por Regras Locais (Regex)</span>
+                            </>
+                        )}
+                    </div>
+                    <div className="text-sm mt-1 opacity-80">
+                        {report.analysisDetails || (
+                            report.analysisMethod === 'AI'
+                                ? 'DeepSeek-V3 via SiliconFlow API'
+                                : 'Modo offline - sem custo'
+                        )}
+                    </div>
+                    {report.analysisMethod === 'AI' && (
+                        <div className="text-xs mt-2 text-blue-600 font-mono">
+                            💰 Custo desta análise: ~$0.002 USD
+                        </div>
+                    )}
                 </div>
 
                 {/* Frameworks */}
@@ -74,13 +106,13 @@ export default function ReportPage() {
                         <div className="space-y-4">
                             {report.issues.map((issue: any, idx: number) => (
                                 <div key={idx} className={`p-4 rounded border-l-4 ${issue.severity === 'critical' ? 'bg-red-50 border-red-500' :
-                                        issue.severity === 'high' ? 'bg-orange-50 border-orange-500' :
-                                            'bg-yellow-50 border-yellow-500'
+                                    issue.severity === 'high' ? 'bg-orange-50 border-orange-500' :
+                                        'bg-yellow-50 border-yellow-500'
                                     }`}>
                                     <div className="flex justify-between items-start mb-2">
                                         <span className={`px-2 py-1 rounded text-xs text-white ${issue.severity === 'critical' ? 'bg-red-600' :
-                                                issue.severity === 'high' ? 'bg-orange-600' :
-                                                    'bg-yellow-600'
+                                            issue.severity === 'high' ? 'bg-orange-600' :
+                                                'bg-yellow-600'
                                             }`}>
                                             {issue.severity.toUpperCase()}
                                         </span>
