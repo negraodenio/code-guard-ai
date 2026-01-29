@@ -3,6 +3,8 @@ export async function analyzeCompliance(code: string, frameworks: any[]) {
   const sfKey = process.env.SILICONFLOW_API_KEY?.trim();
   const orKey = process.env.OPENROUTER_API_KEY?.trim();
   const sfModel = process.env.SILICONFLOW_MODEL?.trim() || 'deepseek-ai/DeepSeek-V3';
+  let sfError = "";
+  let orError = "";
 
   // LOG DE DEBUG SEGURO
   console.log(`[DEBUG] Keys check: SF:${sfKey ? 'OK' : 'MISSING'}, OR:${orKey ? 'OK' : 'MISSING'}`);
@@ -30,9 +32,12 @@ export async function analyzeCompliance(code: string, frameworks: any[]) {
         const data = await response.json();
         return parseAIResponse(data.choices[0].message.content, frameworks, 'AI (SiliconFlow)', sfModel);
       }
-      console.warn(`SiliconFlow falhou: ${response.status}`);
-    } catch (e) {
+      const errorText = await response.text();
+      console.error(`[CRITICAL] SiliconFlow Error: ${response.status} - ${errorText.substring(0, 100)}`);
+      sfError = `SF:${response.status}`;
+    } catch (e: any) {
       console.error('Erro SiliconFlow:', e);
+      sfError = `SF:NET_ERR`;
     }
   }
 
@@ -59,9 +64,12 @@ export async function analyzeCompliance(code: string, frameworks: any[]) {
         const data = await response.json();
         return parseAIResponse(data.choices[0].message.content, frameworks, 'AI (OpenRouter)', 'deepseek-v3');
       }
-      console.warn(`OpenRouter falhou: ${response.status}`);
-    } catch (e) {
+      const errorText = await response.text();
+      console.error(`[CRITICAL] OpenRouter Error: ${response.status} - ${errorText.substring(0, 100)}`);
+      orError = `OR:${response.status}`;
+    } catch (e: any) {
       console.error('Erro OpenRouter:', e);
+      orError = `OR:NET_ERR`;
     }
   }
 
@@ -72,7 +80,7 @@ export async function analyzeCompliance(code: string, frameworks: any[]) {
 
   const errorMsg = missingKeys.length > 0
     ? `Config Error: Missing ${missingKeys.join(', ')}`
-    : "AI failure (401/Network)";
+    : `AI Failure (${sfError || '?'}, ${orError || '?'})`;
 
   return analyzeWithRegex(code, frameworks, errorMsg);
 }
