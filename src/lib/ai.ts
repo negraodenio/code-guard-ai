@@ -5,8 +5,9 @@ export async function analyzeCompliance(code: string, frameworks: any[]) {
   const sfModel = process.env.SILICONFLOW_MODEL?.trim() || 'deepseek-ai/DeepSeek-V3';
 
   // LOG DE DEBUG SEGURO
-  if (sfKey) console.log(`[DEBUG] SiliconFlow Key detectada (${sfKey.length} chars)`);
-  if (orKey) console.log(`[DEBUG] OpenRouter Key detectada (${orKey.length} chars)`);
+  console.log(`[DEBUG] Keys check: SF:${sfKey ? 'OK' : 'MISSING'}, OR:${orKey ? 'OK' : 'MISSING'}`);
+  if (sfKey) console.log(`[DEBUG] SiliconFlow Key length: ${sfKey.length}`);
+  if (orKey) console.log(`[DEBUG] OpenRouter Key length: ${orKey.length}`);
 
   // Tentar primeiro SiliconFlow
   if (sfKey && sfKey.length > 20) {
@@ -65,7 +66,15 @@ export async function analyzeCompliance(code: string, frameworks: any[]) {
   }
 
   // Se tudo falhar, Regex
-  return analyzeWithRegex(code, frameworks, "Todos os provedores de IA falharam (401/Network)");
+  const missingKeys = [];
+  if (!sfKey) missingKeys.push('SF_KEY');
+  if (!orKey) missingKeys.push('OR_KEY');
+
+  const errorMsg = missingKeys.length > 0
+    ? `Config Error: Missing ${missingKeys.join(', ')}`
+    : "AI failure (401/Network)";
+
+  return analyzeWithRegex(code, frameworks, errorMsg);
 }
 
 function parseAIResponse(content: string, frameworks: any[], method: string, details: string) {
