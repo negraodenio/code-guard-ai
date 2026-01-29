@@ -25,7 +25,7 @@ export default function ReportPage() {
                         v1.0.7-PRO
                     </div>
                     <h1 className="text-3xl font-bold text-blue-900">Relatório de Auditoria de Compliance</h1>
-                    <p className="text-gray-600 mt-2">Gerado em: {new Date(report.timestamp).toLocaleString('pt-BR')}</p>
+                    <p className="text-gray-600 mt-2">Gerado em: {report?.timestamp ? new Date(report.timestamp).toLocaleString('pt-BR') : 'N/A'}</p>
                     <p className="text-sm text-gray-500">Ferramenta: Compliance Scanner Professional</p>
                 </div>
 
@@ -36,7 +36,7 @@ export default function ReportPage() {
                         <div className="text-sm uppercase tracking-wide">Score de Compliance</div>
                     </div>
                     <div className={`p-6 rounded-lg text-center border-4 ${report.grade === 'A' ? 'border-green-500 text-green-700' : report.grade === 'F' ? 'border-red-500 text-red-700' : 'border-yellow-500 text-yellow-700'}`}>
-                        <div className="text-4xl font-bold mb-2">Nota {report.grade}</div>
+                        <div className="text-4xl font-bold mb-2">Nota {report?.grade || 'N/A'}</div>
                         <div className="text-sm uppercase tracking-wide">Classificação</div>
                     </div>
                 </div>
@@ -86,7 +86,7 @@ export default function ReportPage() {
                 <div className="mb-8">
                     <h2 className="font-bold text-lg mb-4">Conformidade por Framework</h2>
                     <div className="space-y-2">
-                        {report.frameworks.map((fw: any) => (
+                        {(report?.frameworks || []).map((fw: any) => (
                             <div key={fw.id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
                                 <div>
                                     <div className="font-semibold">{fw.name}</div>
@@ -103,11 +103,11 @@ export default function ReportPage() {
                 {/* Issues Detalhadas */}
                 <div className="mb-8">
                     <h2 className="font-bold text-lg mb-4">Violações Detalhadas</h2>
-                    {report.issues.length === 0 ? (
+                    {(!report?.issues || report.issues.length === 0) ? (
                         <p className="text-green-600 font-semibold">Nenhuma violação crítica encontrada!</p>
                     ) : (
                         <div className="space-y-4">
-                            {report.issues.map((issue: any, idx: number) => (
+                            {(report.issues || []).map((issue: any, idx: number) => (
                                 <div key={idx} className={`p-4 rounded border-l-4 ${issue.severity === 'critical' ? 'bg-red-50 border-red-500' :
                                     issue.severity === 'high' ? 'bg-orange-50 border-orange-500' :
                                         'bg-yellow-50 border-yellow-500'
