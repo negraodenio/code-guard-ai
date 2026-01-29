@@ -92,15 +92,15 @@ Responda APENAS em JSON válido:
       }))
     };
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('SiliconFlow Error:', error);
-    // Fallback para regex se API falhar
-    return analyzeWithRegex(code, frameworks);
+    // Fallback para regex se API falhar, passando o erro para debug
+    return analyzeWithRegex(code, frameworks, error.message || String(error));
   }
 }
 
 // Fallback regex (corrigido e mais abrangente)
-function analyzeWithRegex(code: string, frameworks: any[]) {
+function analyzeWithRegex(code: string, frameworks: any[], apiError?: string) {
   const violations: any[] = [];
 
   // Padrões mais abrangentes
@@ -219,7 +219,7 @@ function analyzeWithRegex(code: string, frameworks: any[]) {
     violations,
     summary: violations.length === 0 ? 'Código limpo' : `${violations.length} violações críticas`,
     analysisMethod: 'REGEX',
-    analysisDetails: 'Regras locais (Fallback)',
+    analysisDetails: apiError ? `Fallback (Erro API: ${apiError})` : 'Regras locais (Fallback)',
     frameworks: frameworks.map((f: any) => ({
       ...f,
       violations: violations.filter((v: any) => v.framework === f.id).length,
