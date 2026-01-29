@@ -22,7 +22,7 @@ export default function ReportPage() {
                 {/* Header Profissional */}
                 <div className="border-b-2 border-blue-600 pb-4 mb-6 relative">
                     <div className="absolute top-0 right-0 text-xs font-mono text-gray-400 bg-gray-50 px-2 py-1 rounded">
-                        v1.1.0-PRO
+                        v1.1.1-PRO
                     </div>
                     <h1 className="text-3xl font-bold text-blue-900">Relatório de Auditoria de Compliance</h1>
                     <p className="text-gray-600 mt-2">Gerado em: {report?.timestamp ? new Date(report.timestamp).toLocaleString('pt-BR') : 'N/A'}</p>
@@ -51,33 +51,40 @@ export default function ReportPage() {
                 </div>
 
                 {/* Indicador do Método de Análise */}
-                <div className={`p-3 rounded-lg mb-6 border ${report.analysisMethod === 'AI'
-                    ? 'bg-blue-50 border-blue-200 text-blue-800'
-                    : 'bg-yellow-50 border-yellow-200 text-yellow-800'
+                <div className={`p-4 rounded-lg mb-6 border-2 ${report.analysisMethod === 'AI'
+                    ? 'bg-blue-100 border-blue-400 text-blue-900 shadow-sm'
+                    : 'bg-yellow-100 border-yellow-400 text-yellow-900 shadow-sm'
                     }`}>
-                    <div className="flex items-center gap-2 font-semibold">
-                        {report.analysisMethod === 'AI' ? (
-                            <>
-                                <span className="text-xl">🤖</span>
-                                <span>Análise por Inteligência Artificial</span>
-                            </>
-                        ) : (
-                            <>
-                                <span className="text-xl">⚡</span>
-                                <span>Análise por Regras Locais (Regex)</span>
-                            </>
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2 font-bold text-lg">
+                            {report.analysisMethod === 'AI' ? (
+                                <><span>🤖</span><span>Análise por Inteligência Artificial</span></>
+                            ) : (
+                                <><span>⚡</span><span>Análise por Regras Locais (Regex)</span></>
+                            )}
+                        </div>
+                        {report.analysisDetails?.includes('Config Error') && (
+                            <span className="bg-red-600 text-white text-[10px] px-2 py-1 rounded-full animate-pulse">
+                                ⚠️ CONFIGURAÇÃO NECESSÁRIA
+                            </span>
                         )}
                     </div>
-                    <div className="text-sm mt-1 opacity-80">
+
+                    <div className="text-sm opacity-90 font-medium">
                         {report.analysisDetails || (
                             report.analysisMethod === 'AI'
                                 ? 'DeepSeek-V3 via SiliconFlow API'
                                 : 'Modo offline - sem custo'
                         )}
                     </div>
-                    {report.analysisMethod === 'AI' && (
-                        <div className="text-xs mt-2 text-blue-600 font-mono">
+
+                    {report.analysisMethod === 'AI' ? (
+                        <div className="text-xs mt-2 text-blue-700 font-mono italic">
                             💰 Custo desta análise: ~$0.002 USD
+                        </div>
+                    ) : (
+                        <div className="text-xs mt-2 text-yellow-700 font-mono italic">
+                            💡 Para habilitar IA, configure as chaves na Vercel.
                         </div>
                     )}
                 </div>
