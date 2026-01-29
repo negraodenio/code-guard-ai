@@ -1,6 +1,6 @@
 // FORÇAR USO DA API - Modo Inteligente (Gasta 1 crédito por análise)
 export async function analyzeCompliance(code: string, frameworks: any[]) {
-  const apiKey = process.env.SILICONFLOW_API_KEY;
+  const apiKey = process.env.SILICONFLOW_API_KEY?.trim();
 
   // Se não tiver API key, retorna erro claro
   if (!apiKey) {
@@ -51,7 +51,7 @@ Responda APENAS em JSON válido:
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'deepseek-ai/DeepSeek-V3',
+        model: process.env.SILICONFLOW_MODEL?.trim() || 'deepseek-ai/DeepSeek-V3',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.1,
         max_tokens: 2000
