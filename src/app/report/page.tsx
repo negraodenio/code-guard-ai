@@ -139,6 +139,11 @@ export default function ReportPage() {
                 <div className="text-center text-gray-400 text-sm mt-8 pt-4 border-t">
                     <p>Relatório gerado automaticamente por Compliance Scanner</p>
                     <p>Este relatório serve como base para auditoria preliminar. Consulte um advogado especialista para validação jurídica final.</p>
+                    <div className="mt-4 opacity-50 font-mono text-[10px] flex justify-center gap-4">
+                        <span>Method: {report?.analysisMethod || 'N/A'}</span>
+                        <span>Details: {report?.analysisDetails || 'N/A'}</span>
+                        <span>Issues: {report?.issues?.length || 0}</span>
+                    </div>
                 </div>
 
                 {/* Botão Exportar */}
