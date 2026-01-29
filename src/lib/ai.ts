@@ -2,15 +2,20 @@
 export async function analyzeCompliance(code: string, frameworks: any[]) {
   const apiKey = process.env.SILICONFLOW_API_KEY?.trim();
 
+  // LOG DE DEBUG SEGURO (Apenas para resolver o 401)
+  if (apiKey) {
+    console.log(`[DEBUG] Key detectada. Comprimento: ${apiKey.length}. Começa com: ${apiKey.substring(0, 7)}... termina com: ...${apiKey.substring(apiKey.length - 4)}`);
+  }
+
   // Se não tiver API key, retorna erro claro
-  if (!apiKey) {
+  if (!apiKey || apiKey.length < 10) {
     return {
       score: 0,
-      error: "API Key não configurada",
+      error: "API Key não configurada ou inválida",
       violations: [{
         severity: 'critical',
         framework: 'CONFIG',
-        message: 'Configure SILICONFLOW_API_KEY no Vercel'
+        message: 'Configure SILICONFLOW_API_KEY no Vercel corretamente'
       }]
     };
   }
