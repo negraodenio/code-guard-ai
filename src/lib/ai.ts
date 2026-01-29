@@ -1,107 +1,96 @@
 // FORÇAR USO DA API - Modo Inteligente (Gasta 1 crédito por análise)
 export async function analyzeCompliance(code: string, frameworks: any[]) {
-  const apiKey = process.env.SILICONFLOW_API_KEY?.trim();
+  const sfKey = process.env.SILICONFLOW_API_KEY?.trim();
+  const orKey = process.env.OPENROUTER_API_KEY?.trim();
+  const sfModel = process.env.SILICONFLOW_MODEL?.trim() || 'deepseek-ai/DeepSeek-V3';
 
-  // LOG DE DEBUG SEGURO (Apenas para resolver o 401)
-  if (apiKey) {
-    console.log(`[DEBUG] Key detectada. Comprimento: ${apiKey.length}. Começa com: ${apiKey.substring(0, 7)}... termina com: ...${apiKey.substring(apiKey.length - 4)}`);
+  // LOG DE DEBUG SEGURO
+  if (sfKey) console.log(`[DEBUG] SiliconFlow Key detectada (${sfKey.length} chars)`);
+  if (orKey) console.log(`[DEBUG] OpenRouter Key detectada (${orKey.length} chars)`);
+
+  // Tentar primeiro SiliconFlow
+  if (sfKey && sfKey.length > 20) {
+    try {
+      const response = await fetch('https://api.siliconflow.cn/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${sfKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: sfModel,
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.1,
+          max_tokens: 2000
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return parseAIResponse(data.choices[0].message.content, frameworks, 'AI (SiliconFlow)', sfModel);
+      }
+      console.warn(`SiliconFlow falhou: ${response.status}`);
+    } catch (e) {
+      console.error('Erro SiliconFlow:', e);
+    }
   }
 
-  // Se não tiver API key, retorna erro claro
-  if (!apiKey || apiKey.length < 10) {
-    return {
-      score: 0,
-      error: "API Key não configurada ou inválida",
-      violations: [{
-        severity: 'critical',
-        framework: 'CONFIG',
-        message: 'Configure SILICONFLOW_API_KEY no Vercel corretamente'
-      }]
-    };
+  // Tentar fallback para OpenRouter
+  if (orKey && orKey.length > 20) {
+    try {
+      console.log("[DEBUG] Tentando Fallback OpenRouter...");
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${orKey}`,
+          'HTTP-Referer': 'https://compliance-scanner-eight.vercel.app',
+          'X-Title': 'Compliance Scanner',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'deepseek/deepseek-v3',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.1
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return parseAIResponse(data.choices[0].message.content, frameworks, 'AI (OpenRouter)', 'deepseek-v3');
+      }
+      console.warn(`OpenRouter falhou: ${response.status}`);
+    } catch (e) {
+      console.error('Erro OpenRouter:', e);
+    }
   }
 
-  const prompt = `Analise este código JavaScript/Node.js como um especialista em compliance e segurança.
+  // Se tudo falhar, Regex
+  return analyzeWithRegex(code, frameworks, "Todos os provedores de IA falharam (401/Network)");
+}
 
-REGRAS ABSOLUTAS PARA DETECTAR:
-1. console.log com dados sensíveis (senha, password, cpf, email, creditCard) = LGPD VIOLATION
-2. Armazenamento de password sem hash/bcrypt = LGPD VIOLATION  
-3. Armazenamento de creditCard em texto plano = PCI-DSS VIOLATION
-4. Query MongoDB direto sem sanitização (req.body direto no findOne) = NoSQL Injection
-5. Retorno de dados completos do usuário sem filtro = Data Exposure
-6. Endpoint admin sem verificação de role = Broken Access Control
+function parseAIResponse(content: string, frameworks: any[], method: string, details: string) {
+  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('JSON não encontrado na resposta da IA');
 
-Código para analisar:
-${code}
+  const result = JSON.parse(jsonMatch[0]);
 
-Responda APENAS em JSON válido:
-{
-  "score": número entre 0-100,
-  "violations": [
-    {
-      "severity": "critical|high|medium",
-      "framework": "LGPD|GDPR|PCI-DSS|OWASP|FAPI-BR",
-      "code": "CÓDIGO-001",
-      "message": "descrição clara do problema",
-      "fix": "como corrigir"
-    }
-  ],
-  "summary": "resumo executivo"
-}`;
-
-  try {
-    const response = await fetch('https://api.siliconflow.cn/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: process.env.SILICONFLOW_MODEL?.trim() || 'deepseek-ai/DeepSeek-V3',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.1,
-        max_tokens: 2000
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const content = data.choices[0].message.content;
-
-    // Extrai JSON da resposta (às vezes vem com markdown ```json)
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error('JSON não encontrado na resposta');
-    }
-
-    const result = JSON.parse(jsonMatch[0]);
-
-    // Validação básica
-    return {
-      score: result.score || 50,
-      grade: result.score >= 90 ? 'A' : result.score >= 80 ? 'B' : result.score >= 70 ? 'C' : 'F',
-      violations: result.violations || [],
-      summary: result.summary || 'Análise completada',
-      analysisMethod: 'AI',
-      analysisDetails: 'DeepSeek-V3 via SiliconFlow',
-      frameworks: frameworks.map((f: any) => ({
-        ...f,
-        violations: (result.violations || []).filter((v: any) =>
-          v.framework?.includes(f.id) || v.framework?.includes(f.name)
-        ).length,
-        passed: !(result.violations || []).some((v: any) =>
-          v.framework?.includes(f.id) || v.framework?.includes(f.name)
-        )
-      }))
-    };
-
-  } catch (error: any) {
-    console.error('SiliconFlow Error:', error);
-    // Fallback para regex se API falhar, passando o erro para debug
-    return analyzeWithRegex(code, frameworks, error.message || String(error));
-  }
+  return {
+    score: result.score || 50,
+    grade: result.score >= 90 ? 'A' : result.score >= 80 ? 'B' : result.score >= 70 ? 'C' : 'F',
+    violations: result.violations || [],
+    summary: result.summary || 'Análise completada',
+    analysisMethod: 'AI',
+    analysisDetails: `${method} - ${details}`,
+    frameworks: frameworks.map((f: any) => ({
+      ...f,
+      violations: (result.violations || []).filter((v: any) =>
+        v.framework?.includes(f.id) || v.framework?.includes(f.name)
+      ).length,
+      passed: !(result.violations || []).some((v: any) =>
+        v.framework?.includes(f.id) || v.framework?.includes(f.name)
+      )
+    }))
+  };
 }
 
 // Fallback regex (corrigido e mais abrangente)
