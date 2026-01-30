@@ -66,8 +66,10 @@ Responda em JSON válido:
       "framework": "LGPD|GDPR|PCI-DSS|OWASP|FAPI-BR|BACEN",
       "code": "ID",
       "message": "Mensagem curta",
-      "fix": "Ação de correção",
-      "isLikelyFalsePositive": boolean
+      "fix": "Ação de correção (específica: ex: Usar Pino/Winston com redação de PII para LGPD-001)",
+      "isLikelyFalsePositive": boolean,
+      "businessImpact": "Descrição do risco financeiro/operacional",
+      "mitigationEffort": "baixo|medio|alto"
     }
   ],
   "summary": "Resumo executivo de risco de negócio"
