@@ -8,8 +8,34 @@ export async function analyzeCompliance(code: string, frameworks: any[]) {
 
   // LOG DE DEBUG SEGURO
   console.log(`[DEBUG] Keys check: SF:${sfKey ? 'OK' : 'MISSING'}, OR:${orKey ? 'OK' : 'MISSING'}`);
-  if (sfKey) console.log(`[DEBUG] SiliconFlow Key length: ${sfKey.length}`);
-  if (orKey) console.log(`[DEBUG] OpenRouter Key length: ${orKey.length}`);
+
+  const prompt = `Analise este código JavaScript/Node.js como um especialista em compliance e segurança.
+
+REGRAS ABSOLUTAS PARA DETECTAR:
+1. console.log com dados sensíveis (senha, password, cpf, email, creditCard) = LGPD VIOLATION
+2. Armazenamento de password sem hash/bcrypt = LGPD VIOLATION  
+3. Armazenamento de creditCard em texto plano = PCI-DSS VIOLATION
+4. Query MongoDB direto sem sanitização (req.body direto no findOne) = NoSQL Injection
+5. Retorno de dados completos do usuário sem filtro = Data Exposure
+6. Endpoint admin sem verificação de role = Broken Access Control
+
+Código para analisar:
+${code}
+
+Responda APENAS em JSON válido:
+{
+  "score": número entre 0-100,
+  "violations": [
+    {
+      "severity": "critical|high|medium",
+      "framework": "LGPD|GDPR|PCI-DSS|OWASP|FAPI-BR",
+      "code": "CÓDIGO-001",
+      "message": "descrição clara do problema",
+      "fix": "como corrigir"
+    }
+  ],
+  "summary": "resumo executivo"
+}`;
 
   // Tentar primeiro SiliconFlow
   if (sfKey && sfKey.length > 20) {
@@ -37,7 +63,7 @@ export async function analyzeCompliance(code: string, frameworks: any[]) {
       sfError = `SF:${response.status}`;
     } catch (e: any) {
       console.error('Erro SiliconFlow:', e);
-      sfError = `SF:NET_ERR`;
+      sfError = e.name === 'ReferenceError' ? 'SF:CODE_ERR' : `SF:FAIL`;
     }
   }
 
@@ -69,7 +95,7 @@ export async function analyzeCompliance(code: string, frameworks: any[]) {
       orError = `OR:${response.status}`;
     } catch (e: any) {
       console.error('Erro OpenRouter:', e);
-      orError = `OR:NET_ERR`;
+      orError = e.name === 'ReferenceError' ? 'OR:CODE_ERR' : `OR:FAIL`;
     }
   }
 
