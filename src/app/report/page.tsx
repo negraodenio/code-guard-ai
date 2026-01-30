@@ -55,23 +55,41 @@ export default function ReportPage() {
                         <div className="px-3 py-1 bg-blue-600 text-white text-xs rounded-full font-bold shadow-sm inline-block">
                             📌 {report.context || 'Análise Geral'}
                         </div>
-                        {report.confidence && (
-                            <div className="mt-2">
-                                <span className="text-[10px] uppercase text-gray-400 font-bold tracking-widest mr-2">CONFIANÇA:</span>
-                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${report.confidence === 'high' ? 'bg-green-100 text-green-700' :
-                                    report.confidence === 'medium' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'
-                                    }`}>
-                                    {report.confidence.toUpperCase()}
-                                </span>
-                            </div>
-                        )}
+                        <div className="mt-2 flex flex-col items-end gap-1">
+                            {report.trustLevel && (
+                                <div className="flex items-center gap-1">
+                                    <span className="text-[9px] uppercase text-gray-400 font-bold">TRUST ZONE:</span>
+                                    <span className="text-[9px] font-bold text-indigo-700 bg-indigo-50 px-1 rounded">{report.trustLevel}</span>
+                                </div>
+                            )}
+                            {report.confidence && (
+                                <div className="flex items-center gap-1">
+                                    <span className="text-[9px] uppercase text-gray-400 font-bold">CONFIANÇA:</span>
+                                    <span className={`text-[9px] font-bold px-1 rounded ${report.confidence === 'high' ? 'bg-green-100 text-green-700' :
+                                            report.confidence === 'medium' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'
+                                        }`}>
+                                        {report.confidence.toUpperCase()}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 
+                {/* Camada de Inteligência Semântica */}
+                {report.reasoning && report.reasoning !== 'N/A' && (
+                    <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded mb-6 shadow-sm">
+                        <h3 className="font-bold text-indigo-900 text-sm mb-1 flex items-center gap-2 text-xs">
+                            🧠 REPO INTELLIGENCE (Semantic Reasoning)
+                        </h3>
+                        <p className="text-indigo-800 text-sm whitespace-pre-wrap">{report.reasoning}</p>
+                    </div>
+                )}
+
                 {/* Estratégia de Mitigação de Negócio */}
                 {report.mitigationStrategy && (
-                    <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-6">
-                        <h3 className="font-bold text-blue-900 text-sm mb-1">🏦 RECOMENDAÇÃO ESTRATÉGICA (Business Context)</h3>
+                    <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-6 shadow-sm">
+                        <h3 className="font-bold text-blue-900 text-xs mb-1">🏦 RECOMENDAÇÃO ESTRATÉGICA</h3>
                         <p className="text-blue-800 text-sm italic">"{report.mitigationStrategy}"</p>
                     </div>
                 )}
