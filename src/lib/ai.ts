@@ -60,7 +60,7 @@ Responda APENAS em JSON válido:
       }
       const errorText = await response.text();
       console.error(`[CRITICAL] SiliconFlow Error: ${response.status} - ${errorText.substring(0, 100)}`);
-      sfError = `SF:${response.status}`;
+      sfError = `SF:${response.status}(${errorText.substring(0, 30)})`;
     } catch (e: any) {
       console.error('Erro SiliconFlow:', e);
       sfError = e.name === 'ReferenceError' ? 'SF:CODE_ERR' : `SF:FAIL`;
@@ -92,7 +92,7 @@ Responda APENAS em JSON válido:
       }
       const errorText = await response.text();
       console.error(`[CRITICAL] OpenRouter Error: ${response.status} - ${errorText.substring(0, 100)}`);
-      orError = `OR:${response.status}`;
+      orError = `OR:${response.status}(${errorText.substring(0, 30)})`;
     } catch (e: any) {
       console.error('Erro OpenRouter:', e);
       orError = e.name === 'ReferenceError' ? 'OR:CODE_ERR' : `OR:FAIL`;
