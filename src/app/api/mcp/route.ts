@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest } from 'next/server';
-import { WebStandardStreamableHTTPServerTransport } from '@/lib/mcp/transport'; // verified
+import { WebStandardStreamableHTTPServerTransport } from '@/lib/mcp/transport';
 import { server } from '@/lib/mcp/server';
 import { createClient } from '@supabase/supabase-js';
 
