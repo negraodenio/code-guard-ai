@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/dist/esm/server/webStandardStreamableHttp.js';
+import { WebStandardStreamableHTTPServerTransport } from '@/lib/mcp/transport';
 import { server } from '@/lib/mcp/server';
 import { createClient } from '@supabase/supabase-js';
 
