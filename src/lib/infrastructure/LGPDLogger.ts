@@ -59,6 +59,12 @@ export class LGPDLogger {
         for (const [key, value] of Object.entries(obj)) {
             if (SENSITIVE_FIELDS.some(f => key.toLowerCase().includes(f))) {
                 sanitized[key] = '[REDACTED-LGPD]';
+            } else if (typeof value === 'string') {
+                // Apply pattern masking
+                sanitized[key] = SENSITIVE_PATTERNS.reduce(
+                    (acc, { pattern, mask }) => acc.replace(pattern, mask),
+                    value
+                );
             } else if (typeof value === 'object') {
                 sanitized[key] = this.deepSanitize(value);
             } else {
@@ -68,9 +74,27 @@ export class LGPDLogger {
         return sanitized;
     }
 
-    info(obj: any, msg?: string) { this.logger.info(obj, msg); }
-    error(obj: any, msg?: string) { this.logger.error(obj, msg); }
-    warn(obj: any, msg?: string) { this.logger.warn(obj, msg); }
+    /**
+     * 🛡️ safeInfo: Ensures that req.body or sensitive objects are 
+     * sanitized BEFORE hitting the redact layer.
+     */
+    safeInfo(obj: any, msg?: string) {
+        let internalObj = obj;
+        if (obj && obj.req && typeof obj.req === 'object') {
+            const safeReq = {
+                method: obj.req.method,
+                url: obj.req.url,
+                contentType: obj.req.headers ? obj.req.headers['content-type'] : 'unknown',
+                userAgent: obj.req.headers ? obj.req.headers['user-agent']?.substring(0, 50) : 'unknown'
+            };
+            internalObj = { ...obj, req: safeReq };
+        }
+        this.logger.info(this.deepSanitize(internalObj), msg);
+    }
+
+    info(obj: any, msg?: string) { this.logger.info(this.deepSanitize(obj), msg); }
+    error(obj: any, msg?: string) { this.logger.error(this.deepSanitize(obj), msg); }
+    warn(obj: any, msg?: string) { this.logger.warn(this.deepSanitize(obj), msg); }
 }
 
 export const logger = new LGPDLogger();

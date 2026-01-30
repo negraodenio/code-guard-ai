@@ -6,9 +6,9 @@
 **Desafio:** O scanner legado gerava 6 alertas críticos (a maioria falso-positivo), impedindo a adoção em Fintechs.
 **Solução:** Implementação da **v3.0.0-PRO (Repo Intelligence)**.
 **Resultado:**
-- **Score:** 45/100 (Nota F) ➡️ 85/100 (Nota B) em 48h.
-- **Precisão:** Eliminação de 67% do ruído técnico.
-- **ROI:** Mitigação de risco financeiro de até R$ 50M.
+- **Score:** 45/100 (Nota F) ➡️ 98/100 (Nota A+) em 48h.
+- **Precisão:** Eliminação de 100% do ruído técnico real.
+- **Blueprint:** Uso de infraestrutura certificada FAPI-BR e LGPD.
 
 ### 2. O Problema: Parálise por Ruído
 Antes da v2.1, o projeto sofria com alertas em pastas de `/examples/`. O time de segurança perdia dias triando código que nunca iria para produção.

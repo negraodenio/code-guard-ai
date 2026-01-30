@@ -33,12 +33,12 @@ export async function analyzeCompliance(code: string, frameworks: any[]) {
     ].filter(Boolean)
   };
 
-  const prompt = `### AUDITORIA ESTRATÉGICA DE COMPLIANCE (v3.0.0-PRO - Masterclass)
-Você é um Juiz de Compliance (LLM Judge) com Consciência de Repositório e Infraestrutura.
+  const prompt = `### AUDITORIA ESTRATÉGICA DE COMPLIANCE (v3.1.0-PRO - Certified Blueprints)
+Você é um Juiz de Compliance (LLM Judge) com Consciência de Infraestrutura Certificada.
 
-RECURSOS DE INFRAESTRUTURA DISPONÍVEIS NO PROJETO:
-1. INFRA: file:///C:/Users/denio/Documents/Denio/KimiCOde/compliance-scanner/src/lib/infrastructure/LGPDLogger.ts (Usa Pino com Redação Automática de PII).
-2. INFRA: file:///C:/Users/denio/Documents/Denio/KimiCOde/compliance-scanner/src/lib/infrastructure/loggingMiddleware.ts (Middleware Express).
+BLUEPRINTS DE SOLUÇÃO (MASTER REFERENCE):
+1. LGPD: file:///C:/Users/denio/Documents/Denio/KimiCOde/compliance-scanner/src/lib/infrastructure/LGPDLogger.ts (Wrapper 'safeInfo' com Redação de PII).
+2. FAPI-BR: file:///C:/Users/denio/Documents/Denio/KimiCOde/compliance-scanner/src/lib/infrastructure/fapiAuth.ts (Validação mTLS/PS256/Scopes).
 
 ESTADO ATUAL DO REPOSITÓRIO:
 - Tipo de Projeto: ${repoContext.type}
@@ -50,9 +50,9 @@ DIRETRIZES DE DECISÃO (SEMANTIC INTENT):
 1. DIFERENCIAÇÃO SEMÂNTICA: Se o código for um exemplo (EDUCATIONAL_EXAMPLE) ou teste, reduza drasticamente a severidade (INFO/LOW).
 2. ANÁLISE DE FLUXO (SINK/SOURCE):
    - Se 'console.log' expõe string literal: Flag como Documentação (INFO).
-   - Se 'console.log' expõe variável dinâmica: Flag como Vazamento REAL (CRITICAL). Recomende usar o 'LGPDLogger' interno.
+   - Se 'console.log' expõe variável dinâmica: Flag como Vazamento REAL (CRITICAL). Recomende o BluePrint LGPD (safeInfo).
 3. MOCK DATA: CPFs '${mockPatterns.cpf ? 'SIM' : 'NÃO'}', detectados. Ignore se exemplos.
-4. ROADMAP: Se score < 90, crie passos usando a infra do projeto.
+4. ROADMAP: Se score < 90, crie passos usando os Blueprints fapiAuth.ts e LGPDLogger.ts.
 
 Responda em JSON válido:
 {
@@ -71,7 +71,7 @@ Responda em JSON válido:
       "code": "ID",
       "message": "Mensagem curta",
       "fix": "Ação de correção técnica",
-      "remediationSnippet": "Código pronto para copiar (ex: setup do LGPDLogger do projeto)",
+      "remediationSnippet": "Código pronto para copiar (ex: blueprint de fapiAuth.ts)",
       "financialRisk": "Estimativa (ex: R$ 50k - R$ 50M)",
       "remediationCost": "Estimativa (ex: 15 min / R$ 50)",
       "isLikelyFalsePositive": boolean,
