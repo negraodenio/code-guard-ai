@@ -1,10 +1,10 @@
-import { Server } from '@modelcontextprotocol/sdk';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js'; // verified
 import {
     CallToolRequestSchema,
     ListToolsRequestSchema,
     ListResourcesRequestSchema,
     ReadResourceRequestSchema
-} from '@modelcontextprotocol/sdk';
+} from '@modelcontextprotocol/sdk/types.js';
 import { orchestrator } from '../core/ComplianceOrchestrator';
 import { z } from 'zod';
 
