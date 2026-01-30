@@ -60,7 +60,7 @@ Responda APENAS em JSON válido:
       }
       const errorText = await response.text();
       console.error(`[CRITICAL] SiliconFlow Error: ${response.status} - ${errorText.substring(0, 100)}`);
-      sfError = `SF:${response.status}(${errorText.substring(0, 30)})`;
+      sfError = `SF:${response.status}(${errorText.substring(0, 40).replace(/[^a-zA-Z0-9 ]/g, '')})`;
     } catch (e: any) {
       console.error('Erro SiliconFlow:', e);
       sfError = e.name === 'ReferenceError' ? 'SF:CODE_ERR' : `SF:FAIL`;
@@ -80,9 +80,10 @@ Responda APENAS em JSON válido:
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'deepseek/deepseek-v3',
+          model: 'deepseek/deepseek-chat',
           messages: [{ role: 'user', content: prompt }],
-          temperature: 0.1
+          temperature: 0.1,
+          max_tokens: 2000
         })
       });
 
@@ -92,7 +93,7 @@ Responda APENAS em JSON válido:
       }
       const errorText = await response.text();
       console.error(`[CRITICAL] OpenRouter Error: ${response.status} - ${errorText.substring(0, 100)}`);
-      orError = `OR:${response.status}(${errorText.substring(0, 30)})`;
+      orError = `OR:${response.status}(${errorText.substring(0, 40).replace(/[^a-zA-Z0-9 ]/g, '')})`;
     } catch (e: any) {
       console.error('Erro OpenRouter:', e);
       orError = e.name === 'ReferenceError' ? 'OR:CODE_ERR' : `OR:FAIL`;
