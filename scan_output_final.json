@@ -1,0 +1,94 @@
+﻿{
+    "status":  "success",
+    "engine":  "CodeGuard v10.0.0-ULTRA",
+    "results":  {
+                    "scan":  {
+                                 "score":  65,
+                                 "grade":  "F",
+                                 "violations":  [
+                                                    {
+                                                        "severity":  "critical",
+                                                        "framework":  "LGPD",
+                                                        "code":  "LGPD-001",
+                                                        "message":  "Vazamento de PII via \u0027console.log\u0027 em produÃ§Ã£o.",
+                                                        "fix":  "Remover ou substituir por logger seguro (LGPDLogger).",
+                                                        "remediationSnippet":  "// Substituir console.log por LGPDLogger.safeInfo\nLGPDLogger.safeInfo(\u0027Mensagem segura\u0027, { redacted: true });",
+                                                        "financialRisk":  "Alto - Risco de sanÃ§Ã£o da LGPD",
+                                                        "remediationCost":  "Baixo (30 min)",
+                                                        "businessImpact":  "ExposiÃ§Ã£o de dados sensÃ­veis e perda de confianÃ§a dos clientes.",
+                                                        "mitigationEffort":  "baixo"
+                                                    },
+                                                    {
+                                                        "severity":  "high",
+                                                        "framework":  "FAPI-BR",
+                                                        "code":  "FAPI-001",
+                                                        "message":  "PossÃ­vel falha na validaÃ§Ã£o mTLS/PS256/Scopes.",
+                                                        "fix":  "Validar implementaÃ§Ã£o do mTLS e assinatura PS256.",
+                                                        "remediationSnippet":  "// Verificar configuraÃ§Ã£o mTLS no fapiAuth.ts\nif (!validarMTLS()) throw new Error(\u0027mTLS invÃ¡lido\u0027);",
+                                                        "financialRisk":  "MÃ©dio - Risco de nÃ£o conformidade com BACEN",
+                                                        "remediationCost":  "MÃ©dio (2-4 horas)",
+                                                        "businessImpact":  "PossÃ­vel bloqueio de transaÃ§Ãµes financeiras.",
+                                                        "mitigationEffort":  "medio"
+                                                    }
+                                                ],
+                                 "summary":  "O sistema possui vulnerabilidades crÃ­ticas de LGPD e FAPI-BR que exigem correÃ§Ã£o imediata para evitar sanÃ§Ãµes e perda de reputaÃ§Ã£o.",
+                                 "executiveSummary":  {
+                                                          "overview":  "Sistema vulnerÃ¡vel a multas da LGPD e BACEN devido a vazamento de dados sensÃ­veis.",
+                                                          "riskAssessment":  "Risco financeiro alto: multas da LGPD podem chegar a 2% do faturamento, limitado a R$ 50 milhÃµes por infraÃ§Ã£o, alÃ©m de danos reputacionais significativos.",
+                                                          "actionableVerdict":  "Remover imediatamente todos os \u0027console.log\u0027 com PII e validar a implementaÃ§Ã£o do mTLS nas prÃ³ximas 24h."
+                                                      },
+                                 "context":  "PRODUCTION_APPLICATION",
+                                 "trustLevel":  "PRODUCTION_SURFACE (High Risk)",
+                                 "confidence":  "high",
+                                 "reasoning":  "O cÃ³digo estÃ¡ em produÃ§Ã£o com alto risco, mas possui implementaÃ§Ãµes de LGPD e FAPI-BR. No entanto, hÃ¡ sinais de vazamento de PII via \u0027console.log\u0027 e possÃ­veis falhas na validaÃ§Ã£o mTLS.",
+                                 "mitigationStrategy":  "Remover imediatamente todos os \u0027console.log\u0027 com PII e validar a implementaÃ§Ã£o do mTLS nas prÃ³ximas 24h.",
+                                 "analysisMethod":  "AI",
+                                 "analysisDetails":  "SiliconFlow - deepseek-ai/DeepSeek-V3",
+                                 "frameworks":  [
+                                                    {
+                                                        "id":  "LGPD",
+                                                        "name":  "LGPD",
+                                                        "tier":  1,
+                                                        "country":  "BR",
+                                                        "violations":  1,
+                                                        "passed":  false
+                                                    },
+                                                    {
+                                                        "id":  "FAPI-BR",
+                                                        "name":  "FAPI-BR",
+                                                        "tier":  1,
+                                                        "country":  "BR",
+                                                        "violations":  1,
+                                                        "passed":  false
+                                                    }
+                                                ],
+                                 "intelligence":  {
+                                                      "context":  "application",
+                                                      "trustZone":  "PRODUCTION_SURFACE (High Risk)",
+                                                      "memoryDepth":  0
+                                                  },
+                                 "recommendsCertifiedBlueprint":  true
+                             },
+                    "educationalMode":  {
+                                            "active":  true,
+                                            "ctf":  {
+                                                        "code":  "// Code for PCI-DSS - missing_consent scan...",
+                                                        "hints":  [
+                                                                      "Check how PCI-DSS handles data flow.",
+                                                                      "The vulnerability is related to missing_consent."
+                                                                  ],
+                                                        "correctAnswers":  [
+                                                                               {
+                                                                                   "type":  "missing_consent",
+                                                                                   "line":  10,
+                                                                                   "framework":  "PCI-DSS"
+                                                                               }
+                                                                           ],
+                                                        "rewards":  {
+                                                                        "badge":  "Compliance Cadet",
+                                                                        "proCredits":  20
+                                                                    }
+                                                    }
+                                        }
+                }
+}

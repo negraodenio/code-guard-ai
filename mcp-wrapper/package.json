@@ -1,0 +1,29 @@
+{
+    "name": "@codeguard/mcp-wrapper",
+    "version": "1.0.0",
+    "description": "CodeGuard MCP Wrapper - Stdio to HTTP bridge for Claude Desktop, Zed, and other MCP clients",
+    "main": "index.js",
+    "bin": {
+        "codeguard-mcp": "./index.js"
+    },
+    "scripts": {
+        "start": "node index.js"
+    },
+    "keywords": [
+        "mcp",
+        "codeguard",
+        "compliance",
+        "lgpd",
+        "gdpr",
+        "cursor",
+        "claude"
+    ],
+    "author": "CodeGuard <mcp@code-guard.eu>",
+    "license": "MIT",
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.0.0"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    }
+}

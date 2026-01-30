@@ -63,6 +63,24 @@ export default function Home() {
                     >
                         {loading ? 'Analisando...' : 'GERAR RELATÓRIO DE COMPLIANCE'}
                     </button>
+
+                    <div className="mt-12 p-6 bg-gray-800 rounded-lg border border-blue-900/30">
+                        <h2 className="text-xl font-bold mb-3 flex items-center">
+                            <span className="mr-2">🔌</span> Professional Access: MCP Server
+                        </h2>
+                        <p className="text-sm text-gray-400 mb-4">
+                            Conecte o CodeGuard diretamente ao seu <b>Claude Desktop</b> ou <b>Cursor</b> para auditorias em tempo real enquanto você digita.
+                        </p>
+                        <div className="bg-black/50 p-4 rounded font-mono text-xs text-blue-400 break-all border border-gray-700">
+                            https://code-guard.eu/api/mcp
+                        </div>
+                        <a
+                            href="https://github.com/usuario/repo/blob/main/MCP_GUIDE.md"
+                            className="inline-block mt-4 text-sm text-blue-500 hover:underline"
+                        >
+                            Ver manual de conectividade Stdio/SSE →
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

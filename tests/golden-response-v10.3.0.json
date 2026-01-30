@@ -1,0 +1,48 @@
+{
+    "status": "success",
+    "engine": "CodeGuard v10.0.0-ULTRA",
+    "results": {
+        "scan": {
+            "score": 85,
+            "grade": "B",
+            "executiveSummary": {
+                "overview": "Sistema em produção com violações críticas de mTLS e vazamento de logs.",
+                "riskAssessment": "Risco financeiro alto devido a não conformidade com FAPI-BR (bloqueio BACEN) e multas LGPD por exposição de PII.",
+                "actionableVerdict": "Priorizar a implementação do blueprint fapiAuth.ts e substituir console.log por safeInfo imediatamente."
+            },
+            "violations": [
+                {
+                    "severity": "medium",
+                    "framework": "LGPD",
+                    "code": "LGPD-001",
+                    "message": "Uso de console.log expõe variáveis dinâmicas.",
+                    "fix": "Usar safeInfo do LGPDLogger.ts.",
+                    "financialRisk": "Médio - Risco de sanção LGPD.",
+                    "remediationCost": "Baixo (30 min)",
+                    "mitigationEffort": "baixo"
+                }
+            ],
+            "intelligence": {
+                "context": "PRODUCTION_APPLICATION",
+                "trustZone": "PRODUCTION_SURFACE (High Risk)",
+                "confidence": "high"
+            },
+            "frameworks": [
+                {
+                    "id": "LGPD",
+                    "tier": 1,
+                    "country": "BR",
+                    "violations": 1,
+                    "passed": false
+                },
+                {
+                    "id": "FAPI-BR",
+                    "tier": 1,
+                    "country": "BR",
+                    "violations": 0,
+                    "passed": true
+                }
+            ]
+        }
+    }
+}
