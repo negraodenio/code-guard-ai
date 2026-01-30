@@ -9,32 +9,39 @@ export async function analyzeCompliance(code: string, frameworks: any[]) {
   // LOG DE DEBUG SEGURO
   console.log(`[DEBUG] Keys check: SF:${sfKey ? 'OK' : 'MISSING'}, OR:${orKey ? 'OK' : 'MISSING'}`);
 
-  const prompt = `Analise este código JavaScript/Node.js como um especialista em compliance e segurança.
+  const prompt = `Analise este código (JavaScript, Node.js ou Especificação API) como um CTO e Especialista em Compliance.
+Sua missão é dar um veredito real de risco de negócio, distinguindo entre código produtivo e exemplos/documentação.
+
+DIRETRIZES DE JULGAMENTO:
+1. Identifique a Natureza do Código: (Core Lib, App Produtivo, Exemplo/Demo, Teste, Especificação OpenAPI).
+2. Se for Exemplo ou Documentação (ex: pasta /examples, mock-servers): Reduza a severidade. O risco é real apenas se o desenvolvedor copiar o exemplo para produção. Flag como "LOW" ou "INFO" se for apenas falha em exemplo.
+3. Se for Especificação (YAML/JSON): Analise falhas de DESIGN de segurança no contrato (ex: falta de autenticação no endpoint), não procure bugs de execução como "MongoDB Injection".
 
 REGRAS ABSOLUTAS PARA DETECTAR:
-1. console.log com dados sensíveis (senha, password, cpf, email, creditCard) = LGPD VIOLATION
-2. Armazenamento de password sem hash/bcrypt = LGPD VIOLATION  
-3. Armazenamento de creditCard em texto plano = PCI-DSS VIOLATION
-4. Query MongoDB direto sem sanitização (req.body direto no findOne) = NoSQL Injection
-5. Retorno de dados completos do usuário sem filtro = Data Exposure
-6. Endpoint admin sem verificação de role = Broken Access Control
+1. console.log com dados sensíveis (senha, cpf, etc) = LGPD VIOLATION
+2. Armazenamento de password sem hash/bcrypt = LGPD VIOLATION
+3. Query MongoDB direto sem sanitização = NoSQL Injection
+4. Endpoint admin sem verificação de role = Broken Access Control
+5. No caso de OpenAPI: Falta de esquema de segurança (securityScheme) ou endpoints sensíveis sem "security".
 
 Código para analisar:
 ${code}
 
 Responda APENAS em JSON válido:
 {
-  "score": número entre 0-100,
+  "score": número 0-100,
+  "context": "Natureza detectada do código (ex: Core Production, OpenAPI Spec, Example)",
+  "mitigationStrategy": "Estratégia executiva recomendada (ex: Isolar componente, Corrigir Escopo, Refatorar Core)",
   "violations": [
     {
-      "severity": "critical|high|medium",
-      "framework": "LGPD|GDPR|PCI-DSS|OWASP|FAPI-BR",
-      "code": "CÓDIGO-001",
-      "message": "descrição clara do problema",
+      "severity": "critical|high|medium|low|info",
+      "framework": "LGPD|GDPR|PCI-DSS|OWASP|FAPI-BR|BACEN",
+      "code": "CÓDIGO-ID",
+      "message": "descrição do problema",
       "fix": "como corrigir"
     }
   ],
-  "summary": "resumo executivo"
+  "summary": "resumo executivo focado em risco de negócio"
 }`;
 
   // Tentar primeiro SiliconFlow
@@ -123,6 +130,8 @@ function parseAIResponse(content: string, frameworks: any[], method: string, det
     grade: result.score >= 90 ? 'A' : result.score >= 80 ? 'B' : result.score >= 70 ? 'C' : 'F',
     violations: result.violations || [],
     summary: result.summary || 'Análise completada',
+    context: result.context || 'Não identificado',
+    mitigationStrategy: result.mitigationStrategy || 'Não fornecida',
     analysisMethod: 'AI',
     analysisDetails: `${method} - ${details}`,
     frameworks: frameworks.map((f: any) => ({
@@ -256,6 +265,8 @@ function analyzeWithRegex(code: string, frameworks: any[], apiError?: string) {
     grade: score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : 'F',
     violations,
     summary: violations.length === 0 ? 'Código limpo' : `${violations.length} violações críticas`,
+    context: 'Análise Estática Local',
+    mitigationStrategy: 'Revisar violações individuais apontadas pelas regras locais.',
     analysisMethod: 'REGEX',
     analysisDetails: apiError ? `Fallback (Erro API: ${apiError})` : 'Regras locais (Fallback)',
     frameworks: frameworks.map((f: any) => ({

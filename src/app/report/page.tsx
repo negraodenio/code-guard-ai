@@ -22,7 +22,7 @@ export default function ReportPage() {
                 {/* Header Profissional */}
                 <div className="border-b-2 border-blue-600 pb-4 mb-6 relative">
                     <div className="absolute top-0 right-0 text-xs font-mono text-gray-400 bg-gray-50 px-2 py-1 rounded">
-                        v1.1.5-PRO
+                        v1.2.0-PRO
                     </div>
                     <h1 className="text-3xl font-bold text-blue-900">Relatório de Auditoria de Compliance</h1>
                     <p className="text-gray-600 mt-2">Gerado em: {report?.timestamp ? new Date(report.timestamp).toLocaleString('pt-BR') : 'N/A'}</p>
@@ -42,13 +42,29 @@ export default function ReportPage() {
                 </div>
 
                 {/* Resumo Executivo */}
-                <div className="bg-gray-50 p-4 rounded mb-6">
-                    <h2 className="font-bold text-lg mb-2">Resumo Executivo</h2>
-                    <p className="text-gray-700">{report.summary}</p>
-                    <p className="mt-2 text-sm text-gray-600">
-                        Total de violações encontradas: <strong>{(report.issues || []).length}</strong>
-                    </p>
+                <div className="bg-gray-50 p-4 rounded mb-6 flex justify-between items-start">
+                    <div className="flex-1">
+                        <h2 className="font-bold text-lg mb-2">Resumo Executivo</h2>
+                        <p className="text-gray-700">{report.summary}</p>
+                        <p className="mt-2 text-sm text-gray-600">
+                            Total de violações encontradas: <strong>{(report.issues || []).length}</strong>
+                        </p>
+                    </div>
+                    <div className="ml-4 text-right">
+                        <div className="text-[10px] uppercase text-gray-400 font-bold mb-1 tracking-widest">NATUREZA DO CÓDIGO</div>
+                        <div className="px-3 py-1 bg-blue-600 text-white text-xs rounded-full font-bold shadow-sm inline-block">
+                            📌 {report.context || 'Análise Geral'}
+                        </div>
+                    </div>
                 </div>
+
+                {/* Estratégia de Mitigação de Negócio */}
+                {report.mitigationStrategy && (
+                    <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-6">
+                        <h3 className="font-bold text-blue-900 text-sm mb-1">🏦 RECOMENDAÇÃO ESTRATÉGICA (Business Context)</h3>
+                        <p className="text-blue-800 text-sm italic">"{report.mitigationStrategy}"</p>
+                    </div>
+                )}
 
                 {/* Indicador do Método de Análise */}
                 <div className={`p-4 rounded-lg mb-6 border-2 ${report.analysisMethod === 'AI'
