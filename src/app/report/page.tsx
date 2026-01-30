@@ -159,32 +159,73 @@ export default function ReportPage() {
                     ) : (
                         <div className="space-y-4">
                             {(report.issues || []).map((issue: any, idx: number) => (
-                                <div key={idx} className={`p-4 rounded border-l-4 ${issue.severity === 'critical' ? 'bg-red-50 border-red-500' :
+                                <div key={idx} className={`p-4 rounded border-l-4 shadow-sm ${issue.severity === 'critical' ? 'bg-red-50 border-red-500' :
                                     issue.severity === 'high' ? 'bg-orange-50 border-orange-500' :
                                         'bg-yellow-50 border-yellow-500'
                                     }`}>
                                     <div className="flex justify-between items-start mb-2">
-                                        <span className={`px-2 py-1 rounded text-xs text-white ${issue.severity === 'critical' ? 'bg-red-600' :
-                                            issue.severity === 'high' ? 'bg-orange-600' :
-                                                'bg-yellow-600'
-                                            }`}>
-                                            {issue.severity.toUpperCase()}
-                                        </span>
-                                        <span className="text-sm text-gray-500 font-mono">{issue.code}</span>
+                                        <div className="flex gap-2 items-center">
+                                            <span className={`px-2 py-1 rounded text-[10px] font-bold text-white ${issue.severity === 'critical' ? 'bg-red-600' :
+                                                issue.severity === 'high' ? 'bg-orange-600' :
+                                                    'bg-yellow-600'
+                                                }`}>
+                                                {issue.severity.toUpperCase()}
+                                            </span>
+                                            <span className="bg-white px-2 py-0.5 rounded text-[10px] font-bold text-gray-500 border border-gray-200">{issue.framework}</span>
+                                            {issue.mitigationEffort && (
+                                                <span className="text-[10px] uppercase font-bold text-gray-400">Esforço: {issue.mitigationEffort}</span>
+                                            )}
+                                        </div>
+                                        <span className="text-[11px] text-gray-400 font-mono">{issue.code}</span>
                                     </div>
-                                    <div className="font-semibold mb-1">{issue.framework}</div>
-                                    <div className="text-gray-700 mb-2">{issue.message}</div>
+                                    <div className="font-bold text-gray-900 mb-1">{issue.message}</div>
+
+                                    {issue.businessImpact && (
+                                        <div className="text-[11px] text-gray-600 bg-white/50 p-2 rounded mb-2 border-l-2 border-gray-300">
+                                            <strong>IMPACTO:</strong> {issue.businessImpact}
+                                        </div>
+                                    )}
+
                                     {issue.line > 0 && (
                                         <div className="text-sm text-gray-500 mb-2">Linha: {issue.line}</div>
                                     )}
-                                    <div className="bg-blue-50 p-2 rounded text-sm">
-                                        <strong>Correção sugerida:</strong> {issue.fix || issue.recommendation}
+                                    <div className="bg-white p-3 rounded border border-blue-100 shadow-sm mt-3">
+                                        <p className="text-[10px] font-bold text-blue-900 tracking-wider mb-1 uppercase">Recomendação Técnica</p>
+                                        <p className="text-sm text-blue-800 font-medium">{issue.fix || issue.recommendation}</p>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     )}
                 </div>
+
+                {/* Compliance Roadmap para Nota A */}
+                {report.score < 90 && (
+                    <div className="mt-8 border-t-2 border-gray-100 pt-6">
+                        <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            🚀 ROADMAP PARA NOTA A (90+)
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-gradient-to-br from-green-50 to-white border-2 border-green-500 p-4 rounded-xl shadow-sm">
+                                <div className="text-xs font-bold text-green-600 mb-1 tracking-widest uppercase">Curto Prazo • Trivial</div>
+                                <h4 className="font-bold text-gray-900 border-b pb-1 mb-2">Sanitização de Logs (LGPD-001)</h4>
+                                <p className="text-xs text-gray-600 leading-relaxed italic">
+                                    Substitua logs dinâmicos de 'req.body' pelo Winston/Pino com redação de PII. **Impacto imediato no score.**
+                                </p>
+                            </div>
+                            <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-blue-500 p-4 rounded-xl shadow-sm">
+                                <div className="text-xs font-bold text-blue-600 mb-1 tracking-widest uppercase">Médio Prazo • Estratégia</div>
+                                <h4 className="font-bold text-gray-900 border-b pb-1 mb-2">Auditoria FAPI-BR</h4>
+                                <p className="text-xs text-gray-600 leading-relaxed italic">
+                                    Implementar mTLS e conformidade Open Banking/BACEN. **Essencial para parcerias financeiras.**
+                                </p>
+                            </div>
+                        </div>
+                        <div className="mt-4 bg-gray-50 p-3 rounded text-[11px] text-gray-500 italic text-center">
+                            Nota: Corrigir estes dois pontos levará o score global para A (95/100).
+                        </div>
+                    </div>
+                )}
 
                 {/* Footer */}
                 <div className="text-center text-gray-400 text-sm mt-8 pt-4 border-t">
