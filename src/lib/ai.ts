@@ -6,42 +6,52 @@ export async function analyzeCompliance(code: string, frameworks: any[]) {
   let sfError = "";
   let orError = "";
 
-  // LOG DE DEBUG SEGURO
-  console.log(`[DEBUG] Keys check: SF:${sfKey ? 'OK' : 'MISSING'}, OR:${orKey ? 'OK' : 'MISSING'}`);
+  // HEURÍSTICA DE CONTEXTO (Pré-processamento)
+  const isOpenAPI = /openapi|swagger|paths:|components:|securitySchemes:/i.test(code);
+  const isLibrary = /module\.exports|export\s+|package\.json|keywords:/i.test(code);
+  const isExample = /example|demo|sample|usage:|__tests__/i.test(code);
+  const hasMocks = /123\.456\.789-00|4111.?1111.?1111.?1111|password123|senha123/i.test(code);
 
-  const prompt = `Analise este código (JavaScript, Node.js ou Especificação API) como um CTO e Especialista em Compliance.
-Sua missão é dar um veredito real de risco de negócio, distinguindo entre código produtivo e exemplos/documentação.
+  const detectedHeuristic = isOpenAPI ? 'OpenAPI Specification' :
+    isLibrary ? (isExample ? 'Library Example' : 'Core Library') :
+      'Application Code';
 
-DIRETRIZES DE JULGAMENTO:
-1. Identifique a Natureza do Código: (Core Lib, App Produtivo, Exemplo/Demo, Teste, Especificação OpenAPI).
-2. Se for Exemplo ou Documentação (ex: pasta /examples, mock-servers): Reduza a severidade. O risco é real apenas se o desenvolvedor copiar o exemplo para produção. Flag como "LOW" ou "INFO" se for apenas falha em exemplo.
-3. Se for Especificação (YAML/JSON): Analise falhas de DESIGN de segurança no contrato (ex: falta de autenticação no endpoint), não procure bugs de execução como "MongoDB Injection".
+  const prompt = `Analise este código como um CTO e Especialista em Auditoria Estratégica.
+Sua missão é dar um veredito real de risco de negócio, filtrando "ruídos" de documentação e exemplos.
 
-REGRAS ABSOLUTAS PARA DETECTAR:
-1. console.log com dados sensíveis (senha, cpf, etc) = LGPD VIOLATION
-2. Armazenamento de password sem hash/bcrypt = LGPD VIOLATION
-3. Query MongoDB direto sem sanitização = NoSQL Injection
-4. Endpoint admin sem verificação de role = Broken Access Control
-5. No caso de OpenAPI: Falta de esquema de segurança (securityScheme) ou endpoints sensíveis sem "security".
+VALOR DE REFERÊNCIA:
+- Natureza Detectada: ${detectedHeuristic}
+- Contém Mocks Prováveis: ${hasMocks ? 'SIM (Ignore violações de dados literais nestes padrões)' : 'NÃO'}
 
-Código para analisar:
-${code}
+DIRETRIZES DE AUDITORIA:
+1. IDENTIFICAÇÃO: Distinga entre código produtivo e Documentary Samples.
+2. PESO CONTEXTUAL:
+   - Se for OpenAPI Spec: Foque 100% em Segurança do Contrato (HTTPS, mTLS, OAuth2). IGNORE console.log ou NoSQL Injection (especificações não executam código).
+   - Se for Core Library: Foque em Sanitização de Input e Exportação Segura. IGNORE flags de console.log se forem informativos.
+   - Se for Exemplo/Demo: Flag como "LOW/INFO". O risco só existe se copiado para produção.
+3. SEMÂNTICA AST: Verifique se um 'console.log' expõe uma variável real do sistema ou uma string literal de exemplo.
 
-Responda APENAS em JSON válido:
+REGRAS CRÍTICAS:
+- console.log com variáveis dinâmicas de PII = LGPD VIOLATION
+- Password/CreditCard em texto plano sem hash = LGPD/PCI VIOLATION
+- OpenAPI sem security schemes = FAPI-BR VIOLATION
+
+Responda em JSON válido:
 {
-  "score": número 0-100,
-  "context": "Natureza detectada do código (ex: Core Production, OpenAPI Spec, Example)",
-  "mitigationStrategy": "Estratégia executiva recomendada (ex: Isolar componente, Corrigir Escopo, Refatorar Core)",
+  "score": 0-100,
+  "contextType": "${detectedHeuristic}",
+  "confidence": "high|medium|low",
+  "mitigationStrategy": "Veredito executivo: ex: 'Seguro para uso como contrato', 'Uso proibido em produção', 'Refatorar core'",
   "violations": [
     {
       "severity": "critical|high|medium|low|info",
       "framework": "LGPD|GDPR|PCI-DSS|OWASP|FAPI-BR|BACEN",
-      "code": "CÓDIGO-ID",
-      "message": "descrição do problema",
-      "fix": "como corrigir"
+      "code": "ID",
+      "message": "descrição curta",
+      "fix": "como mitigar"
     }
   ],
-  "summary": "resumo executivo focado em risco de negócio"
+  "summary": "resumo focado em decisão de negócio"
 }`;
 
   // Tentar primeiro SiliconFlow
@@ -130,7 +140,8 @@ function parseAIResponse(content: string, frameworks: any[], method: string, det
     grade: result.score >= 90 ? 'A' : result.score >= 80 ? 'B' : result.score >= 70 ? 'C' : 'F',
     violations: result.violations || [],
     summary: result.summary || 'Análise completada',
-    context: result.context || 'Não identificado',
+    context: result.contextType || result.context || 'Não identificado',
+    confidence: result.confidence || 'medium',
     mitigationStrategy: result.mitigationStrategy || 'Não fornecida',
     analysisMethod: 'AI',
     analysisDetails: `${method} - ${details}`,

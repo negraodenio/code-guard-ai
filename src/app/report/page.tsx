@@ -22,7 +22,7 @@ export default function ReportPage() {
                 {/* Header Profissional */}
                 <div className="border-b-2 border-blue-600 pb-4 mb-6 relative">
                     <div className="absolute top-0 right-0 text-xs font-mono text-gray-400 bg-gray-50 px-2 py-1 rounded">
-                        v1.2.0-PRO
+                        v1.3.0-PRO
                     </div>
                     <h1 className="text-3xl font-bold text-blue-900">Relatório de Auditoria de Compliance</h1>
                     <p className="text-gray-600 mt-2">Gerado em: {report?.timestamp ? new Date(report.timestamp).toLocaleString('pt-BR') : 'N/A'}</p>
@@ -55,6 +55,16 @@ export default function ReportPage() {
                         <div className="px-3 py-1 bg-blue-600 text-white text-xs rounded-full font-bold shadow-sm inline-block">
                             📌 {report.context || 'Análise Geral'}
                         </div>
+                        {report.confidence && (
+                            <div className="mt-2">
+                                <span className="text-[10px] uppercase text-gray-400 font-bold tracking-widest mr-2">CONFIANÇA:</span>
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${report.confidence === 'high' ? 'bg-green-100 text-green-700' :
+                                        report.confidence === 'medium' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'
+                                    }`}>
+                                    {report.confidence.toUpperCase()}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </div>
 
