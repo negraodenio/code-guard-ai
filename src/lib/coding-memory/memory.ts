@@ -4,10 +4,12 @@ import traverse from '@babel/traverse';
 import fs from 'fs/promises';
 
 export class CodingMemory {
-    private supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_KEY!
-    );
+    private get db() {
+        return createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_KEY!
+        );
+    }
 
     /**
      * Index a file by chunking it semantically (Functions/Classes)
@@ -18,7 +20,7 @@ export class CodingMemory {
         for (const chunk of chunks) {
             // Note: In production, we'd call an embedding API (OpenAI/SiliconFlow)
             // For now, we'll store the content and a placeholder embedding if not available
-            await this.supabase.from('code_memory').insert({
+            await this.db.from('code_memory').insert({
                 repo_id: repoId,
                 file_path: filePath,
                 chunk_type: chunk.type,
@@ -83,7 +85,7 @@ export class CodingMemory {
 
     async querySimilar(repoId: string, codeSnippet: string) {
         // Search for existing similar patterns in memory to identify false positives
-        const { data } = await this.supabase
+        const { data } = await this.db
             .from('code_memory')
             .select('content, metadata, file_path')
             .eq('repo_id', repoId)
