@@ -33,8 +33,12 @@ export async function analyzeCompliance(code: string, frameworks: any[]) {
     ].filter(Boolean)
   };
 
-  const prompt = `### AUDITORIA ESTRATÉGICA DE COMPLIANCE (v2.0.0-PRO)
-Você é um Juiz de Compliance (LLM Judge) com Consciência de Repositório (Repo Intelligence) e Memória de Contexto.
+  const prompt = `### AUDITORIA ESTRATÉGICA DE COMPLIANCE (v3.0.0-PRO - Masterclass)
+Você é um Juiz de Compliance (LLM Judge) com Consciência de Repositório e Infraestrutura.
+
+RECURSOS DE INFRAESTRUTURA DISPONÍVEIS NO PROJETO:
+1. INFRA: file:///C:/Users/denio/Documents/Denio/KimiCOde/compliance-scanner/src/lib/infrastructure/LGPDLogger.ts (Usa Pino com Redação Automática de PII).
+2. INFRA: file:///C:/Users/denio/Documents/Denio/KimiCOde/compliance-scanner/src/lib/infrastructure/loggingMiddleware.ts (Middleware Express).
 
 ESTADO ATUAL DO REPOSITÓRIO:
 - Tipo de Projeto: ${repoContext.type}
@@ -45,10 +49,10 @@ ESTADO ATUAL DO REPOSITÓRIO:
 DIRETRIZES DE DECISÃO (SEMANTIC INTENT):
 1. DIFERENCIAÇÃO SEMÂNTICA: Se o código for um exemplo (EDUCATIONAL_EXAMPLE) ou teste, reduza drasticamente a severidade (INFO/LOW).
 2. ANÁLISE DE FLUXO (SINK/SOURCE):
-   - Se 'console.log' expõe string literal (ex: "pass123"): Flag como Documentação (INFO).
-   - Se 'console.log' expõe variável dinâmica ou objeto de request (ex: req.body): Flag como Vazamento REAL (CRITICAL/HIGH).
-3. MOCK DATA: CPFs '${mockPatterns.cpf ? 'SIM' : 'NÃO'}', Cartões '${mockPatterns.card ? 'SIM' : 'NÃO'}' detectados. Ignore se usados apenas como exemplo educativo.
-4. API SPEC: Foque em segurança de design (FAPI-BR, OAuth2). Ignore vulnerabilidades de execução de código.
+   - Se 'console.log' expõe string literal: Flag como Documentação (INFO).
+   - Se 'console.log' expõe variável dinâmica: Flag como Vazamento REAL (CRITICAL). Recomende usar o 'LGPDLogger' interno.
+3. MOCK DATA: CPFs '${mockPatterns.cpf ? 'SIM' : 'NÃO'}', detectados. Ignore se exemplos.
+4. ROADMAP: Se score < 90, crie passos usando a infra do projeto.
 
 Responda em JSON válido:
 {
@@ -57,25 +61,25 @@ Responda em JSON válido:
     "detectedContext": "${repoContext.type}",
     "trustLevel": "${repoContext.trustZone}",
     "confidence": "low|medium|high",
-    "reasoning": "Justificativa de por que este código foi classificado desta forma."
+    "reasoning": "Justificativa."
   },
-  "mitigationStrategy": "Estratégia executiva: ex: 'Seguro para uso', 'Refatoração necessária no core', 'Isolar mocks'",
+  "mitigationStrategy": "Estratégia executiva",
   "violations": [
     {
       "severity": "critical|high|medium|low|info",
       "framework": "LGPD|GDPR|PCI-DSS|OWASP|FAPI-BR|BACEN",
       "code": "ID",
       "message": "Mensagem curta",
-      "fix": "Recomendação textual técnica",
-      "remediationSnippet": "Código pronto para copiar (ex: config do Pino para LGPD-001)",
+      "fix": "Ação de correção técnica",
+      "remediationSnippet": "Código pronto para copiar (ex: setup do LGPDLogger do projeto)",
       "financialRisk": "Estimativa (ex: R$ 50k - R$ 50M)",
       "remediationCost": "Estimativa (ex: 15 min / R$ 50)",
       "isLikelyFalsePositive": boolean,
-      "businessImpact": "Risco de negócio real",
+      "businessImpact": "Risco de negócio",
       "mitigationEffort": "baixo|medio|alto"
     }
   ],
-  "summary": "Resumo executivo de risco de negócio"
+  "summary": "Resumo executivo"
 }`;
 
   // Tentar primeiro SiliconFlow

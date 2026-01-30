@@ -22,7 +22,7 @@ export default function ReportPage() {
                 {/* Header Profissional */}
                 <div className="border-b-2 border-blue-600 pb-4 mb-6 relative">
                     <div className="absolute top-0 right-0 text-xs font-mono text-gray-400 bg-gray-50 px-2 py-1 rounded">
-                        v2.2.0-PRO
+                        v3.0.0-PRO
                     </div>
                     <h1 className="text-3xl font-bold text-blue-900">Relatório de Auditoria de Compliance</h1>
                     <p className="text-gray-600 mt-2">Gerado em: {report?.timestamp ? new Date(report.timestamp).toLocaleString('pt-BR') : 'N/A'}</p>
