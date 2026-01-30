@@ -22,7 +22,7 @@ export default function ReportPage() {
                 {/* Header Profissional */}
                 <div className="border-b-2 border-blue-600 pb-4 mb-6 relative">
                     <div className="absolute top-0 right-0 text-xs font-mono text-gray-400 bg-gray-50 px-2 py-1 rounded">
-                        v2.1.0-PRO
+                        v2.2.0-PRO
                     </div>
                     <h1 className="text-3xl font-bold text-blue-900">Relatório de Auditoria de Compliance</h1>
                     <p className="text-gray-600 mt-2">Gerado em: {report?.timestamp ? new Date(report.timestamp).toLocaleString('pt-BR') : 'N/A'}</p>
@@ -76,13 +76,36 @@ export default function ReportPage() {
                     </div>
                 </div>
 
+                {/* Dashboard de ROI Empresarial (v2.2.0-PRO) */}
+                <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="bg-red-50 p-4 rounded-xl border border-red-100">
+                        <div className="text-[10px] font-bold text-red-600 uppercase tracking-widest mb-1">EXPOSIÇÃO FINANCEIRA</div>
+                        <div className="text-xl font-bold text-red-900">
+                            {report.issues?.some((i: any) => i.severity === 'critical') ? 'R$ 50k - 50M' : 'Baixa'}
+                        </div>
+                        <div className="text-[9px] text-red-700 mt-1 opacity-80">*Baseado em multas LGPD/BACEN</div>
+                    </div>
+                    <div className="bg-green-50 p-4 rounded-xl border border-green-100">
+                        <div className="text-[10px] font-bold text-green-600 uppercase tracking-widest mb-1">CUSTO DE MITIGAÇÃO</div>
+                        <div className="text-xl font-bold text-green-900">
+                            ~ R$ 1.200,00
+                        </div>
+                        <div className="text-[9px] text-green-700 mt-1 opacity-80">*Esforço total estimado</div>
+                    </div>
+                    <div className="bg-blue-900 p-4 rounded-xl text-white shadow-lg">
+                        <div className="text-[10px] font-bold text-blue-300 uppercase tracking-widest mb-1">ROI DA CORREÇÃO</div>
+                        <div className="text-xl font-bold">∞ (INFINITO)</div>
+                        <div className="text-[9px] text-blue-200 mt-1 opacity-80">Evita bloqueios e sanções</div>
+                    </div>
+                </div>
+
                 {/* Camada de Inteligência Semântica */}
                 {report.reasoning && report.reasoning !== 'N/A' && (
                     <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded mb-6 shadow-sm">
                         <h3 className="font-bold text-indigo-900 text-sm mb-1 flex items-center gap-2 text-xs">
                             🧠 REPO INTELLIGENCE (Semantic Reasoning)
                         </h3>
-                        <p className="text-indigo-800 text-sm whitespace-pre-wrap">{report.reasoning}</p>
+                        <p className="text-indigo-800 text-sm whitespace-pre-wrap leading-relaxed">{report.reasoning}</p>
                     </div>
                 )}
 
@@ -182,16 +205,41 @@ export default function ReportPage() {
 
                                     {issue.businessImpact && (
                                         <div className="text-[11px] text-gray-600 bg-white/50 p-2 rounded mb-2 border-l-2 border-gray-300">
-                                            <strong>IMPACTO:</strong> {issue.businessImpact}
+                                            <div className="flex justify-between items-center mb-1">
+                                                <strong>IMPACTO:</strong>
+                                                {issue.financialRisk && (
+                                                    <span className="text-red-600 font-bold">Risco: {issue.financialRisk}</span>
+                                                )}
+                                            </div>
+                                            {issue.businessImpact}
                                         </div>
                                     )}
 
                                     {issue.line > 0 && (
                                         <div className="text-sm text-gray-500 mb-2">Linha: {issue.line}</div>
                                     )}
+
                                     <div className="bg-white p-3 rounded border border-blue-100 shadow-sm mt-3">
-                                        <p className="text-[10px] font-bold text-blue-900 tracking-wider mb-1 uppercase">Recomendação Técnica</p>
+                                        <div className="flex justify-between items-center mb-1">
+                                            <p className="text-[10px] font-bold text-blue-900 tracking-wider uppercase">Recomendação Técnica</p>
+                                            {issue.remediationCost && (
+                                                <span className="text-[9px] font-bold text-green-600">Esforço: {issue.remediationCost}</span>
+                                            )}
+                                        </div>
                                         <p className="text-sm text-blue-800 font-medium">{issue.fix || issue.recommendation}</p>
+
+                                        {/* Snippet de Remediação (v2.2.0) */}
+                                        {issue.remediationSnippet && (
+                                            <div className="mt-3 bg-gray-900 p-3 rounded-lg overflow-x-auto">
+                                                <div className="text-[9px] font-bold text-blue-400 mb-2 uppercase tracking-widest flex justify-between items-center">
+                                                    <span>Snippet de Remediação</span>
+                                                    <span className="text-gray-500">Copy & Paste</span>
+                                                </div>
+                                                <pre className="text-xs text-blue-50 font-mono leading-relaxed">
+                                                    {issue.remediationSnippet}
+                                                </pre>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))}

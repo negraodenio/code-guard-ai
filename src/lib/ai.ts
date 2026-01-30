@@ -66,9 +66,12 @@ Responda em JSON válido:
       "framework": "LGPD|GDPR|PCI-DSS|OWASP|FAPI-BR|BACEN",
       "code": "ID",
       "message": "Mensagem curta",
-      "fix": "Ação de correção (específica: ex: Usar Pino/Winston com redação de PII para LGPD-001)",
+      "fix": "Recomendação textual técnica",
+      "remediationSnippet": "Código pronto para copiar (ex: config do Pino para LGPD-001)",
+      "financialRisk": "Estimativa (ex: R$ 50k - R$ 50M)",
+      "remediationCost": "Estimativa (ex: 15 min / R$ 50)",
       "isLikelyFalsePositive": boolean,
-      "businessImpact": "Descrição do risco financeiro/operacional",
+      "businessImpact": "Risco de negócio real",
       "mitigationEffort": "baixo|medio|alto"
     }
   ],
