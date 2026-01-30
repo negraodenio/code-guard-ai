@@ -80,7 +80,7 @@ export default function ReportPage() {
 
                     {report.analysisMethod === 'AI' ? (
                         <div className="text-xs mt-2 text-blue-700 font-mono italic">
-                            💰 Custo desta análise: ~$0.002 USD
+                            ✓ Análise em conformidade com padrões globais
                         </div>
                     ) : (
                         <div className="text-xs mt-2 text-yellow-700 font-mono italic">
