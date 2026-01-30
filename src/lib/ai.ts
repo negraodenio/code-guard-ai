@@ -6,52 +6,71 @@ export async function analyzeCompliance(code: string, frameworks: any[]) {
   let sfError = "";
   let orError = "";
 
-  // HEURÍSTICA DE CONTEXTO (Pré-processamento)
+  // 🧠 REPO INTELLIGENCE LAYER (v2.0.0-PRO)
   const isOpenAPI = /openapi|swagger|paths:|components:|securitySchemes:/i.test(code);
-  const isLibrary = /module\.exports|export\s+|package\.json|keywords:/i.test(code);
-  const isExample = /example|demo|sample|usage:|__tests__/i.test(code);
-  const hasMocks = /123\.456\.789-00|4111.?1111.?1111.?1111|password123|senha123/i.test(code);
+  const isLibrary = /module\.exports|export\s+|package\.json|keywords:|@typedef/i.test(code);
+  const isExample = /example|demo|sample|usage:|__tests__|tutorial/i.test(code);
+  const isConfig = /config|process\.env|dotenv|\.env/i.test(code);
 
-  const detectedHeuristic = isOpenAPI ? 'OpenAPI Specification' :
-    isLibrary ? (isExample ? 'Library Example' : 'Core Library') :
-      'Application Code';
+  // Identificação Semântica de Mocks (Coding Memory)
+  const mockPatterns = {
+    cpf: /123\.456\.789-00|111\.222\.333-44/i.test(code),
+    card: /4111.?1111.?1111.?1111|4242.?4242.?4242.?4242/i.test(code),
+    credentials: /password123|senha123|admin123|secret-token-123/i.test(code)
+  };
 
-  const prompt = `Analise este código como um CTO e Especialista em Auditoria Estratégica.
-Sua missão é dar um veredito real de risco de negócio, filtrando "ruídos" de documentação e exemplos.
+  const hasMocks = Object.values(mockPatterns).some(v => v);
 
-VALOR DE REFERÊNCIA:
-- Natureza Detectada: ${detectedHeuristic}
-- Contém Mocks Prováveis: ${hasMocks ? 'SIM (Ignore violações de dados literais nestes padrões)' : 'NÃO'}
+  const repoContext = {
+    type: isOpenAPI ? 'API_SPECIFICATION' : (isLibrary ? 'UTILITY_LIBRARY' : 'PRODUCTION_APPLICATION'),
+    surface: isExample ? 'EDUCATIONAL_EXAMPLE' : (isConfig ? 'CONFIGURATION' : 'CORE_IMPLEMENTATION'),
+    trustZone: isExample ? 'SANDBOX (Low Risk)' : 'PRODUCTION_SURFACE (High Risk)',
+    memorySignals: [
+      isOpenAPI && "Ignore functional execution rules (logs/DB)",
+      isLibrary && "Focus on export sanitization and input validation",
+      isExample && "Downgrade severity: educational content",
+      hasMocks && "Confirmed dummy data in code (Mock Patterns detected)"
+    ].filter(Boolean)
+  };
 
-DIRETRIZES DE AUDITORIA:
-1. IDENTIFICAÇÃO: Distinga entre código produtivo e Documentary Samples.
-2. PESO CONTEXTUAL:
-   - Se for OpenAPI Spec: Foque 100% em Segurança do Contrato (HTTPS, mTLS, OAuth2). IGNORE console.log ou NoSQL Injection (especificações não executam código).
-   - Se for Core Library: Foque em Sanitização de Input e Exportação Segura. IGNORE flags de console.log se forem informativos.
-   - Se for Exemplo/Demo: Flag como "LOW/INFO". O risco só existe se copiado para produção.
-3. SEMÂNTICA AST: Verifique se um 'console.log' expõe uma variável real do sistema ou uma string literal de exemplo.
+  const prompt = `### AUDITORIA ESTRATÉGICA DE COMPLIANCE (v2.0.0-PRO)
+Você é um Juiz de Compliance (LLM Judge) com Consciência de Repositório (Repo Intelligence) e Memória de Contexto.
 
-REGRAS CRÍTICAS:
-- console.log com variáveis dinâmicas de PII = LGPD VIOLATION
-- Password/CreditCard em texto plano sem hash = LGPD/PCI VIOLATION
-- OpenAPI sem security schemes = FAPI-BR VIOLATION
+ESTADO ATUAL DO REPOSITÓRIO:
+- Tipo de Projeto: ${repoContext.type}
+- Superfície: ${repoContext.surface}
+- Zona de Confiança: ${repoContext.trustZone}
+- Sinais de Memória: ${repoContext.memorySignals.join(' | ')}
+
+DIRETRIZES DE DECISÃO (SEMANTIC INTENT):
+1. DIFERENCIAÇÃO SEMÂNTICA: Se o código for um exemplo (EDUCATIONAL_EXAMPLE) ou teste, reduza drasticamente a severidade (INFO/LOW).
+2. ANÁLISE DE FLUXO (SINK/SOURCE):
+   - Se 'console.log' expõe string literal (ex: "pass123"): Flag como Documentação (INFO).
+   - Se 'console.log' expõe variável dinâmica ou objeto de request (ex: req.body): Flag como Vazamento REAL (CRITICAL/HIGH).
+3. MOCK DATA: CPFs '${mockPatterns.cpf ? 'SIM' : 'NÃO'}', Cartões '${mockPatterns.card ? 'SIM' : 'NÃO'}' detectados. Ignore se usados apenas como exemplo educativo.
+4. API SPEC: Foque em segurança de design (FAPI-BR, OAuth2). Ignore vulnerabilidades de execução de código.
 
 Responda em JSON válido:
 {
   "score": 0-100,
-  "contextType": "${detectedHeuristic}",
-  "confidence": "high|medium|low",
-  "mitigationStrategy": "Veredito executivo: ex: 'Seguro para uso como contrato', 'Uso proibido em produção', 'Refatorar core'",
+  "intelligence": {
+    "detectedContext": "${repoContext.type}",
+    "trustLevel": "${repoContext.trustZone}",
+    "confidence": "low|medium|high",
+    "reasoning": "Justificativa de por que este código foi classificado desta forma."
+  },
+  "mitigationStrategy": "Estratégia executiva: ex: 'Seguro para uso', 'Refatoração necessária no core', 'Isolar mocks'",
   "violations": [
     {
       "severity": "critical|high|medium|low|info",
       "framework": "LGPD|GDPR|PCI-DSS|OWASP|FAPI-BR|BACEN",
       "code": "ID",
-      "message": "descrição curta",
-      "fix": "como mitigar"
+      "message": "Mensagem curta",
+      "fix": "Ação de correção",
+      "isLikelyFalsePositive": boolean
     }
   ],
-  "summary": "resumo focado em decisão de negócio"
+  "summary": "Resumo executivo de risco de negócio"
 }`;
 
   // Tentar primeiro SiliconFlow
@@ -134,14 +153,17 @@ function parseAIResponse(content: string, frameworks: any[], method: string, det
   if (!jsonMatch) throw new Error('JSON não encontrado na resposta da IA');
 
   const result = JSON.parse(jsonMatch[0]);
+  const intel = result.intelligence || {};
 
   return {
     score: result.score || 50,
     grade: result.score >= 90 ? 'A' : result.score >= 80 ? 'B' : result.score >= 70 ? 'C' : 'F',
     violations: result.violations || [],
     summary: result.summary || 'Análise completada',
-    context: result.contextType || result.context || 'Não identificado',
-    confidence: result.confidence || 'medium',
+    context: intel.detectedContext || result.contextType || result.context || 'Não identificado',
+    trustLevel: intel.trustLevel || 'N/A',
+    confidence: intel.confidence || result.confidence || 'medium',
+    reasoning: intel.reasoning || 'N/A',
     mitigationStrategy: result.mitigationStrategy || 'Não fornecida',
     analysisMethod: 'AI',
     analysisDetails: `${method} - ${details}`,
