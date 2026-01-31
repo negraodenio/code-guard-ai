@@ -24,6 +24,7 @@
     "glob": "^13.0.0",
     "jsonwebtoken": "^9.0.3",
     "jwks-rsa": "^3.2.2",
+    "mcp-handler": "^1.0.7",
     "next": "15.1.6",
     "pino": "^10.3.0",
     "react": "^19.0.0",

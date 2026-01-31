@@ -1,87 +1,64 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest } from 'next/server';
-import { WebStandardStreamableHTTPServerTransport } from '@/lib/mcp/transport';
-import { server } from '@/lib/mcp/server';
+import { createMcpHandler } from 'mcp-handler';
+import { setupMcpServer } from '@/lib/mcp/setup';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
+const getSupabase = () => createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_KEY!
 );
 
-// Create a singleton transport for the session manager
-const transport = new WebStandardStreamableHTTPServerTransport({
-    sessionIdGenerator: () => crypto.randomUUID()
-});
+const mcpHandler = createMcpHandler(setupMcpServer, {
+    scopes: {}
+} as any);
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*', // Permite que Cursor, Replit e outros se conectem
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, x-api-key, Authorization',
-};
-
-export async function OPTIONS() {
-    return new Response(null, { headers: corsHeaders });
-}
-
-export async function GET(req: NextRequest) {
-    // 1. Auth & Quota Check
+async function checkAuth(req: NextRequest) {
     const apiKey = req.headers.get('x-api-key') || req.nextUrl.searchParams.get('apiKey');
 
     if (!apiKey) {
-        return new Response('Auth required. Provide x-api-key header or query param.', { status: 401 });
+        return { authorized: false, error: 'Auth required. Provide x-api-key header or query param.', status: 401 };
     }
 
     // Call Supabase function to check quota
-    const { data: hasQuota, error: quotaError } = await supabase.rpc('check_license_quota', {
+    const { data: hasQuota, error: quotaError } = await getSupabase().rpc('check_license_quota', {
         p_api_key: apiKey
     });
 
     if (quotaError || !hasQuota) {
-        return new Response('Invalid key or quota exceeded.', {
-            status: 403,
-            headers: corsHeaders
-        });
+        return { authorized: false, error: 'Invalid key or quota exceeded.', status: 403 };
     }
 
-    // Ensure server is connected to the transport
-    await server.connect(transport);
-
     // Track usage (fire and forget)
-    supabase.rpc('increment_license_requests', { p_api_key: apiKey }).then(() => { });
+    getSupabase().rpc('increment_license_requests', { p_api_key: apiKey }).then(() => { });
 
-    // 2. Handle the request using the Web Standard transport
-    const response = await transport.handleRequest(req);
-    Object.entries(corsHeaders).forEach(([key, value]) => {
-        response.headers.set(key, value);
-    });
-    return response;
+    return { authorized: true };
+}
+
+export async function GET(req: NextRequest) {
+    const auth = await checkAuth(req);
+    if (!auth.authorized) {
+        return new Response(auth.error, { status: auth.status });
+    }
+    return mcpHandler(req);
 }
 
 export async function POST(req: NextRequest) {
-    const apiKey = req.headers.get('x-api-key') || req.nextUrl.searchParams.get('apiKey');
-
-    if (!apiKey) {
-        return new Response('Auth required.', {
-            status: 401,
-            headers: corsHeaders
-        });
+    const auth = await checkAuth(req);
+    if (!auth.authorized) {
+        return new Response(auth.error, { status: auth.status });
     }
-
-    // Connect just in case (no-op if already connected)
-    await server.connect(transport);
-
-    const response = await transport.handleRequest(req);
-    Object.entries(corsHeaders).forEach(([key, value]) => {
-        response.headers.set(key, value);
-    });
-    return response;
+    return mcpHandler(req);
 }
 
+// OPTIONS is typically handled automatically or we can pass it through if mcpHandler supports it,
+// but for CORS we usually want explicit handling or middleware. mcp-handler handles basic requests.
 export async function DELETE(req: NextRequest) {
-    const response = await transport.handleRequest(req);
-    Object.entries(corsHeaders).forEach(([key, value]) => {
-        response.headers.set(key, value);
-    });
-    return response;
+    // Auth check might be needed for DELETE too depending on semantics, assuming yes based on previous code.
+    const auth = await checkAuth(req);
+    if (!auth.authorized) {
+        return new Response(auth.error, { status: auth.status });
+    }
+    return mcpHandler(req);
 }
+
