@@ -1,0 +1,36 @@
+{
+    "version": 2,
+    "functions": {
+        "api/**/*.ts": {
+            "runtime": "edge"
+        }
+    },
+    "routes": [
+        {
+            "src": "/api/v1/scan",
+            "dest": "/api/v1/scan.ts"
+        },
+        {
+            "src": "/api/v1/patch",
+            "dest": "/api/v1/patch.ts"
+        },
+        {
+            "src": "/api/v1/credits",
+            "dest": "/api/v1/credits.ts"
+        },
+        {
+            "src": "/api/v1/webhook",
+            "dest": "/api/v1/webhook.ts"
+        },
+        {
+            "src": "/api/v1/health",
+            "dest": "/api/v1/health.ts"
+        }
+    ],
+    "env": {
+        "SILICONFLOW_API_KEY": "@siliconflow_api_key",
+        "KIMI_API_KEY": "@kimi_api_key",
+        "OPENAI_API_KEY": "@openai_api_key",
+        "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret"
+    }
+}

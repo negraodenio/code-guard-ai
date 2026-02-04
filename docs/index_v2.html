@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>CodeGuard AI - Secure Compliance</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8b5cf6",
+                        "emerald-accent": "#10b981",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#0f172a",
+                        "card-dark": "#1e293b",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+    <!-- Header -->
+    <nav
+        class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+        <div class="flex items-center justify-between px-4 py-3">
+            <div class="flex items-center gap-2">
+                <div class="bg-primary rounded-lg p-1 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white text-xl">shield_lock</span>
+                </div>
+                <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">CodeGuard AI</h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <button
+                    class="hidden @[480px]:block text-sm font-medium text-slate-600 dark:text-slate-300">Docs</button>
+                <button
+                    class="bg-primary hover:bg-primary/90 text-white text-xs font-bold py-2 px-4 rounded-lg transition-colors">
+                    Get Started
+                </button>
+                <span class="material-symbols-outlined text-slate-600 dark:text-slate-400">menu</span>
+            </div>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <main class="relative overflow-hidden">
+        <!-- Subtle Background Glow -->
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/10 blur-[120px] rounded-full -z-10">
+        </div>
+        <div class="px-4 py-12 flex flex-col items-center text-center">
+            <div
+                class="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-3 py-1 mb-6">
+                <span class="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+                <span class="text-primary text-[10px] font-bold uppercase tracking-wider text-xs">New: EU AI Act
+                    Support</span>
+            </div>
+            <h1 class="text-slate-900 dark:text-white text-4xl font-black leading-[1.1] tracking-tight mb-6">
+                Compliance that feels like <span class="text-primary">Magic.</span>
+            </h1>
+            <p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-relaxed max-w-[320px] mb-8">
+                Automate GDPR, HIPAA, and EU AI Act compliance directly in your IDE with AI-powered security fixes.
+            </p>
+            <div class="flex flex-col w-full gap-3 sm:flex-row sm:justify-center">
+                <button
+                    class="w-full sm:w-auto bg-primary text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-primary/25 flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">download</span>
+                    Install Extension
+                </button>
+                <button
+                    class="w-full sm:w-auto bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">play_circle</span>
+                    View Demo
+                </button>
+            </div>
+
+            <!-- Universal Support -->
+            <div class="mt-8 flex flex-col items-center gap-3">
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Works everywhere VS Code runs
+                </p>
+                <div class="flex gap-3 flex-wrap justify-center opacity-70">
+                    <span
+                        class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-md text-xs font-semibold border border-slate-200 dark:border-slate-700">⚡
+                        Cursor AI</span>
+                    <span
+                        class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-md text-xs font-semibold border border-slate-200 dark:border-slate-700">🤖
+                        Claude Dev</span>
+                    <span
+                        class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-md text-xs font-semibold border border-slate-200 dark:border-slate-700">🐙
+                        GitHub Copilot</span>
+                    <span
+                        class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-md text-xs font-semibold border border-slate-200 dark:border-slate-700">🌐
+                        IDX & Gitpod</span>
+                </div>
+            </div>
+        </div>
+        <!-- Visual Mockup -->
+        <div class="px-4 pb-12">
+            <div
+                class="relative mx-auto max-w-[360px] rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-card-dark p-2 shadow-2xl">
+                <div class="bg-slate-900 rounded-lg aspect-[4/3] relative overflow-hidden flex flex-col">
+                    <div class="flex items-center gap-1.5 p-2 border-b border-white/10">
+                        <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                        <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <div class="ml-4 h-3 w-32 bg-white/10 rounded"></div>
+                    </div>
+                    <div class="flex-1 p-3 font-mono text-[10px] text-slate-400 leading-relaxed">
+                        <div class="flex gap-2"><span class="text-slate-600">1</span><span
+                                class="text-primary">import</span> {
+                            protect } <span class="text-primary">from</span> 'cg-ai';</div>
+                        <div class="flex gap-2"><span class="text-slate-600">2</span></div>
+                        <div class="flex gap-2"><span class="text-slate-600">3</span><span
+                                class="text-emerald-accent">async
+                                function</span> handleData(user) {</div>
+                        <div class="flex gap-2 bg-red-500/10"><span class="text-slate-600">4</span> <span
+                                class="text-red-400">console.log(user.ssn);</span> <span
+                                class="bg-red-500 text-[8px] text-white px-1 rounded">GDPR Risk</span></div>
+                        <div class="flex gap-2"><span class="text-slate-600">5</span> <span class="text-slate-300">//
+                                Process user
+                                data securely</span></div>
+                        <div class="flex gap-2"><span class="text-slate-600">6</span>}</div>
+                    </div>
+                    <!-- Auto-Fix Toast -->
+                    <div
+                        class="absolute bottom-4 right-4 left-4 bg-slate-800 border border-emerald-accent/50 rounded-lg p-3 shadow-xl ring-1 ring-emerald-accent/30">
+                        <div class="flex items-start gap-3">
+                            <div class="bg-emerald-accent/20 p-1.5 rounded text-emerald-accent">
+                                <span class="material-symbols-outlined text-sm">auto_fix_high</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-white text-[11px] font-bold">Fix suggested</p>
+                                <p class="text-slate-400 text-[9px]">Apply SHA-256 hashing for PII compliance?</p>
+                            </div>
+                            <button
+                                class="bg-emerald-accent text-slate-900 text-[10px] font-bold px-2 py-1 rounded">Apply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Social Proof -->
+    <section class="bg-slate-50 dark:bg-slate-900/50 py-10 border-y border-slate-200 dark:border-slate-800">
+        <p class="text-slate-500 dark:text-slate-400 text-[11px] font-bold uppercase tracking-[0.2em] text-center mb-6">
+            Trusted
+            by developers at</p>
+        <div class="flex justify-center flex-wrap gap-8 opacity-50 grayscale invert dark:invert-0 px-4">
+            <div class="h-6 w-24 bg-center bg-no-repeat bg-contain" data-alt="Tech company logo placeholder"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA2llXsOMLqpZgeCheHHZi2XhxaqsPfI003j3cyC5gRKPhNl7Vr6wKAazjWGHmQ4YJRl1HAcdvuMi_oweloihQexTmQ_BANC9gQDo-pNbE3cPdF0zcwLEoOL6sjQHvDZfslR2dFwNDI8EIKDEytPSK2Zxi1-HikKGWxWUiMOETKt0G3OPSsCoAeOKIM-ve-7XnL2f7Rk9khgc3dS3nF0tqgmcv62PR7SFo7lZddvSSFr7eQjUCmzXY3ij3a2t364t5u_4_Obe4-GDL9");'>
+            </div>
+            <div class="h-6 w-24 bg-center bg-no-repeat bg-contain" data-alt="Tech company logo placeholder"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA2CQsAqaHHDtl56PQsqqPAIzD4hsWxHTHhjXz-IlmdG2pQFgcz3WLBI_IGSqGkaEe8zZ7w705NJBsJeLLUia-Weop9zi3_IHrcP49opyYiGl_aSE9nqCiQjCXhc1wWAarb-4sZ6JW7Sd34ghRzMCCVpjbjDMG_pgmlmNZPh5AG-eLGO-42jA_yO2yS2hAxNNX2k-SDep5WBXE3c1-QFlkR8-YOfKhVLK19bK7t4b24bskpYboDyjJXG_MbtrN_1NwibXVK4HzVWOJV");'>
+            </div>
+            <div class="h-6 w-24 bg-center bg-no-repeat bg-contain" data-alt="Tech company logo placeholder"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDRCaFwME-iwDAv4DTCo4gFxtVnMxq5eFwSf2kwSPhZr8MMGZ675EQRGlLhxE7W725cxEUgoYss5fGIuV9hDN6Yo1cgt_l97jxxMvabqMRnW3yghErs0IHKNqTsxCJxhbIjOnELYOjxbhhL1kZGHLYykc5wQBWv9pbEwCe7NqeQvnkIzc9TWgYzmFwf7PHxQPhQB-ZZlBJ-AIQnlmNJ-clHvHOSzoFnivi1mkscQ6khffC-xA5nwAW0FP44bV_wExK1xmaqPP4fQhW_");'>
+            </div>
+        </div>
+    </section>
+    <!-- Features -->
+    <section class="px-4 py-16">
+        <div class="mb-10 text-center">
+            <h2 class="text-slate-900 dark:text-white text-2xl font-bold mb-2">Features built for security</h2>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">Ship fast without breaking compliance</p>
+        </div>
+        <div class="space-y-4">
+            <!-- Feature 1 -->
+            <div class="bg-slate-100 dark:bg-card-dark p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <div
+                    class="w-12 h-12 bg-emerald-accent/10 rounded-xl flex items-center justify-center text-emerald-accent mb-4">
+                    <span class="material-symbols-outlined text-3xl">auto_fix_normal</span>
+                </div>
+                <h3 class="text-slate-900 dark:text-white text-lg font-bold mb-2">Instant Auto-Fix</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    Identify vulnerabilities in real-time and apply one-click remediation that follows your team's best
+                    practices.
+                </p>
+            </div>
+            <!-- Feature 2 -->
+            <div class="bg-slate-100 dark:bg-card-dark p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary mb-4">
+                    <span class="material-symbols-outlined text-3xl">verified_user</span>
+                </div>
+                <h3 class="text-slate-900 dark:text-white text-lg font-bold mb-2">Compliance Packs</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    Pre-configured scanning rules for GDPR, HIPAA, and the latest EU AI Act requirements. Stay compliant
+                    effortlessly.
+                </p>
+            </div>
+            <!-- Feature 3 -->
+            <div class="bg-slate-100 dark:bg-card-dark p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500 mb-4">
+                    <span class="material-symbols-outlined text-3xl">psychology</span>
+                </div>
+                <h3 class="text-slate-900 dark:text-white text-lg font-bold mb-2">Repo Intelligence</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    Our AI understands your entire codebase context to prevent security regressions before they hit
+                    production.
+                </p>
+            </div>
+        </div>
+    </section>
+    <!-- Compliance Section -->
+    <section class="bg-primary/5 px-4 py-16 border-y border-primary/10">
+        <div class="text-center mb-8">
+            <h2 class="text-slate-900 dark:text-white text-xl font-bold mb-2">Universal Compliance</h2>
+            <p class="text-slate-500 dark:text-slate-400 text-xs uppercase tracking-widest font-bold">Standardized
+                protection</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+            <div
+                class="bg-white dark:bg-slate-800 p-4 rounded-xl flex flex-col items-center justify-center text-center border border-slate-200 dark:border-slate-700">
+                <span class="material-symbols-outlined text-primary mb-2 text-3xl">gavel</span>
+                <span class="text-xs font-bold text-slate-900 dark:text-white uppercase">GDPR</span>
+            </div>
+            <div
+                class="bg-white dark:bg-slate-800 p-4 rounded-xl flex flex-col items-center justify-center text-center border border-slate-200 dark:border-slate-700">
+                <span class="material-symbols-outlined text-emerald-accent mb-2 text-3xl">medical_services</span>
+                <span class="text-xs font-bold text-slate-900 dark:text-white uppercase">HIPAA</span>
+            </div>
+            <div
+                class="bg-white dark:bg-slate-800 p-4 rounded-xl flex flex-col items-center justify-center text-center border border-slate-200 dark:border-slate-700">
+                <span class="material-symbols-outlined text-blue-500 mb-2 text-3xl">credit_card</span>
+                <span class="text-xs font-bold text-slate-900 dark:text-white uppercase">PCI-DSS</span>
+            </div>
+            <div
+                class="bg-white dark:bg-slate-800 p-4 rounded-xl flex flex-col items-center justify-center text-center border border-slate-200 dark:border-slate-700">
+                <span class="material-symbols-outlined text-amber-500 mb-2 text-3xl">smart_toy</span>
+                <span class="text-xs font-bold text-slate-900 dark:text-white uppercase">EU AI ACT</span>
+            </div>
+        </div>
+    </section>
+    <!-- Pricing Preview -->
+    <section class="px-4 py-16" id="pricing">
+        <div class="text-center mb-10">
+            <h2 class="text-slate-900 dark:text-white text-2xl font-bold mb-2">Fair Pricing for Devs</h2>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">We charge for the Automation, not the API.</p>
+        </div>
+        <div class="space-y-6">
+            <!-- Tier 1: Community -->
+            <div class="bg-slate-100 dark:bg-card-dark p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Community</p>
+                <div class="flex items-baseline gap-1 mb-4">
+                    <span class="text-slate-900 dark:text-white text-3xl font-black">Free</span>
+                </div>
+                <ul class="space-y-3 mb-6">
+                    <li class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-emerald-accent text-lg">check_circle</span>
+                        Unlimited Compliance Scans
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-emerald-accent text-lg">check_circle</span>
+                        <strong>BYOK</strong> (Bring Your Own Key)
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-slate-400 text-lg">cancel</span>
+                        Manual Fixes Only
+                    </li>
+                </ul>
+                <button
+                    class="w-full py-3 rounded-lg border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-bold text-sm">Download
+                    Configuration Guide</button>
+            </div>
+
+            <!-- Tier 2: Power Packs (Credits) -->
+            <div class="bg-primary/5 dark:bg-primary/10 p-6 rounded-2xl border-2 border-primary relative">
+                <div
+                    class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-black uppercase px-3 py-1 rounded-full">
+                    Recommended</div>
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-primary text-xs font-bold uppercase tracking-widest">Auto-Fix Pack</p>
+                    <select id="regionSelect" onchange="updateRegion()"
+                        class="bg-transparent text-[10px] font-bold text-slate-500 border-none focus:ring-0 cursor-pointer hover:text-primary transition-colors">
+                        <option value="Global">🇪🇺 Global (EUR)</option>
+                        <option value="Brazil">🇧🇷 Brazil (BRL)</option>
+                    </select>
+                </div>
+                <div class="flex items-baseline gap-1 mb-4">
+                    <span id="priceDisplay" class="text-slate-900 dark:text-white text-3xl font-black">€19.99</span>
+                    <span class="text-slate-500 text-sm">/20 fixes</span>
+                </div>
+                <p class="text-xs text-slate-500 mb-4">Use your credits to apply fixes instantly.</p>
+                <ul class="space-y-3 mb-6">
+                    <li class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-emerald-accent text-lg">bolt</span>
+                        <strong>One-Click Auto-Fix</strong>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-emerald-accent text-lg">check_circle</span>
+                        Repo-Context Intelligence
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                        <span class="text-xs text-slate-500">Requires your API Key (OpenAI/OpenRouter)</span>
+                    </li>
+                </ul>
+                <!-- Promo Code Input -->
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">
+                        <span class="material-symbols-outlined text-sm align-middle">local_offer</span>
+                        Have a discount code?
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="text" id="promoCodeInput" placeholder="Enter promo code (e.g., BETA50)"
+                            class="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <button onclick="applyPromoCode()"
+                            class="px-3 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">Apply</button>
+                    </div>
+                    <p id="promoStatus" class="text-xs text-emerald-accent mt-1 hidden">✓ Code applied!</p>
+                </div>
+                <button id="buyCreditsBtn"
+                    class="w-full py-3 rounded-lg bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
+                    onclick="goToCheckout()">Buy Credits Pack</button>
+                <script>
+                    const stripeBaseUrl = 'https://buy.stripe.com/00w8wRgIt0Td5hS1JE2wU01';
+                    let appliedPromoCode = '';
+
+                    function applyPromoCode() {
+                        const input = document.getElementById('promoCodeInput');
+                        const status = document.getElementById('promoStatus');
+                        const code = input.value.trim();
+
+                        if (code.length > 0) {
+                            appliedPromoCode = code;
+                            status.classList.remove('hidden');
+                            input.classList.add('border-emerald-accent');
+                        } else {
+                            appliedPromoCode = '';
+                            status.classList.add('hidden');
+                            input.classList.remove('border-emerald-accent');
+                        }
+                    }
+
+                    const stripeLinks = {
+                        'Global': 'https://buy.stripe.com/00w8wRgIt0Td5hS1JE2wU01',
+                        'Brazil': 'https://buy.stripe.com/test_br_placeholder' // Placeholder
+                    };
+                    let currentRegion = 'Global';
+
+                    function updateRegion() {
+                        const select = document.getElementById('regionSelect');
+                        currentRegion = select.value;
+                        const priceDisplay = document.getElementById('priceDisplay');
+
+                        if (currentRegion === 'Brazil') {
+                            priceDisplay.innerText = 'R$ 120,00';
+                        } else {
+                            priceDisplay.innerText = '€19.99';
+                        }
+                    }
+
+                    function goToCheckout() {
+                        let url = stripeLinks[currentRegion] || stripeLinks['Global'];
+                        if (appliedPromoCode) {
+                            url += '?prefilled_promo_code=' + encodeURIComponent(appliedPromoCode);
+                        }
+                        window.location.href = url;
+                    }
+
+                    // Also apply on Enter key
+                    document.getElementById('promoCodeInput').addEventListener('keypress', function (e) {
+                        if (e.key === 'Enter') {
+                            applyPromoCode();
+                        }
+                    });
+                </script>
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer class="bg-slate-100 dark:bg-slate-950 px-4 pt-16 pb-8 border-t border-slate-200 dark:border-slate-800">
+        <div class="flex flex-col items-center mb-12">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="bg-primary rounded-lg p-1 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white text-xl">shield_lock</span>
+                </div>
+                <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">CodeGuard AI</h2>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400 text-xs text-center mb-8">Secure by Design. Built for the
+                modern
+                developer ecosystem.</p>
+            <div class="grid grid-cols-2 gap-x-12 gap-y-8 w-full max-w-[280px]">
+                <div class="flex flex-col gap-3">
+                    <h4 class="text-slate-900 dark:text-white text-[10px] font-black uppercase tracking-widest">Product
+                    </h4>
+                    <a class="text-slate-500 dark:text-slate-400 text-xs" href="#">Features</a>
+                    <a class="text-slate-500 dark:text-slate-400 text-xs" href="#">Pricing</a>
+                    <a class="text-slate-500 dark:text-slate-400 text-xs" href="#">Extension</a>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <h4 class="text-slate-900 dark:text-white text-[10px] font-black uppercase tracking-widest">Company
+                    </h4>
+                    <a class="text-slate-500 dark:text-slate-400 text-xs" href="#">Privacy</a>
+                    <a class="text-slate-500 dark:text-slate-400 text-xs" href="#">Terms</a>
+                    <a class="text-slate-500 dark:text-slate-400 text-xs" href="#">Security</a>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col items-center pt-8 border-t border-slate-200 dark:border-slate-800">
+            <div class="flex gap-6 mb-6">
+                <span class="material-symbols-outlined text-slate-400">public</span>
+                <span class="material-symbols-outlined text-slate-400">alternate_email</span>
+                <span class="material-symbols-outlined text-slate-400">rss_feed</span>
+            </div>
+            <p class="text-slate-600 dark:text-slate-500 text-[10px]">© 2024 CodeGuard AI Inc. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

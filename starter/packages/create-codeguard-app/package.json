@@ -1,0 +1,46 @@
+{
+    "name": "create-codeguard-app",
+    "version": "1.0.0",
+    "description": "CLI to create apps with CodeGuard LGPD/GDPR compliance",
+    "main": "bin/index.js",
+    "bin": {
+        "create-codeguard-app": "bin/index.js",
+        "cga": "bin/index.js"
+    },
+    "scripts": {
+        "test": "node bin/index.js --help"
+    },
+    "dependencies": {
+        "chalk": "^4.1.2",
+        "commander": "^11.0.0",
+        "fs-extra": "^11.1.0",
+        "glob": "^10.3.0",
+        "inquirer": "^8.2.6",
+        "ora": "^5.4.1"
+    },
+    "engines": {
+        "node": ">=16.0.0"
+    },
+    "keywords": [
+        "codeguard",
+        "lgpd",
+        "gdpr",
+        "compliance",
+        "cli",
+        "scaffold",
+        "create-app",
+        "lovable",
+        "vercel",
+        "bolt"
+    ],
+    "author": "CodeGuard <support@codeguard.ai>",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/codeguard/starter.git"
+    },
+    "homepage": "https://codeguard.ai",
+    "bugs": {
+        "url": "https://github.com/codeguard/starter/issues"
+    }
+}

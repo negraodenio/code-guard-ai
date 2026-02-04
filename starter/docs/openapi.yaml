@@ -1,0 +1,372 @@
+openapi: 3.0.3
+info:
+  title: CodeGuard API
+  description: |
+    API de compliance LGPD/GDPR para código-fonte.
+    
+    ## Autenticação
+    Todas as requisições requerem header `x-api-key`.
+    
+    ## Créditos
+    Cada operação consome créditos:
+    - Scan: 1 crédito
+    - Patch: 2 créditos
+    - Indexação: 0.5 créditos/arquivo
+    
+  version: 1.0.0
+  contact:
+    name: CodeGuard Support
+    email: support@codeguard.ai
+    url: https://codeguard.ai
+
+servers:
+  - url: https://api.codeguard.ai/v1
+    description: Production
+  - url: https://staging-api.codeguard.ai/v1
+    description: Staging
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Verifica se a API está operacional
+      security: []
+      responses:
+        '200':
+          description: API operacional
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /credits:
+    get:
+      summary: Consultar saldo
+      description: Retorna saldo de créditos e plano atual
+      responses:
+        '200':
+          description: Saldo consultado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /scan:
+    post:
+      summary: Escanear código
+      description: |
+        Analisa código-fonte para violações de compliance.
+        O código deve ser enviado em base64.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScanRequest'
+      responses:
+        '200':
+          description: Scan completo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanResponse'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /patch:
+    post:
+      summary: Gerar correção
+      description: Gera patch automático para uma violação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchRequest'
+      responses:
+        '200':
+          description: Patch gerado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchResponse'
+
+  /patch/apply:
+    post:
+      summary: Aplicar correção
+      description: Aplica patch ao código original
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchApplyRequest'
+      responses:
+        '200':
+          description: Patch aplicado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchApplyResponse'
+
+  /webhook:
+    post:
+      summary: Webhook para resultados assíncronos
+      description: |
+        Endpoint para receber resultados de scans longos.
+        Configure callback_url no scan para usar.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookPayload'
+      responses:
+        '200':
+          description: Webhook recebido
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+        version:
+          type: string
+          example: 1.0.0
+        timestamp:
+          type: string
+          format: date-time
+
+    CreditsResponse:
+      type: object
+      properties:
+        balance:
+          type: integer
+          description: Créditos disponíveis
+          example: 950
+        plan:
+          type: string
+          enum: [free, pro, team, enterprise]
+          example: pro
+        api_key_prefix:
+          type: string
+          example: cg_live_abc...
+
+    ScanRequest:
+      type: object
+      required:
+        - content
+        - filename
+      properties:
+        content:
+          type: string
+          description: Código fonte em base64
+        filename:
+          type: string
+          description: Nome do arquivo com extensão
+          example: userController.ts
+        language:
+          type: string
+          description: Linguagem (auto-detectado se não informado)
+        frameworks:
+          type: array
+          items:
+            type: string
+            enum: [lgpd, gdpr, nis2, pci-dss, hipaa, soc2, owasp, iso27001]
+          default: [lgpd, gdpr]
+        useAI:
+          type: boolean
+          default: true
+        callback_url:
+          type: string
+          format: uri
+
+    ScanResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        scan_id:
+          type: string
+          format: uuid
+        credits_used:
+          type: integer
+        credits_remaining:
+          type: integer
+        duration_ms:
+          type: integer
+        report:
+          $ref: '#/components/schemas/ComplianceReport'
+
+    ComplianceReport:
+      type: object
+      properties:
+        file:
+          type: string
+        summary:
+          type: object
+          properties:
+            total:
+              type: integer
+            critical:
+              type: integer
+            high:
+              type: integer
+            medium:
+              type: integer
+            low:
+              type: integer
+            fixable:
+              type: integer
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Violation'
+
+    Violation:
+      type: object
+      properties:
+        id:
+          type: string
+        line:
+          type: integer
+        severity:
+          type: string
+          enum: [critical, high, medium, low, info]
+        ruleId:
+          type: string
+        message:
+          type: string
+        article:
+          type: string
+        suggestion:
+          type: string
+        codeSnippet:
+          type: string
+        fixable:
+          type: boolean
+
+    PatchRequest:
+      type: object
+      required:
+        - violation_id
+        - file_content
+        - framework
+      properties:
+        violation_id:
+          type: string
+        file_content:
+          type: string
+        framework:
+          type: string
+        strategy:
+          type: string
+          enum: [minimal, refactor, secure-by-design]
+          default: minimal
+
+    PatchResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        patch:
+          type: object
+          properties:
+            id:
+              type: string
+            diff:
+              type: string
+            explanation:
+              type: string
+            risks:
+              type: array
+              items:
+                type: string
+
+    PatchApplyRequest:
+      type: object
+      required:
+        - patch_id
+        - original_code
+      properties:
+        patch_id:
+          type: string
+        original_code:
+          type: string
+        dry_run:
+          type: boolean
+          default: true
+
+    PatchApplyResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        patched_code:
+          type: string
+        changes_applied:
+          type: integer
+
+    WebhookPayload:
+      type: object
+      properties:
+        scan_id:
+          type: string
+        status:
+          type: string
+          enum: [completed, failed]
+        result:
+          $ref: '#/components/schemas/ScanResponse'
+
+  responses:
+    Unauthorized:
+      description: API key inválida ou ausente
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+    PaymentRequired:
+      description: Créditos insuficientes
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              balance:
+                type: integer
+              upgrade_url:
+                type: string
+
+    RateLimited:
+      description: Rate limit excedido (60 req/min)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              retry_after:
+                type: integer

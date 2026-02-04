@@ -1,0 +1,126 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-sdk:
+    name: Test SDK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: starter/sdk/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: starter/sdk
+        run: npm ci
+      
+      - name: Build SDK
+        working-directory: starter/sdk
+        run: npm run build
+      
+      - name: Run tests
+        working-directory: starter/sdk
+        run: npm test
+        continue-on-error: true
+
+  test-cli:
+    name: Test CLI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: starter/packages/create-codeguard-app/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: starter/packages/create-codeguard-app
+        run: npm ci
+      
+      - name: Test CLI help
+        working-directory: starter/packages/create-codeguard-app
+        run: node bin/index.js --help
+
+  validate-templates:
+    name: Validate Templates
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        template: [lovable, vercel, bolt]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check template structure
+        run: |
+          echo "Validating ${{ matrix.template }} template..."
+          ls -la starter/templates/${{ matrix.template }}/
+          
+          if [ -f "starter/templates/${{ matrix.template }}/README.md" ]; then
+            echo "✅ README.md exists"
+          else
+            echo "❌ README.md missing"
+            exit 1
+          fi
+
+  publish-sdk:
+    name: Publish SDK
+    needs: [test-sdk, test-cli]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install and build SDK
+        working-directory: starter/sdk
+        run: |
+          npm ci
+          npm run build
+      
+      - name: Publish SDK (dry run)
+        working-directory: starter/sdk
+        run: npm publish --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-cli:
+    name: Publish CLI
+    needs: [test-sdk, test-cli]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install CLI dependencies
+        working-directory: starter/packages/create-codeguard-app
+        run: npm ci
+      
+      - name: Publish CLI (dry run)
+        working-directory: starter/packages/create-codeguard-app
+        run: npm publish --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

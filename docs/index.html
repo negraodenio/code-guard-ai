@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibe Code Compliance – Auditoria Inteligente de Código</title>
+<style>
+    body {margin:0;font-family:'Segoe UI', Tahoma, Geneva, Verdana,sans-serif;background:#f5f6fa;color:#1e1e1e;line-height:1.6;}
+    header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:80px 20px 40px;text-align:center;}
+    header h1{margin:0;font-size:3rem;}
+    header p{font-size:1.2rem;margin-top:10px;}
+    .cta-buttons{margin-top:20px;}
+    .cta-buttons a{display:inline-block;margin:10px;padding:14px 28px;border-radius:6px;text-decoration:none;font-weight:bold;transition:.3s;}
+    .cta-primary{background-color:#4caf50;color:white;}
+    .cta-primary:hover{background-color:#43a047;}
+    .cta-secondary{background-color:#fff;color:#667eea;border:2px solid #667eea;}
+    .cta-secondary:hover{background-color:#f0f0f0;}
+    section{padding:60px 20px;max-width:1200px;margin:auto;}
+    section h2{text-align:center;font-size:2rem;margin-bottom:20px;}
+    .features,.plans,.testimonials{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;}
+    .feature-card,.plan-card,.testimonial-card{background:white;border-radius:8px;padding:30px 20px;flex:1 1 280px;box-shadow:0 4px 20px rgba(0,0,0,0.1);}
+    .plan-card{border-top:5px solid #667eea;text-align:center;}
+    .plan-price{font-size:2rem;margin:15px 0;font-weight:bold;color:#667eea;}
+    .plan-features{list-style:none;padding-left:0;text-align:left;margin-top:20px;}
+    .plan-features li{margin:8px 0;}
+    .testimonial-card p{font-style:italic;}
+    footer{background:#1e1e1e;color:white;text-align:center;padding:40px 20px;}
+    footer a{color:#4caf50;text-decoration:none;}
+    input,button,select,textarea{font-family:'Segoe UI',Tahoma,sans-serif;}
+    .form-lead{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px;}
+    .form-lead input{padding:12px;flex:1 1 200px;border-radius:6px;border:1px solid #ccc;}
+    .form-lead button{padding:12px 24px;border-radius:6px;border:none;background:#667eea;color:white;font-weight:bold;cursor:pointer;transition:.3s;}
+    .form-lead button:hover{background:#5a67d8;}
+</style>
+<!-- Stripe JS -->
+<script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+
+<header>
+    <h1>Vibe Code Compliance</h1>
+    <p>Auditoria de Código AI-Powered: GDPR, LGPD, PCI-DSS, HIPAA e AI Act.</p>
+    <div class="cta-buttons">
+        <a href="#plans" class="cta-primary">Comece Grátis</a>
+        <a href="#contact" class="cta-secondary">Solicite Demonstração Enterprise</a>
+    </div>
+</header>
+
+<section id="solution">
+    <h2>Por que usar o Vibe Code?</h2>
+    <p style="text-align:center; max-width:800px;margin:auto;">
+        Auditar código manualmente é arriscado e caro. Multas podem custar milhões. 
+        O Vibe Code automatiza auditorias, identifica violações, sugere correções e aplica auto-fix direto no VS Code.
+    </p>
+    <div class="features">
+        <div class="feature-card"><h3>AI-Powered Scanning</h3><p>Detecta padrões complexos de violações com inteligência artificial.</p></div>
+        <div class="feature-card"><h3>Compliance Packs</h3><p>GDPR, LGPD, PCI-DSS, HIPAA, OWASP e AI Act, prontos para uso.</p></div>
+        <div class="feature-card"><h3>Auto-Fix Inteligente</h3><p>Correções automáticas para planos Professional/Enterprise.</p></div>
+        <div class="feature-card"><h3>Dashboard Premium</h3><p>Visualize violações, gravidade e relatórios executivos detalhados.</p></div>
+    </div>
+</section>
+
+<section id="plans">
+    <h2>Escolha o seu Plano</h2>
+    <div class="plans">
+        <div class="plan-card">
+            <h3>FREE</h3>
+            <p class="plan-price">$0</p>
+            <ul class="plan-features">
+                <li>5 violações por arquivo</li>
+                <li>GDPR básico</li>
+                <li>Sem AI Auto-Fix</li>
+            </ul>
+            <a href="#" class="cta-primary" onclick="startCheckout('free')">Comece Grátis</a>
+        </div>
+        <div class="plan-card">
+            <h3>BASIC</h3>
+            <p class="plan-price">$99/mês</p>
+            <ul class="plan-features">
+                <li>Todos os compliance packs</li>
+                <li>Sugestões de correção</li>
+                <li>Suporte por email</li>
+            </ul>
+            <a href="#" class="cta-primary" onclick="startCheckout('basic')">Assine Agora</a>
+        </div>
+        <div class="plan-card">
+            <h3>PROFESSIONAL</h3>
+            <p class="plan-price">$499/mês</p>
+            <ul class="plan-features">
+                <li>Auto-Fix Inteligente</li>
+                <li>Análise AI avançada</li>
+                <li>Integração CI/CD</li>
+                <li>Suporte prioritário</li>
+            </ul>
+            <a href="#" class="cta-primary" onclick="startCheckout('pro')">Assine Agora</a>
+        </div>
+        <div class="plan-card">
+            <h3>ENTERPRISE</h3>
+            <p class="plan-price">$1.999/mês</p>
+            <ul class="plan-features">
+                <li>API dedicada</li>
+                <li>On-premise deployment</li>
+                <li>SLAs e Treinamento</li>
+            </ul>
+            <a href="#contact" class="cta-primary">Solicite Demo</a>
+        </div>
+    </div>
+</section>
+
+<section id="testimonials">
+    <h2>O que dizem nossos usuários</h2>
+    <div class="testimonials">
+        <div class="testimonial-card"><h3>CTO - Startup Tech</h3><p>"Reduzimos 80% do tempo de auditoria de código. Vibe Code é indispensável."</p></div>
+        <div class="testimonial-card"><h3>Lead Dev - Enterprise</h3><p>"Compliance sem dores de cabeça. Auto-Fix e AI analysis são impressionantes."</p></div>
+        <div class="testimonial-card"><h3>Engenheiro de Software</h3><p>"Relatórios executivos prontos para auditoria e equipe de segurança adorou."</p></div>
+    </div>
+</section>
+
+<section id="contact">
+    <h2>Cadastre-se e Receba Early Access</h2>
+    <p style="text-align:center; max-width:800px;margin:auto;">Experimente 14 dias grátis ou entre em contato para demonstração Enterprise.</p>
+    <form class="form-lead" id="leadForm">
+        <input type="text" name="name" placeholder="Seu nome" required>
+        <input type="email" name="email" placeholder="Seu email" required>
+        <button type="submit">Receber Early Access</button>
+    </form>
+</section>
+
+<footer>
+    <p>&copy; 2026 Vibe Code. Todos os direitos reservados.</p>
+    <p>Suas chaves OpenAI/OpenRouter são seguras. Você decide qual usar.</p>
+    <p><a href="#">Política de Privacidade</a> | <a href="#">Termos de Uso</a></p>
+</footer>
+
+<script>
+// Placeholder Stripe Checkout
+function startCheckout(plan){
+    alert("Checkout iniciado para o plano: " + plan + " (configure Stripe real no backend)");
+}
+
+// Formulário de lead
+document.getElementById('leadForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    const name = this.name.value;
+    const email = this.email.value;
+    alert(`Obrigado ${name}! Você está na lista de Early Access.`);
+    this.reset();
+});
+</script>
+
+</body>
+</html>

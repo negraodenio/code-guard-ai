@@ -1,0 +1,64 @@
+{
+    "name": "@codeguard/universal-sdk",
+    "version": "1.0.0",
+    "description": "Universal SDK for CodeGuard LGPD/GDPR compliance API",
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "scripts": {
+        "build": "tsup src/index.ts --format cjs,esm --dts",
+        "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+        "test": "vitest",
+        "lint": "eslint src --ext .ts",
+        "clean": "rimraf dist"
+    },
+    "files": [
+        "dist"
+    ],
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "tsup": "^8.0.0",
+        "typescript": "^5.3.0",
+        "vitest": "^1.0.0",
+        "rimraf": "^5.0.0"
+    },
+    "peerDependencies": {
+        "react": ">=17.0.0"
+    },
+    "peerDependenciesMeta": {
+        "react": {
+            "optional": true
+        }
+    },
+    "engines": {
+        "node": ">=16.0.0"
+    },
+    "keywords": [
+        "codeguard",
+        "lgpd",
+        "gdpr",
+        "compliance",
+        "security",
+        "sdk",
+        "api",
+        "react"
+    ],
+    "author": "CodeGuard <support@codeguard.ai>",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/codeguard/starter.git",
+        "directory": "sdk"
+    },
+    "homepage": "https://codeguard.ai",
+    "bugs": {
+        "url": "https://github.com/codeguard/starter/issues"
+    }
+}

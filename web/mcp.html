@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeGuard AI - Universal Compliance for MCP</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131f;
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.4);
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #2d2d42;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Nav */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn:hover {
+            box-shadow: 0 0 20px var(--primary-glow);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--text);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 100px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+
+        p.lead {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        /* Terminal Demo */
+        .terminal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: left;
+            font-family: 'Fira Code', monospace;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .terminal-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .red {
+            background: #ff5f56;
+        }
+
+        .yellow {
+            background: #ffbd2e;
+        }
+
+        .green {
+            background: #27c93f;
+        }
+
+        .cmd {
+            color: var(--success);
+        }
+
+        .arg {
+            color: var(--text);
+        }
+
+        .output {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 8px;
+            white-space: pre-wrap;
+        }
+
+        .risk {
+            color: var(--danger);
+        }
+
+        .highlight {
+            color: #f59e0b;
+        }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 80px 0;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 32px;
+            border-radius: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .card h3 {
+            margin-bottom: 12px;
+            font-size: 1.5rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+        }
+
+        /* Pricing */
+        .pricing-section {
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .price-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px 24px;
+            position: relative;
+        }
+
+        .price-card.featured {
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.1);
+        }
+
+        .badge {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .period {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .features-list {
+            list-style: none;
+            text-align: left;
+            margin: 24px 0;
+        }
+
+        .features-list li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+        }
+
+        .check {
+            color: var(--success);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 60px 0;
+            margin-top: 80px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="container">
+        <div class="logo">
+            🛡️ <span>CodeGuard</span>
+        </div>
+        <div>
+            <a href="https://github.com/codeguard/codeguard-ai" class="btn btn-outline"
+                style="margin-right: 12px;">GitHub</a>
+            <a href="#pricing" class="btn">Get Started</a>
+        </div>
+    </nav>
+
+    <header class="hero container">
+        <h1>Stop Shadow APIs<br><span class="gradient-text">Before Production</span></h1>
+        <p class="lead">The Universal Compliance Orchestrator. Block LGPD/GDPR violations in VS Code, Claude, and CI/CD.
+        </p>
+
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="dot red"></div>
+                <div class="dot yellow"></div>
+                <div class="dot green"></div>
+            </div>
+            <div>
+                <span class="cmd">➜</span> <span class="arg">npx codeguard-ai scan .</span>
+            </div>
+            <div class="output">
+                🔎 Scan Complete. Found 1 critical violation.
+
+                1. <span class="risk">[CRITICAL]</span> Shadow API detected: Undocumented POST endpoint
+                📄 src/routes/users.ts:14
+                <span class="highlight">💰 Potential Fine: R$ 50,000 - R$ 500,000</span>
+
+                <span class="cmd">➜</span> <span class="arg">upgrade to block this PR...</span>
+            </div>
+        </div>
+    </header>
+
+    <section class="container features">
+        <div class="card">
+            <h3>🤖 For AI Agents</h3>
+            <p>Give Claude/Cursor a "Compliance Brain". Connect CodeGuard via MCP to check every line generated by AI.
+            </p>
+        </div>
+        <div class="card">
+            <h3>🔄 For CI/CD</h3>
+            <p>Block Pull Requests that introduce new risks. Works with GitHub Actions, GitLab, and Jenkins.</p>
+        </div>
+        <div class="card">
+            <h3>🛡️ For Teams</h3>
+            <p>Deep Audit against LGPD, GDPR, and PCI-DSS frameworks. Generate PDF reports for auditors.</p>
+        </div>
+    </section>
+
+    <section id="pricing" class="container pricing-section">
+        <h2>Simple Pricing</h2>
+        <p class="lead">Discovery is Free. Governance is Pro.</p>
+
+        <div class="pricing-grid">
+            <!-- Free -->
+            <div class="price-card">
+                <h3>Developer</h3>
+                <div class="price">$0 <span class="period">/ forever</span></div>
+                <ul class="features-list">
+                    <li><span class="check">✔</span> Unlimited Shadow API Scans</li>
+                    <li><span class="check">✔</span> VS Code Extension</li>
+                    <li><span class="check">✔</span> Local CLI</li>
+                    <li><span class="check">✔</span> MCP Server (Basic)</li>
+                </ul>
+                <a href="#" class="btn btn-outline" style="display:block">Install CLI</a>
+            </div>
+
+            <!-- Pro -->
+            <div class="price-card featured">
+                <div class="badge">MOST POPULAR</div>
+                <h3>Pro Team</h3>
+                <div class="price">€79 <span class="period">/ mo</span></div>
+                <ul class="features-list">
+                    <li><span class="check">✔</span> <strong>Everything in Free</strong></li>
+                    <li><span class="check">✔</span> CI/CD Blocking (Exit 1)</li>
+                    <li><span class="check">✔</span> Deep Compliance Audit (AI)</li>
+                    <li><span class="check">✔</span> Auto-Fix Suggestions</li>
+                    <li><span class="check">✔</span> Priority Support</li>
+                </ul>
+                <a href="https://code-guard.eu/enterprise" class="btn" style="display:block">Start 14-Day Trial</a>
+            </div>
+
+            <!-- Enterprise -->
+            <div class="price-card">
+                <h3>Enterprise</h3>
+                <div class="price">Custom</div>
+                <ul class="features-list">
+                    <li><span class="check">✔</span> <strong>Everything in Pro</strong></li>
+                    <li><span class="check">✔</span> Custom Frameworks</li>
+                    <li><span class="check">✔</span> SSO / SAML</li>
+                    <li><span class="check">✔</span> On-Premise Deployment</li>
+                    <li><span class="check">✔</span> Dedicated Slack</li>
+                </ul>
+                <a href="#" class="btn btn-outline" style="display:block">Contact Sales</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="container">
+        <p>&copy; 2026 CodeGuard AI. All rights reserved.</p>
+        <p style="margin-top: 12px; font-size: 0.9rem;">
+            Automated Compliance for the AI Era.
+        </p>
+    </footer>
+
+</body>
+
+</html>

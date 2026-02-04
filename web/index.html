@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeGuard AI - Auto-Fix Compliance & Security</title>
+    <meta name="description"
+        content="Stop wasting time on code reviews. CodeGuard AI automatically fixes compliance risks, PII leaks, and security issues in VS Code and Cursor.">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #10b981;
+            --dark: #0f0f23;
+            --darker: #090912;
+            --text: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Hero */
+        header {
+            padding: 100px 0 60px;
+            text-align: center;
+            background: radial-gradient(circle at top center, #1a1a3e 0%, var(--dark) 70%);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+        }
+
+        /* Demo */
+        .demo-container {
+            margin: 60px auto;
+            max-width: 900px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid #334155;
+            background: #1e1e1e;
+            position: relative;
+        }
+
+        .demo-placeholder {
+            padding: 100px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        /* Features */
+        .features {
+            padding: 80px 0;
+            background: var(--darker);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 32px;
+            border-radius: 16px;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary);
+        }
+
+        .icon {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: white;
+        }
+
+        /* Social Proof */
+        .proof {
+            padding: 60px 0;
+            text-align: center;
+            border-top: 1px solid #334155;
+        }
+
+        .stat {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            color: #64748b;
+            border-top: 1px solid #1e1e2e;
+        }
+
+        .links a {
+            color: #94a3b8;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div style="font-size: 3rem; margin-bottom: 20px;">🛡️</div>
+            <h1>Automate Code Compliance<br>Inside VS Code & Cursor</h1>
+            <p class="subtitle">CodeGuard AI detects PII leaks, security risks, and compliance violations (GDPR, LGPD)
+                in real-time. Fix them with one click.</p>
+            <a href="https://marketplace.visualstudio.com/items?itemName=codeguard.codeguard-ai"
+                class="cta-button">Install for Free extension</a>
+            <p style="margin-top: 16px; font-size: 0.9rem; color: #64748b;">Compatible with VS Code, Cursor, Windsurf
+            </p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="demo-container">
+            <!-- Replace with actual GIF -->
+            <div class="demo-placeholder">
+                <img src="/demo.gif" alt="CodeGuard AI Demo" style="width: 100%; display: block;"
+                    onerror="this.style.display='none'; this.parentElement.innerHTML='<h3 style=\'color:white;\'>[Demo GIF Placeholder]</h3><p>Showcasing AI Auto-Fix in action</p>'">
+            </div>
+        </div>
+    </div>
+
+    <section class="features">
+        <div class="container">
+            <div class="grid">
+                <div class="card">
+                    <span class="icon">🤖</span>
+                    <h3>AI-Powered Fixes</h3>
+                    <p>Don't just find errors. Fix them. Our AI engine refactors non-compliant code patterns instantly,
+                        satisfying GDPR & LGPD requiremens.</p>
+                </div>
+                <div class="card">
+                    <span class="icon">⚡</span>
+                    <h3>Built for Speed</h3>
+                    <p>Basic scans run locally in milliseconds using optimized regex. No data leaves your machine for
+                        standard checks.</p>
+                </div>
+                <div class="card">
+                    <span class="icon">🧠</span>
+                    <h3>Cursor Companion</h3>
+                    <p>Perfect for AI-generated code. CodeGuard acts as a safety layer, catching security hallucinations
+                        from LLMs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="proof">
+        <div class="container">
+            <div class="grid">
+                <div>
+                    <div class="stat">9+</div>
+                    <p>Frameworks Supported</p>
+                </div>
+                <div>
+                    <div class="stat">100%</div>
+                    <p>Code Privacy (Offline Mode)</p>
+                </div>
+                <div>
+                    <div class="stat">24/7</div>
+                    <p>Automated Review</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p class="links">
+                <a href="/terms">Terms of Service</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="mailto:support@code-guard.eu">Support</a>
+            </p>
+            <p style="margin-top: 20px;">© 2026 CodeGuard AI. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>
