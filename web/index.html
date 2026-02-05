@@ -102,15 +102,15 @@
             <div
                 class="inline-flex items-center gap-2 rounded-full border border-border-dark bg-surface-dark/50 px-3 py-1 mb-8 backdrop-blur-sm">
                 <span class="flex h-2 w-2 rounded-full bg-accent-cyan animate-pulse"></span>
-                <span class="text-xs font-medium text-gray-300">New: EU AI Act Compliance Engine</span>
+                <span class="text-xs font-medium text-gray-300">New: Universal MCP &amp; CLI Support</span>
             </div>
             <h1 class="max-w-4xl text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6">
                 <span class="glowing-text">Compliance as Code</span><br />
                 for Modern Enterprises
             </h1>
             <p class="max-w-2xl text-lg text-gray-400 mb-10 leading-relaxed">
-                Automate regulatory intelligence directly in your CI/CD pipeline.
-                Detect and mitigate GDPR, HIPAA, and SOC2 risks before they merge.
+                Automate regulatory intelligence directly in your CI/CD pipeline, Cursor, or Claude.
+                Detect and mitigate GDPR, Shadow APIs, and security risks before they merge.
             </p>
             <div class="flex flex-wrap justify-center gap-4 mb-16">
                 <button
@@ -274,10 +274,10 @@
                         class="w-12 h-12 rounded-lg bg-[#1a1f36] flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined text-3xl">hub</span>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-2">1. Connect Repository</h3>
+                    <h3 class="text-xl font-bold text-white mb-2">1. Universal CLI &amp; MCP</h3>
                     <p class="text-gray-400 text-sm leading-relaxed">
-                        One-click integration with GitHub, GitLab, or Bitbucket. We automatically map your codebase
-                        architecture.
+                        Install via <code>npm i -g codeguard-ai</code>. Works natively with GitHub Actions, Jenkins, and
+                        Claude Desktop.
                     </p>
                 </div>
                 <div
@@ -286,10 +286,10 @@
                         class="w-12 h-12 rounded-lg bg-[#1a1f36] flex items-center justify-center text-accent-cyan mb-6 group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined text-3xl">radar</span>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-2">2. Automated Scan</h3>
+                    <h3 class="text-xl font-bold text-white mb-2">2. Shadow API Detection</h3>
                     <p class="text-gray-400 text-sm leading-relaxed">
-                        Our LLM-powered engine analyzes code semantics for regulatory violations, logic flaws, and PII
-                        leaks.
+                        Our engine analyzes code semantics to find undocumented endpoints and PII leaks that standard
+                        tools miss.
                     </p>
                 </div>
                 <div
@@ -298,9 +298,9 @@
                         class="w-12 h-12 rounded-lg bg-[#1a1f36] flex items-center justify-center text-accent-purple mb-6 group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined text-3xl">monitor_heart</span>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-2">3. Continuous Monitoring</h3>
+                    <h3 class="text-xl font-bold text-white mb-2">3. Continuous Guardrails</h3>
                     <p class="text-gray-400 text-sm leading-relaxed">
-                        Get real-time alerts on PRs. Block non-compliant merges before they reach production.
+                        Block non-compliant merges in CI/CD. Give your AI agents a "Compliance Brain" via MCP.
                     </p>
                 </div>
             </div>
@@ -359,14 +359,16 @@
                             mo</span></div>
                     <ul class="space-y-4 mb-8 flex-1">
                         <li class="flex items-start gap-3 text-sm text-gray-300">
-                            <span class="material-symbols-outlined text-green-500 text-lg">check</span> 1 Repository
+                            <span class="material-symbols-outlined text-green-500 text-lg">check</span> Local CLI
+                            (codeguard scan)
                         </li>
                         <li class="flex items-start gap-3 text-sm text-gray-300">
-                            <span class="material-symbols-outlined text-green-500 text-lg">check</span> Basic PII Scan
+                            <span class="material-symbols-outlined text-green-500 text-lg">check</span> MCP Server for
+                            Claude
                         </li>
                         <li class="flex items-start gap-3 text-sm text-gray-300">
-                            <span class="material-symbols-outlined text-green-500 text-lg">check</span> Community
-                            Support
+                            <span class="material-symbols-outlined text-green-500 text-lg">check</span> VS Code
+                            Extension
                         </li>
                     </ul>
                     <button
