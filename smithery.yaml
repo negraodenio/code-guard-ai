@@ -1,0 +1,8 @@
+startCommand:
+  type: stdio
+  config:
+    command: npx
+    args:
+      - "-y"
+      - "codeguard-ai"
+      - "start:mcp"

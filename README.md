@@ -5,6 +5,7 @@
 [![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://marketplace.visualstudio.com/items?itemName=codeguard.codeguard-ai)
 [![License](https://img.shields.io/badge/license-Proprietary-lightgrey.svg)](LICENSE)
 <a href="https://glama.ai/mcp/servers/@negraodenio/code-guard-ai"><img src="https://glama.ai/mcp/servers/@negraodenio/code-guard-ai/badge" /></a>
+[![Smithery Badge](https://smithery.ai/badge/@negraodenio/code-guard-ai)](https://smithery.ai/server/@negraodenio/code-guard-ai)
 
 > **Stop wasting hours in code reviews hunting for PII leaks.**
 > CodeGuard scans your code in seconds and **auto-fixes** compliance risks — so you ship faster and avoid €20M GDPR fines.
