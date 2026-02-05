@@ -24,7 +24,7 @@ Ctrl+Shift+P → "CodeGuard: Scan for Compliance"
 ### 2. 🤖 **Claude Desktop (MCP)**
 Give your AI Agent a "Compliance Brain".
 ```bash
-npx codeguard-ai install:mcp
+npx -y codeguard-ai start:mcp
 ```
 
 ### 3. 🔄 **CI/CD (GitHub Actions / GitLab)**
