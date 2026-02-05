@@ -1,8 +1,11 @@
 startCommand:
   type: stdio
   config:
-    command: npx
+    command: node
     args:
-      - "-y"
-      - "codeguard-ai"
-      - "start:mcp"
+      - "out/src/mcp-server.js"
+build:
+  exclude:
+    - vscode
+  external:
+    - vscode
