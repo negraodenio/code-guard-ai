@@ -9,7 +9,7 @@
  * - Validação pós-aplicação
  */
 
-import * as vscode from 'vscode';
+import { vscode } from '../utils/vscode-compat';
 import * as path from 'path';
 import * as fs from 'fs';
 import { getLLMRouter } from '../core/llm-router';

@@ -10,7 +10,8 @@
  * - Fallback: OpenRouter (+5.5% markup - apenas emergência)
  */
 
-import * as vscode from 'vscode';
+import type * as vscodeTypes from 'vscode';
+import { vscode } from '../utils/vscode-compat';
 import { AIClient } from './ai_client';
 import { ContextBatcher, BatchedContext, FileContext } from './batcher';
 import { FrameworkConfig, getFrameworksByRegion, getLLMForFramework } from './frameworks';
@@ -208,7 +209,7 @@ export class ComplianceOrchestrator {
     async runAudit(
         region: 'BR' | 'EU' | 'US',
         selectedFrameworks?: string[],
-        progress?: vscode.Progress<{ message?: string; increment?: number }>,
+        progress?: any, // Use any to avoid runtime dependency on types
         metadata?: { clientName?: string; repoUrl?: string },
         targetDir?: string
     ): Promise<ConsolidatedAuditResult> {

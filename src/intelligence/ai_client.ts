@@ -1,5 +1,5 @@
 
-import * as vscode from 'vscode';
+import { vscode } from '../utils/vscode-compat';
 import fetch from 'node-fetch';
 import { getSupabaseClient } from '../supabase/client';
 

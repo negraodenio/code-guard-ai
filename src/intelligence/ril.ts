@@ -8,7 +8,7 @@
  * - Analisa fluxos de dados cross-file
  */
 
-import * as vscode from 'vscode';
+import { vscode } from '../utils/vscode-compat';
 import * as path from 'path';
 import { CodingMemory } from './memory';
 import { getLLMRouter } from '../core/llm-router';
