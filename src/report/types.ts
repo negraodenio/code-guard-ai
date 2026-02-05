@@ -2,6 +2,15 @@
 import { Violation } from '../scanner/gdpr';
 import { PlanType } from '../license/manager';
 
+export { Violation };
+
+export interface ScanResult {
+    score: number;
+    grade: string;
+    issues: SummaryCounts;
+    violations: Violation[];
+}
+
 export interface SummaryCounts {
     total: number;
     critical: number;

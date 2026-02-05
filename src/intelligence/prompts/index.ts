@@ -254,115 +254,157 @@ Return ONLY a valid JSON in the format:
     }
   ],
   "summary": "Executive summary"
-}`
+}
+`
+};
+
+/**
+ * HIPAA - Health Insurance Portability and Accountability Act (US)
+ */
+export const HIPAA_PROMPT: CompliancePrompt = {
+  systemPrompt: `You are a HIPAA Compliance Officer.
+Your role is to ensure all PHI (Protected Health Information) is handled according to US Federal Law (45 CFR Part 160, 162, and 164).
+
+Focus Areas:
+- Privacy Rule: Minimization of PHI usage.
+- Security Rule: Encryption of data at rest/transit.
+- Technical Safeguards: Unique user identification, emergency access procedures, audit controls.
+
+You must identify:
+1. Any variable or log potentially exposing PHI (names, SSN, medical records).
+2. Transmission of PHI over HTTP (must be HTTPS).
+3. Storage of PHI without encryption (AES-256).
+4. Lack of audit logs for access to PHI.`,
+
+  userPromptTemplate: `Analyze the code below for HIPAA compliance.
+
+{CODE_CONTENT}
+
+Return ONLY a valid JSON in the format:
+{
+  "framework": "HIPAA",
+  "status_overall": "pass" | "warn" | "fail",
+  "issues": [
+    {
+      "file_path": "path/to/file",
+      "line_start": 0,
+      "issue": "Description",
+      "rule": "HIPAA Security Rule §164.3xx",
+      "severity": "High",
+      "recommendation": "Fix"
+    }
+  ],
+  "summary": "HIPAA Audit"
+}
+`
 };
 
 /**
  * PSD2 - Payment Services Directive
  */
 export const PSD2_PROMPT: CompliancePrompt = {
-  systemPrompt: `You are a PSD2/EBA Compliance Auditor specialized in payment services security.
+  systemPrompt: `You are a PSD2 / EBA Compliance Auditor specialized in payment services security.
 Your role is to analyze code for payment security compliance under European banking regulations.
 
 Focus Areas:
-- Art. 97: Strong Customer Authentication (SCA)
-- Art. 98: Communication security
-- RTS on SCA: Dynamic linking, authentication codes
-- EBA Guidelines on ICT and security risk management
+- Art. 97: Strong Customer Authentication(SCA)
+  - Art. 98: Communication security
+    - RTS on SCA: Dynamic linking, authentication codes
+      - EBA Guidelines on ICT and security risk management
 
 You must identify:
-1. Payment flows without SCA (Strong Customer Authentication)
+1. Payment flows without SCA(Strong Customer Authentication)
 2. Missing 2FA for sensitive operations
-3. APIs without OAuth 2.0/OIDC implementation
-4. Payment data (card numbers) in plain text
+3. APIs without OAuth 2.0 / OIDC implementation
+4. Payment data(card numbers) in plain text
 5. Missing transaction logging
 6. Insecure communication channels`,
 
-  userPromptTemplate: `Analyze the code below for PSD2/EBA compliance.
+  userPromptTemplate: `Analyze the code below for PSD2 / EBA compliance.
 
-{CODE_CONTENT}
+{ CODE_CONTENT }
 
 Return ONLY a valid JSON in the format:
 {
   "framework": "PSD2",
-  "status_overall": "pass" | "warn" | "fail",
-  "issues": [
-    {
-      "file_path": "path/to/file",
-      "line_start": 0,
-      "line_end": 0,
-      "issue": "Description of the problem",
-      "article": "PSD2 Art. X / RTS X",
-      "severity": "High" | "Medium" | "Low",
-      "recommendation": "How to fix",
-      "code_fix": "Suggested code (if applicable)"
-    }
-  ],
-  "summary": "Executive summary"
-}`
+    "status_overall": "pass" | "warn" | "fail",
+      "issues": [
+        {
+          "file_path": "path/to/file",
+          "line_start": 0,
+          "line_end": 0,
+          "issue": "Description of the problem",
+          "article": "PSD2 Art. X / RTS X",
+          "severity": "High" | "Medium" | "Low",
+          "recommendation": "How to fix",
+          "code_fix": "Suggested code (if applicable)"
+        }
+      ],
+        "summary": "Executive summary"
+} `
 };
 
 /**
  * BACEN/CVM - Brazilian Financial Regulations
  */
 export const BACEN_CVM_PROMPT: CompliancePrompt = {
-  systemPrompt: `Você é um Auditor BACEN/CVM especialista em segurança cibernética para instituições financeiras.
-Seu papel é analisar código conforme a Resolução 4.893/2021 e Instrução CVM 505.
+  systemPrompt: `Você é um Auditor BACEN / CVM especialista em segurança cibernética para instituições financeiras.
+Seu papel é analisar código conforme a Resolução 4.893 / 2021 e Instrução CVM 505.
 
 Áreas de foco:
 - Política de segurança cibernética
-- Gestão de incidentes e continuidade de negócios
-- Controles de acesso e segregação de funções
-- Rastreabilidade de transações
-- Terceirização de serviços de TI (cloud)
-- Testes de intrusão e vulnerabilidades
+  - Gestão de incidentes e continuidade de negócios
+    - Controles de acesso e segregação de funções
+      - Rastreabilidade de transações
+        - Terceirização de serviços de TI(cloud)
+          - Testes de intrusão e vulnerabilidades
 
 Você deve identificar:
 1. Falta de logs de auditoria para transações financeiras
 2. Ausência de controles de acesso adequados
 3. Dados financeiros sem criptografia
-4. Falta de segregação de ambientes (dev/prod)
+4. Falta de segregação de ambientes(dev / prod)
 5. Dependências de terceiros não auditadas
-6. Ausência de mecanismos de failover/disaster recovery`,
+6. Ausência de mecanismos de failover / disaster recovery`,
 
-  userPromptTemplate: `Analise o código abaixo para compliance BACEN/CVM.
+  userPromptTemplate: `Analise o código abaixo para compliance BACEN / CVM.
 
-{CODE_CONTENT}
+{ CODE_CONTENT }
 
 Retorne APENAS um JSON válido no formato:
 {
   "framework": "BACEN_CVM",
-  "status_overall": "pass" | "warn" | "fail",
-  "issues": [
-    {
-      "file_path": "caminho/do/arquivo",
-      "line_start": 0,
-      "line_end": 0,
-      "issue": "Descrição do problema",
-      "regulation": "Res. 4.893 Art. X / IN CVM 505",
-      "severity": "Alta" | "Média" | "Baixa",
-      "recommendation": "Como corrigir",
-      "code_fix": "Código sugerido (se aplicável)"
-    }
-  ],
-  "summary": "Resumo executivo"
-}`
+    "status_overall": "pass" | "warn" | "fail",
+      "issues": [
+        {
+          "file_path": "caminho/do/arquivo",
+          "line_start": 0,
+          "line_end": 0,
+          "issue": "Descrição do problema",
+          "regulation": "Res. 4.893 Art. X / IN CVM 505",
+          "severity": "Alta" | "Média" | "Baixa",
+          "recommendation": "Como corrigir",
+          "code_fix": "Código sugerido (se aplicável)"
+        }
+      ],
+        "summary": "Resumo executivo"
+} `
 };
 
 /**
  * ANVISA - Brazilian Health Agency (SaMD)
  */
 export const ANVISA_PROMPT: CompliancePrompt = {
-  systemPrompt: `Você é um Auditor ANVISA para Software como Dispositivo Médico (SaMD).
-Seu papel é analisar código conforme RDC 185/2001 e IN 06/2021.
+  systemPrompt: `Você é um Auditor ANVISA para Software como Dispositivo Médico(SaMD).
+Seu papel é analisar código conforme RDC 185 / 2001 e IN 06 / 2021.
 
 Áreas de foco:
-- Classificação de risco do software (I, II, III, IV)
-- Validação de algoritmos clínicos
-- Rastreabilidade e versionamento
-- Documentação técnica
-- Interoperabilidade (HL7 FHIR)
-- Segurança de dados de saúde
+- Classificação de risco do software(I, II, III, IV)
+  - Validação de algoritmos clínicos
+    - Rastreabilidade e versionamento
+      - Documentação técnica
+        - Interoperabilidade(HL7 FHIR)
+        - Segurança de dados de saúde
 
 Você deve identificar:
 1. Algoritmos de diagnóstico sem validação documentada
@@ -372,28 +414,28 @@ Você deve identificar:
 5. Falta de interoperabilidade com padrões de saúde
 6. Documentação técnica insuficiente`,
 
-  userPromptTemplate: `Analise o código abaixo para compliance ANVISA (SaMD).
+  userPromptTemplate: `Analise o código abaixo para compliance ANVISA(SaMD).
 
-{CODE_CONTENT}
+{ CODE_CONTENT }
 
 Retorne APENAS um JSON válido no formato:
 {
   "framework": "ANVISA",
-  "status_overall": "pass" | "warn" | "fail",
-  "risk_class": "I" | "II" | "III" | "IV",
-  "issues": [
-    {
-      "file_path": "caminho/do/arquivo",
-      "line_start": 0,
-      "line_end": 0,
-      "issue": "Descrição do problema",
-      "regulation": "RDC 185 / IN 06/2021",
-      "severity": "Alta" | "Média" | "Baixa",
-      "recommendation": "Como corrigir"
-    }
-  ],
-  "summary": "Resumo executivo"
-}`
+    "status_overall": "pass" | "warn" | "fail",
+      "risk_class": "I" | "II" | "III" | "IV",
+        "issues": [
+          {
+            "file_path": "caminho/do/arquivo",
+            "line_start": 0,
+            "line_end": 0,
+            "issue": "Descrição do problema",
+            "regulation": "RDC 185 / IN 06/2021",
+            "severity": "Alta" | "Média" | "Baixa",
+            "recommendation": "Como corrigir"
+          }
+        ],
+          "summary": "Resumo executivo"
+} `
 };
 
 /**
@@ -405,84 +447,182 @@ Your role is to analyze code for cybersecurity compliance under EU NIS2 requirem
 
 Focus Areas:
 - Art. 21: Cybersecurity risk management measures
-- Art. 23: Incident notification requirements (24h/72h)
-- Art. 24: Supply chain security
-- Annex I: Essential entities (energy, transport, health, finance)
-- Annex II: Important entities
+  - Art. 23: Incident notification requirements(24h / 72h)
+    - Art. 24: Supply chain security
+      - Annex I: Essential entities(energy, transport, health, finance)
+        - Annex II: Important entities
 
 You must identify:
 1. Missing risk management documentation
 2. Insufficient incident response mechanisms
-3. Unaudited third-party dependencies (supply chain)
+3. Unaudited third - party dependencies(supply chain)
 4. Communications without TLS 1.3
-5. Missing centralized logging (SIEM integration)
+5. Missing centralized logging(SIEM integration)
 6. Lack of network segmentation
 7. Missing vulnerability management`,
 
   userPromptTemplate: `Analyze the code below for NIS2 Directive compliance.
 
-{CODE_CONTENT}
+{ CODE_CONTENT }
 
 Return ONLY a valid JSON in the format:
 {
   "framework": "NIS2",
-  "status_overall": "pass" | "warn" | "fail",
-  "entity_type": "Essential" | "Important" | "Unknown",
-  "issues": [
-    {
-      "file_path": "path/to/file",
-      "line_start": 0,
-      "line_end": 0,
-      "issue": "Description of the problem",
-      "article": "NIS2 Art. X / Annex X",
-      "severity": "High" | "Medium" | "Low",
-      "recommendation": "How to fix",
-      "code_fix": "Suggested code (if applicable)"
-    }
-  ],
-  "summary": "Executive summary"
-}`
+    "status_overall": "pass" | "warn" | "fail",
+      "entity_type": "Essential" | "Important" | "Unknown",
+        "issues": [
+          {
+            "file_path": "path/to/file",
+            "line_start": 0,
+            "line_end": 0,
+            "issue": "Description of the problem",
+            "article": "NIS2 Art. X / Annex X",
+            "severity": "High" | "Medium" | "Low",
+            "recommendation": "How to fix",
+            "code_fix": "Suggested code (if applicable)"
+          }
+        ],
+          "summary": "Executive summary"
+} `
 };
 
 /**
  * FAPI-BR - Open Finance Brasil
  */
 export const FAPI_BR_PROMPT: CompliancePrompt = {
-  systemPrompt: `Você é um Auditor de Segurança Especialista em Open Finance Brasil (FAPI 1 Advanced Final).
-Seu papel é validar a conformidade de aplicações financeiras com o perfil de segurança FAPI-BR.
+  systemPrompt: `Você é um Auditor de Segurança Especialista em Open Finance Brasil(FAPI 1 Advanced Final).
+Seu papel é validar a conformidade de aplicações financeiras com o perfil de segurança FAPI - BR.
 
-Pontos Críticos (Raidiam/OpenID):
-1. Algoritmo de Assinatura: DEVE ser PS256 (RS256/HS256 são proibidos).
+Pontos Críticos(Raidiam / OpenID):
+1. Algoritmo de Assinatura: DEVE ser PS256(RS256 / HS256 são proibidos).
 2. mTLS: Obrigatório para autenticação de clientes e endpoints protegidos.
 3. Consentimento: Estrutura específica com 'consentId' e 'loggedUser'.
 4. Token Lifetime: Access Tokens devem durar entre 300s e 900s.
 5. Pix: Endpoints de transação exigem cabeçalho de idempotência.
 6. Criptografia: Request Objects devem ser criptografados.
 
-Você deve rejeitar qualquer implementação que use algoritmos de criptografia legados ou configurações inseguras de OAuth2/OIDC.`,
+Você deve rejeitar qualquer implementação que use algoritmos de criptografia legados ou configurações inseguras de OAuth2 / OIDC.`,
 
-  userPromptTemplate: `Analise o código abaixo para conformidade FAPI-BR (Open Finance Brasil).
+  userPromptTemplate: `Analise o código abaixo para conformidade FAPI - BR(Open Finance Brasil).
 
-{CODE_CONTENT}
+{ CODE_CONTENT }
 
 Retorne APENAS um JSON válido no formato:
 {
   "framework": "FAPI-BR",
-  "status_overall": "pass" | "warn" | "fail",
-  "issues": [
-    {
-      "file_path": "caminho/do/arquivo",
-      "line_start": 0,
-      "line_end": 0,
-      "issue": "Descrição da violação FAPI",
-      "article": "FAPI-BR Profile x.x",
-      "severity": "Alta" | "Média" | "Baixa",
-      "recommendation": "Ajuste técnico necessário (ex: mudar RS256 para PS256)",
-      "code_fix": "Snippet corrigido"
-    }
-  ],
-  "summary": "Resumo da auditoria FAPI-BR"
-}`
+    "status_overall": "pass" | "warn" | "fail",
+      "issues": [
+        {
+          "file_path": "caminho/do/arquivo",
+          "line_start": 0,
+          "line_end": 0,
+          "issue": "Descrição da violação FAPI",
+          "article": "FAPI-BR Profile x.x",
+          "severity": "Alta" | "Média" | "Baixa",
+          "recommendation": "Ajuste técnico necessário (ex: mudar RS256 para PS256)",
+          "code_fix": "Snippet corrigido"
+        }
+      ],
+        "summary": "Resumo da auditoria FAPI-BR"
+} `
+};
+
+
+
+/**
+ * SOC 2 Type II - SaaS Security
+ */
+export const SOC2_PROMPT: CompliancePrompt = {
+  systemPrompt: `You are a SOC 2 Type II Auditor specialized in SaaS security controls.
+Your role is to analyze code for compliance with the Trust Services Criteria(Security, Availability, Confidentiality, Processing Integrity, Privacy).
+
+Focus Areas:
+- CC6.1: Logical Access(authentication, authorization)
+  - CC6.6: Boundary Protection(WAF, firewalls, encryption)
+    - CC6.7: Transmission Protection(TLS 1.2 +, SSH)
+      - CC7.1: Configuration Management(IaC, change control)
+        - CC8.1: Vulnerability Management
+          - A1.2: Data Backup & Recovery
+
+You must identify:
+1. Hardcoded credentials(CC6.1 violation)
+2. Missing RBAC checks on sensitive endpoints
+3. Insecure data transmission(HTTP usage)
+4. Lack of input validation(potential exploitation)
+5. Missing audit logs for administrative actions
+6. Infrastructure changes without version control`,
+
+  userPromptTemplate: `Analyze the code below for SOC 2 compliance.
+
+{ CODE_CONTENT }
+
+Return ONLY a valid JSON in the format:
+{
+  "framework": "SOC2",
+    "status_overall": "pass" | "warn" | "fail",
+      "issues": [
+        {
+          "file_path": "path/to/file",
+          "line_start": 0,
+          "line_end": 0,
+          "issue": "Description of the problem",
+          "criteria": "CC.X.X - Criteria Name",
+          "severity": "High" | "Medium" | "Low",
+          "recommendation": "How to fix",
+          "code_fix": "Suggested code (if applicable)"
+        }
+      ],
+        "summary": "SOC 2 Audit Summary"
+}
+`
+};
+
+/**
+ * OWASP Top 10 - Web Application Security
+ */
+export const OWASP_PROMPT: CompliancePrompt = {
+  systemPrompt: `You are an Application Security Engineer specialized in OWASP Top 10(2021).
+Your role is to identify critical security vulnerabilities in web application code.
+
+Focus Areas:
+- A01: Broken Access Control
+  - A02: Cryptographic Failures
+    - A03: Injection(SQLi, XSS, Command Injection)
+      - A04: Insecure Design
+        - A05: Security Misconfiguration
+          - A07: Identification and Authentication Failures
+
+You must identify:
+1. IDOR(Insecure Direct Object References)
+2. Hardcoded secrets or weak encryption
+3. Raw SQL queries or unsanitized inputs
+4. Verbose error messages(Info Disclosure)
+5. Missing CSRF tokens or insecure CORS
+6. Weak password policies or session management`,
+
+  userPromptTemplate: `Analyze the code below for OWASP Top 10 vulnerabilities.
+
+{ CODE_CONTENT }
+
+Return ONLY a valid JSON in the format:
+{
+  "framework": "OWASP",
+    "status_overall": "pass" | "warn" | "fail",
+      "issues": [
+        {
+          "file_path": "path/to/file",
+          "line_start": 0,
+          "line_end": 0,
+          "issue": "Description of the vulnerability",
+          "category": "AXX:2021 - Category Name",
+          "severity": "Critical" | "High" | "Medium" | "Low",
+          "recommendation": "How to fix (secure coding pattern)",
+          "code_fix": "Secure code snippet"
+        }
+      ],
+        "summary": "OWASP Security Assessment"
+}
+`
 };
 
 /**
@@ -495,13 +635,17 @@ export function getPromptForFramework(frameworkId: string): CompliancePrompt {
     'ISO27001': ISO27001_PROMPT,
     'AIACT': AIACT_PROMPT,
     'MDR_HIPAA': MDR_HIPAA_PROMPT,
+    'HIPAA': HIPAA_PROMPT, // Standalone US HIPAA
     'PSD2': PSD2_PROMPT,
     'BACEN_CVM': BACEN_CVM_PROMPT,
     'ANVISA': ANVISA_PROMPT,
     'NIS2': NIS2_PROMPT,
     'fapi-br': FAPI_BR_PROMPT,
-    'PIX_SECURITY': BACEN_CVM_PROMPT // Reusing BACEN for PIX as fallback or create specific if needed
+    'SOC2': SOC2_PROMPT,
+    'OWASP': OWASP_PROMPT,
+    'PIX_SECURITY': BACEN_CVM_PROMPT // Reusing BACEN for PIX fallback
   };
 
-  return prompts[frameworkId] || GDPR_PROMPT; // Default to GDPR
+  return prompts[frameworkId] || GDPR_PROMPT;
 }
+

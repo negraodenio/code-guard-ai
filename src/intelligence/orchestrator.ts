@@ -64,7 +64,7 @@ export interface FrameworkAuditResult {
  * Consolidated audit result
  */
 export interface ConsolidatedAuditResult {
-    region: 'BR' | 'EU';
+    region: 'BR' | 'EU' | 'US' | 'GLOBAL';
     frameworks_audited: string[];
     total_issues: number;
     critical_issues: number;
@@ -206,7 +206,7 @@ export class ComplianceOrchestrator {
      * Run a full compliance audit on the workspace
      */
     async runAudit(
-        region: 'BR' | 'EU',
+        region: 'BR' | 'EU' | 'US',
         selectedFrameworks?: string[],
         progress?: vscode.Progress<{ message?: string; increment?: number }>,
         metadata?: { clientName?: string; repoUrl?: string },

@@ -7,7 +7,7 @@ export interface FrameworkConfig {
     id: string;
     name: string;
     llm: string;
-    region: 'BR' | 'EU' | 'GLOBAL';
+    region: 'BR' | 'EU' | 'GLOBAL' | 'US';
     description: string;
 }
 
@@ -21,8 +21,12 @@ export const COMPLIANCE_LLM_MAP: Record<string, string> = {
     "LGPD": "anthropic/claude-3.5-sonnet",
     "GDPR": "anthropic/claude-3.5-sonnet",
     "ISO27001": "openai/gpt-4o",
+    "SOC2": "openai/gpt-4o",
+    "OWASP": "openai/gpt-4o",
     "AIACT": "google/gemini-2.0-flash-001",
-    "MDR_HIPAA": "google/gemini-2.0-flash-001",
+    "MDR_HIPAA": "google/gemini-2.0-flash-001", // Legacy key kept for safety
+    "MDR": "google/gemini-2.0-flash-001",
+    "HIPAA": "google/gemini-2.0-flash-001",
     "PSD2": "google/gemini-2.0-flash-001",
     "BACEN_CVM": "google/gemini-2.0-flash-001",
     "ANVISA": "google/gemini-2.0-flash-001",
@@ -30,8 +34,43 @@ export const COMPLIANCE_LLM_MAP: Record<string, string> = {
     "CRA": "openai/gpt-4o",
     "DORA": "anthropic/claude-3.5-sonnet",
     "PCI_DSS": "openai/gpt-4o",
-    "PIX_SECURITY": "google/gemini-2.0-flash-001"
+    "PIX_SECURITY": "google/gemini-2.0-flash-001",
+    "CCPA": "anthropic/claude-3.5-sonnet"
 };
+
+/**
+ * Global frameworks applicable to all regions
+ */
+export const GLOBAL_FRAMEWORKS: FrameworkConfig[] = [
+    {
+        id: "ISO27001",
+        name: "ISO 27001",
+        llm: COMPLIANCE_LLM_MAP["ISO27001"],
+        region: "GLOBAL",
+        description: "Information Security Management System standard"
+    },
+    {
+        id: "PCI_DSS",
+        name: "PCI-DSS v4.0",
+        llm: COMPLIANCE_LLM_MAP["PCI_DSS"],
+        region: "GLOBAL",
+        description: "Payment Card Industry Data Security Standard (Critical for Fintechs)"
+    },
+    {
+        id: "SOC2",
+        name: "SOC 2 Type II",
+        llm: COMPLIANCE_LLM_MAP["SOC2"],
+        region: "GLOBAL",
+        description: "SaaS Security, Availability & Confidentiality (Trust Services Criteria)"
+    },
+    {
+        id: "OWASP",
+        name: "OWASP Top 10",
+        llm: COMPLIANCE_LLM_MAP["OWASP"],
+        region: "GLOBAL",
+        description: "Standard for Web Application Security Vulnerabilities"
+    }
+];
 
 /**
  * Brazil-specific compliance frameworks
@@ -53,24 +92,10 @@ export const BR_FRAMEWORKS: FrameworkConfig[] = [
     },
     {
         id: "ANVISA",
-        name: "ANVISA (Software as Medical Device)",
+        name: "ANVISA (SaMD - RDC 665/2022)",
         llm: COMPLIANCE_LLM_MAP["ANVISA"],
         region: "BR",
-        description: "Brazilian health regulatory agency - RDC 185/2001, IN 06/2021"
-    },
-    {
-        id: "ISO27001",
-        name: "ISO 27001",
-        llm: COMPLIANCE_LLM_MAP["ISO27001"],
-        region: "GLOBAL",
-        description: "Information Security Management System standard"
-    },
-    {
-        id: "PCI_DSS",
-        name: "PCI-DSS v4.0",
-        llm: COMPLIANCE_LLM_MAP["PCI_DSS"],
-        region: "GLOBAL",
-        description: "Payment Card Industry Data Security Standard (Critical for Fintechs)"
+        description: "Brazilian health agency - Software as Medical Device (RDC 665/2022)"
     },
     {
         id: "PIX_SECURITY",
@@ -85,7 +110,8 @@ export const BR_FRAMEWORKS: FrameworkConfig[] = [
         llm: "google/gemini-2.0-flash-001",
         region: "BR",
         description: "Raidiam/OFB Profile: PS256, mtLS, Consent & DCR Compliance"
-    }
+    },
+    ...GLOBAL_FRAMEWORKS
 ];
 
 /**
@@ -114,11 +140,11 @@ export const EU_FRAMEWORKS: FrameworkConfig[] = [
         description: "Payment Services Directive 2 - SCA, API security"
     },
     {
-        id: "MDR_HIPAA",
-        name: "MDR/HIPAA",
-        llm: COMPLIANCE_LLM_MAP["MDR_HIPAA"],
+        id: "MDR",
+        name: "MDR (Medical Device Regulation)",
+        llm: COMPLIANCE_LLM_MAP["MDR"],
         region: "EU",
-        description: "Medical Device Regulation & Health data protection"
+        description: "EU Medical Device Regulation 2017/745"
     },
     {
         id: "NIS2",
@@ -141,19 +167,35 @@ export const EU_FRAMEWORKS: FrameworkConfig[] = [
         region: "EU",
         description: "EU Financial sector resilience - ICT risk management & incident reporting"
     },
+    ...GLOBAL_FRAMEWORKS
+];
+
+/**
+ * US-specific compliance frameworks
+ */
+export const US_FRAMEWORKS: FrameworkConfig[] = [
     {
-        id: "ISO27001",
-        name: "ISO 27001",
-        llm: COMPLIANCE_LLM_MAP["ISO27001"],
-        region: "GLOBAL",
-        description: "Information Security Management System standard"
-    }
+        id: "CCPA",
+        name: "CCPA (California Consumer Privacy Act)",
+        llm: COMPLIANCE_LLM_MAP["CCPA"],
+        region: "US",
+        description: "California data privacy law - AB 375, consumer rights & opt-out"
+    },
+    {
+        id: "HIPAA",
+        name: "HIPAA (Health Insurance Portability)",
+        llm: COMPLIANCE_LLM_MAP["HIPAA"],
+        region: "US",
+        description: "US Federal Law protecting sensitive patient health information (PHI)"
+    },
+    ...GLOBAL_FRAMEWORKS
 ];
 
 /**
  * Get frameworks by region
  */
-export function getFrameworksByRegion(region: 'BR' | 'EU'): FrameworkConfig[] {
+export function getFrameworksByRegion(region: 'BR' | 'EU' | 'US'): FrameworkConfig[] {
+    if (region === 'US') return US_FRAMEWORKS;
     return region === 'BR' ? BR_FRAMEWORKS : EU_FRAMEWORKS;
 }
 

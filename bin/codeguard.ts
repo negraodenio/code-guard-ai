@@ -140,6 +140,59 @@ async function runAudit() {
     console.log(`\n✅ Audit Complete (Report generated).`);
 }
 
+async function runReport() {
+    const { CompliancePDFGenerator } = require('../src/reports/pdf-generator');
+
+    console.log(`[CodeGuard] Generating Compliance Report...`);
+
+    // 1. Scan first
+    const files = walkSync(targetPath);
+    const violations = [];
+    for (const file of files) {
+        const content = fs.readFileSync(file, 'utf-8');
+        const v = ShadowAPIScanner.scan(content);
+        v.forEach(x => (x as any).file = file);
+        violations.push(...v);
+    }
+
+    // 2. Aggregate Data
+    const critical = violations.filter(v => v.severity === 'CRITICAL').length;
+    const high = violations.filter(v => v.severity === 'HIGH').length;
+    const score = Math.max(0, 100 - (critical * 10) - (high * 3));
+
+    const scanResult = {
+        score,
+        grade: score > 90 ? 'A' : score > 70 ? 'B' : 'C',
+        issues: {
+            critical,
+            high,
+            medium: violations.filter(v => v.severity === 'MEDIUM').length,
+            low: violations.filter(v => v.severity === 'LOW').length
+        },
+        violations
+    };
+
+    const config = {
+        companyInfo: {
+            name: process.env.COMPANY_NAME || 'My Company',
+            repository: path.basename(path.resolve(targetPath)),
+            framework: flags.region === 'EU' ? 'GDPR' : 'LGPD'
+        },
+        template: 'basic'
+    };
+
+    // 3. Generate PDF
+    try {
+        const generator = new CompliancePDFGenerator(scanResult, config);
+        const buffer = await generator.generate();
+        const outputPath = 'report.pdf';
+        fs.writeFileSync(outputPath, buffer);
+        console.log(`\n📄 PDF Report generated: ${outputPath}`);
+    } catch (e) {
+        console.error('Failed to generate PDF:', e);
+    }
+}
+
 async function installMcp() {
     console.log(`\n🤖 Configuring CodeGuard MCP for Claude Desktop...`);
 
@@ -162,6 +215,8 @@ if (command === 'scan') {
     runScan();
 } else if (command === 'audit') {
     runAudit();
+} else if (command === 'report') {
+    runReport();
 } else if (command === 'install:mcp') {
     installMcp();
 } else {
