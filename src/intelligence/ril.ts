@@ -87,7 +87,7 @@ export class RepoIntelligence {
      */
     async indexRepository(projectPath: string): Promise<RepoContext> {
         this.rootPath = projectPath;
-        console.log(`[RepoIntelligence] Indexando repositório: ${projectPath}`);
+        console.error(`[RepoIntelligence] Indexando repositório: ${projectPath}`);
 
         const files: FileNode[] = [];
         let totalTokens = 0;
@@ -106,7 +106,7 @@ export class RepoIntelligence {
             this.graph.nodes.set(file.path, file);
         }
 
-        console.log(`[RepoIntelligence] ${files.length} arquivos indexados, ~${totalTokens} tokens`);
+        console.error(`[RepoIntelligence] ${files.length} arquivos indexados, ~${totalTokens} tokens`);
 
         return {
             rootPath: projectPath,
@@ -122,7 +122,7 @@ export class RepoIntelligence {
      * Build dependency graph
      */
     async buildDependencyGraph(context: RepoContext): Promise<DependencyGraph> {
-        console.log('[RepoIntelligence] Construindo grafo de dependências...');
+        console.error('[RepoIntelligence] Construindo grafo de dependências...');
 
         for (const file of context.files) {
             if (file.type !== 'file') continue;
@@ -138,7 +138,7 @@ export class RepoIntelligence {
         // Find entry points (files with no dependents)
         this.graph.entryPoints = this.findEntryPoints();
 
-        console.log(`[RepoIntelligence] Grafo: ${this.graph.nodes.size} nós, ${this.countEdges()} arestas, ${this.graph.cycles.length} ciclos`);
+        console.error(`[RepoIntelligence] Grafo: ${this.graph.nodes.size} nós, ${this.countEdges()} arestas, ${this.graph.cycles.length} ciclos`);
 
         return this.graph;
     }
@@ -156,7 +156,7 @@ export class RepoIntelligence {
             }
         }
 
-        console.log(`[RepoIntelligence] ${sensitiveFiles.length} arquivos sensíveis identificados`);
+        console.error(`[RepoIntelligence] ${sensitiveFiles.length} arquivos sensíveis identificados`);
         return sensitiveFiles;
     }
 

@@ -21,11 +21,6 @@ configSchema:
   required:
     - OPENAI_API_KEY
 
-deploy:
-  runtime: node
-  entrypoint: server.js
-  env:
-    - name: PORT
-      value: "3000"
+
 
 

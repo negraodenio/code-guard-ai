@@ -59,13 +59,13 @@ export class CodingMemory {
      * Initialize memory for a repo context
      */
     async initialize(context: { files: Array<{ path: string; content: string }> }): Promise<void> {
-        console.log(`[CodingMemory] Indexando ${context.files.length} arquivos...`);
+        console.error(`[CodingMemory] Indexando ${context.files.length} arquivos...`);
 
         for (const file of context.files) {
             await this.indexFile(file.path, file.content);
         }
 
-        console.log(`[CodingMemory] Indexação completa. Cache: ${this.cache.size} embeddings`);
+        console.error(`[CodingMemory] Indexação completa. Cache: ${this.cache.size} embeddings`);
     }
 
     /**
@@ -195,7 +195,7 @@ export class CodingMemory {
         }
 
         // Re-index would happen when file is accessed again
-        console.log(`[CodingMemory] Cache invalidado para ${filePath}`);
+        console.error(`[CodingMemory] Cache invalidado para ${filePath}`);
     }
 
     /**
@@ -205,7 +205,7 @@ export class CodingMemory {
         file: { path: string; content: string; language: string },
         provider: string
     ): Promise<void> {
-        console.log(`[CodingMemory] Indexando ${file.path} via ${provider}`);
+        console.error(`[CodingMemory] Indexando ${file.path} via ${provider}`);
         await this.indexFile(file.path, file.content);
     }
 
