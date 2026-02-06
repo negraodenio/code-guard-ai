@@ -56,7 +56,7 @@ export class GithubService {
 
         fs.mkdirSync(destPath, { recursive: true });
 
-        console.log(`[GithubService] Cloning ${url} to ${destPath}...`);
+        console.error(`[GithubService] Cloning ${url} to ${destPath}...`);
 
         try {
             await this.git.clone(finalUrl, destPath);
