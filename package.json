@@ -158,7 +158,7 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "build": "npm run compile",
-    "compile": "tsc -p ./",
+    "compile": "tsc -p ./ && node -e \"require('fs').cpSync('.well-known', 'out/.well-known', {recursive: true})\"",
     "watch": "tsc -watch -p ./",
     "start:mcp": "node out/src/mcp-server.js"
   },
