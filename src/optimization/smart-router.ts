@@ -425,7 +425,7 @@ export class SmartRouter extends EventEmitter {
             health.healthy = true;
         }
 
-        console.log(`[SmartRouter] Circuit breaker CLOSED for ${provider}`);
+        console.error(`[SmartRouter] Circuit breaker CLOSED for ${provider}`);
         this.emit('circuitClose', { provider });
     }
 

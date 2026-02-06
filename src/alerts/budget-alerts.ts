@@ -241,12 +241,11 @@ export class BudgetAlerts extends EventEmitter {
     }
 
     private sendNotifications(alert: Alert): void {
-        // Console
         if (this.config.channels.console) {
             const emoji = alert.severity === 'critical' ? '🚨' :
                 alert.severity === 'warning' ? '⚠️' : 'ℹ️';
-            console.log(`${emoji} [CodeGuard Alert] ${alert.message}`);
-            console.log(`   Current: $${alert.currentSpend.toFixed(2)} / $${alert.limit} (${alert.percentage.toFixed(1)}%)`);
+            console.error(`${emoji} [CodeGuard Alert] ${alert.message}`);
+            console.error(`   Current: $${alert.currentSpend.toFixed(2)} / $${alert.limit} (${alert.percentage.toFixed(1)}%)`);
         }
 
         // Slack
@@ -261,7 +260,7 @@ export class BudgetAlerts extends EventEmitter {
 
         // Email (log for now - integrate with SendGrid/AWS SES)
         if (this.config.channels.email) {
-            console.log(`[Email] Would send to admin: ${alert.message}`);
+            console.error(`[Email] Would send to admin: ${alert.message}`);
         }
     }
 

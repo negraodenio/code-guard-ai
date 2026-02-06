@@ -304,5 +304,5 @@ export function reloadEnvConfig() {
     if (process.env.OPENAI_API_KEY) PROVIDERS.openai.apiKey = process.env.OPENAI_API_KEY;
     if (process.env.SILICONFLOW_API_KEY) PROVIDERS.siliconflow.apiKey = process.env.SILICONFLOW_API_KEY;
     if (process.env.OPENROUTER_API_KEY) PROVIDERS.openrouter.apiKey = process.env.OPENROUTER_API_KEY;
-    console.log('[CodeGuard] Environment configurations reloaded.');
+    console.error('[CodeGuard] Environment configurations reloaded.');
 }

@@ -169,7 +169,7 @@ export class ComplianceOrchestrator {
 
         // Initialize cost management system
         this.setupCostManagement();
-        console.log('[Orchestrator] Stack Antigravity v2.0 inicializado (RIL + Memory + Patch)');
+        console.error('[Orchestrator] Stack Antigravity v2.0 inicializado (RIL + Memory + Patch)');
     }
 
     /**
@@ -192,15 +192,15 @@ export class ComplianceOrchestrator {
         });
 
         smartRouter.on('circuitClose', ({ provider }) => {
-            console.log(`✅ [SmartRouter] Circuit CLOSED for ${provider}`);
+            console.error(`✅ [SmartRouter] Circuit CLOSED for ${provider}`);
         });
 
         // Listen for routing decisions
         smartRouter.on('route', (decision) => {
-            console.log(`[SmartRouter] Routed to ${decision.provider} (${decision.reason})`);
+            console.error(`[SmartRouter] Routed to ${decision.provider} (${decision.reason})`);
         });
 
-        console.log(`[CostManagement] Configurado: limite $${monthlyLimit}/mês`);
+        console.error(`[CostManagement] Configurado: limite $${monthlyLimit}/mês`);
     }
 
     /**
@@ -252,7 +252,7 @@ export class ComplianceOrchestrator {
             await this.ril.buildDependencyGraph(repoContext);
             await this.ril.identifySensitiveFiles(repoContext);
 
-            console.log('[Orchestrator] Antigravity Intelligence ready.');
+            console.error('[Orchestrator] Antigravity Intelligence ready.');
         }
 
         let totalTokensUsed = 0;
@@ -261,8 +261,8 @@ export class ComplianceOrchestrator {
 
         // NOVO: Selecionar provider otimizado para scan
         const scanRouting = this.router.route('scan');
-        console.log(`[Orchestrator] Scan Provider: ${scanRouting.provider} (${scanRouting.reason})`);
-        console.log(`[Orchestrator] Custo estimado por batch: $${scanRouting.estimatedCost.toFixed(4)}`);
+        console.error(`[Orchestrator] Scan Provider: ${scanRouting.provider} (${scanRouting.reason})`);
+        console.error(`[Orchestrator] Custo estimado por batch: $${scanRouting.estimatedCost.toFixed(4)}`);
 
         // 3. Run each framework audit
         for (const framework of frameworks) {
@@ -356,7 +356,7 @@ export class ComplianceOrchestrator {
                         const patch = await this.patcher.generatePatch(violation);
                         if (patch) {
                             issue.code_fix = patch.fixedCode;
-                            console.log(`[PatchEngine] Generated fix for ${issue.file_path} (Rule: ${violation.ruleId})`);
+                            console.error(`[PatchEngine] Generated fix for ${issue.file_path} (Rule: ${violation.ruleId})`);
                         }
                     } catch (err) {
                         console.warn(`[PatchEngine] Failed to generate patch:`, err);
@@ -368,7 +368,7 @@ export class ComplianceOrchestrator {
         // 🆕 Atualizar alertas de orçamento após audit completo
         const currentMonthlySpend = costAnalytics.getSummary().thisMonth.cost;
         budgetAlerts.updateSpend(currentMonthlySpend);
-        console.log(`[Orchestrator] Audit completo. Custo total: $${totalEstimatedCost.toFixed(4)}, Mensal: $${currentMonthlySpend.toFixed(2)}`);
+        console.error(`[Orchestrator] Audit completo. Custo total: $${totalEstimatedCost.toFixed(4)}, Mensal: $${currentMonthlySpend.toFixed(2)}`);
 
         // 4. Consolidate results
         const allIssues = results.flatMap(r => r.issues);
@@ -414,7 +414,7 @@ export class ComplianceOrchestrator {
 
         // Determinar modelo baseado no provider selecionado
         const modelToUse = provider ? this.getModelForProvider(provider, 'scan') : framework.llm;
-        console.log(`[auditFramework] ${framework.name} usando modelo: ${modelToUse}`);
+        console.error(`[auditFramework] ${framework.name} usando modelo: ${modelToUse}`);
 
         // Process each batch
         for (const batch of batches) {
@@ -429,7 +429,7 @@ export class ComplianceOrchestrator {
                 const ragResult = await this.memory.query({ query, maxResults: 3 });
                 if (ragResult.contextString) {
                     contextMsg = `\n\nCONTEXTO RELEVANTE (RAG Knowledge Base):\n${ragResult.contextString}\n`;
-                    console.log(`[RAG] Enriched ${batch.files.length} files with ${ragResult.chunks.length} chunks`);
+                    console.error(`[RAG] Enriched ${batch.files.length} files with ${ragResult.chunks.length} chunks`);
                 }
             } catch (err) {
                 console.warn('[RAG] Failed to query memory:', err);
