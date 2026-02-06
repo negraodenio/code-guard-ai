@@ -3,12 +3,8 @@
         "name": "codeguard-ai",
         "version": "1.2.1"
     },
-    "authentication": {
-        "required": false
-    },
-    "capabilities": {
-        "tools": {},
-        "resources": {},
-        "prompts": {}
-    }
+    "authentication": {},
+    "tools": [],
+    "resources": [],
+    "prompts": []
 }
