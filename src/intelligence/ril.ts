@@ -9,6 +9,7 @@
  */
 
 import { vscode } from '../utils/vscode-compat';
+import type * as vscodeTypes from 'vscode';
 import * as path from 'path';
 import { CodingMemory } from './memory';
 import { getLLMRouter } from '../core/llm-router';
@@ -95,7 +96,7 @@ export class RepoIntelligence {
             location: vscode.ProgressLocation.Notification,
             title: "CodeGuard: Indexando repositório...",
             cancellable: true
-        }, async (progress, token) => {
+        }, async (progress: any, token: any) => {
             await this.scanDirectory(projectPath, files, progress, token);
         });
 
@@ -213,8 +214,8 @@ export class RepoIntelligence {
     private async scanDirectory(
         dirPath: string,
         files: FileNode[],
-        progress: vscode.Progress<{ message?: string }>,
-        token: vscode.CancellationToken
+        progress: vscodeTypes.Progress<{ message?: string }>,
+        token: vscodeTypes.CancellationToken
     ): Promise<void> {
         if (token.isCancellationRequested) return;
 

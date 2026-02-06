@@ -14,9 +14,9 @@ export class AIClient {
     private static getConfiguration() {
         const config = vscode.workspace.getConfiguration('codeguard');
         return {
-            provider: config.get<string>('aiProvider') || 'openrouter',
-            apiKey: config.get<string>('userApiKey') || '',
-            model: config.get<string>('modelName') || 'openai/gpt-4o-mini'
+            provider: config.get('aiProvider') as string || 'openrouter',
+            apiKey: config.get('userApiKey') as string || '',
+            model: config.get('modelName') as string || 'openai/gpt-4o-mini'
         };
     }
 

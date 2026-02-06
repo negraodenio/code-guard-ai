@@ -10,6 +10,7 @@
  */
 
 import { vscode } from '../utils/vscode-compat';
+import type * as vscodeTypes from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { getLLMRouter } from '../core/llm-router';
@@ -388,7 +389,7 @@ Return ONLY the fixed line of code. Do not include markdown or explanations.`;
         return code || null;
     }
 
-    private getContextRange(document: vscode.TextDocument, lineNumber: number): vscode.Range {
+    private getContextRange(document: vscodeTypes.TextDocument, lineNumber: number): vscodeTypes.Range {
         const start = Math.max(0, lineNumber - 6);
         const end = Math.min(document.lineCount - 1, lineNumber + 4);
         return new vscode.Range(start, 0, end, document.lineAt(end).text.length);
@@ -429,7 +430,7 @@ Return ONLY the fixed line of code. Do not include markdown or explanations.`;
     }
 
     // Legacy static methods for backwards compatibility
-    static async generateFix(document: vscode.TextDocument, violation: string, contextLine: number): Promise<string | null> {
+    static async generateFix(document: vscodeTypes.TextDocument, violation: string, contextLine: number): Promise<string | null> {
         const engine = new PatchEngine();
         const patch = await engine.generatePatch({
             id: `legacy_${Date.now()}`,
@@ -444,7 +445,7 @@ Return ONLY the fixed line of code. Do not include markdown or explanations.`;
         return patch?.fixedCode || null;
     }
 
-    static async applyFix(document: vscode.TextDocument, fixedCode: string, contextLine: number): Promise<boolean> {
+    static async applyFix(document: vscodeTypes.TextDocument, fixedCode: string, contextLine: number): Promise<boolean> {
         const lineText = document.lineAt(contextLine - 1).text;
         const range = new vscode.Range(
             new vscode.Position(contextLine - 1, 0),

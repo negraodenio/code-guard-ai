@@ -226,8 +226,8 @@ export function getProviderForTask(task: TaskType): LLMProviderConfig {
     try {
         if (vscode && vscode.workspace) {
             const config = vscode.workspace.getConfiguration('codeguard');
-            configuredProvider = config.get('aiProvider') || 'openrouter';
-            const configuredKey = config.get('userApiKey');
+            configuredProvider = config.get('aiProvider') as string || 'openrouter';
+            const configuredKey = config.get('userApiKey') as string;
 
             // Update OpenRouter key if configured
             if (configuredKey && (configuredProvider === 'openrouter' || configuredProvider === 'openai')) {
@@ -235,73 +235,74 @@ export function getProviderForTask(task: TaskType): LLMProviderConfig {
                     PROVIDERS[configuredProvider].apiKey = configuredKey;
                 }
             }
-        } catch (e) {
-            // Ignore if not in VS Code context
         }
-
-        // Check if primary is configured, considering User Preference first
-        if ((configuredProvider === 'openrouter' || configuredProvider === 'openai') && PROVIDERS[configuredProvider].apiKey) {
-            const provider = PROVIDERS[configuredProvider];
-            if (provider.apiKey.length > 10) return provider;
-        }
-
-        const primaryName = ROUTING_CONFIG.primary[task];
-        const primary = PROVIDERS[primaryName];
-
-        // Check if primary is configured
-        if (primary.apiKey && primary.apiKey.length > 10) {
-            return primary;
-        }
-
-        // Try fallbacks
-        for (const fallbackName of ROUTING_CONFIG.fallbacks[task]) {
-            const fallback = PROVIDERS[fallbackName];
-            if (fallback.apiKey && fallback.apiKey.length > 10) {
-                console.warn(`⚠️ ${primaryName} não configurado, usando ${fallbackName} para ${task}`);
-                return fallback;
-            }
-        }
-
-        // If explicit OpenRouter didn't work above, try it as final resort
-        // (This handles the case where it wasn't selected in settings but key is present in env)
-        if (PROVIDERS.openrouter.apiKey && PROVIDERS.openrouter.apiKey.length > 10) {
-            return PROVIDERS.openrouter;
-        }
-
-        throw new Error(`Nenhum provider configurado para ${task}. Configure KIMI_API_KEY ou alternativas.`);
+    } catch (e) {
+        // Ignore if not in VS Code context
     }
+
+    // Check if primary is configured, considering User Preference first
+    if ((configuredProvider === 'openrouter' || configuredProvider === 'openai') && PROVIDERS[configuredProvider].apiKey) {
+        const provider = PROVIDERS[configuredProvider];
+        if (provider.apiKey.length > 10) return provider;
+    }
+
+    const primaryName = ROUTING_CONFIG.primary[task];
+    const primary = PROVIDERS[primaryName];
+
+    // Check if primary is configured
+    if (primary.apiKey && primary.apiKey.length > 10) {
+        return primary;
+    }
+
+    // Try fallbacks
+    for (const fallbackName of ROUTING_CONFIG.fallbacks[task]) {
+        const fallback = PROVIDERS[fallbackName];
+        if (fallback.apiKey && fallback.apiKey.length > 10) {
+            console.warn(`⚠️ ${primaryName} não configurado, usando ${fallbackName} para ${task}`);
+            return fallback;
+        }
+    }
+
+    // If explicit OpenRouter didn't work above, try it as final resort
+    // (This handles the case where it wasn't selected in settings but key is present in env)
+    if (PROVIDERS.openrouter.apiKey && PROVIDERS.openrouter.apiKey.length > 10) {
+        return PROVIDERS.openrouter;
+    }
+
+    throw new Error(`Nenhum provider configurado para ${task}. Configure KIMI_API_KEY ou alternativas.`);
+}
 
 /**
  * Estimate cost for an operation
  */
 export function estimateCost(
-        task: TaskType,
-        provider: LLMProviderConfig,
-        customTokens?: { input?: number; output?: number }
-    ): number {
-        const estimates = customTokens || ROUTING_CONFIG.tokenEstimates[task];
-        const inputCost = ((estimates.input || 0) / 1_000_000) * provider.pricing.inputPer1M;
-        const outputCost = ((estimates.output || 0) / 1_000_000) * provider.pricing.outputPer1M;
-        return inputCost + outputCost;
-    }
+    task: TaskType,
+    provider: LLMProviderConfig,
+    customTokens?: { input?: number; output?: number }
+): number {
+    const estimates = customTokens || ROUTING_CONFIG.tokenEstimates[task];
+    const inputCost = ((estimates.input || 0) / 1_000_000) * provider.pricing.inputPer1M;
+    const outputCost = ((estimates.output || 0) / 1_000_000) * provider.pricing.outputPer1M;
+    return inputCost + outputCost;
+}
 
-    /**
-     * Check if cost is within limits
-     */
-    export function checkCostLimit(task: TaskType, estimatedCost: number): boolean {
-        const limitKey = `maxPer${task.charAt(0).toUpperCase() + task.slice(1)}` as keyof typeof ROUTING_CONFIG.costLimits;
-        const limit = ROUTING_CONFIG.costLimits[limitKey];
-        return estimatedCost <= (limit || Infinity);
-    }
+/**
+ * Check if cost is within limits
+ */
+export function checkCostLimit(task: TaskType, estimatedCost: number): boolean {
+    const limitKey = `maxPer${task.charAt(0).toUpperCase() + task.slice(1)}` as keyof typeof ROUTING_CONFIG.costLimits;
+    const limit = ROUTING_CONFIG.costLimits[limitKey];
+    return estimatedCost <= (limit || Infinity);
+}
 
-    /**
-     * Reload configurations from process.env
-     * Useful after loading .env file in extension activation
-     */
-    export function reloadEnvConfig() {
-        if (process.env.KIMI_API_KEY) PROVIDERS.kimi.apiKey = process.env.KIMI_API_KEY;
-        if (process.env.OPENAI_API_KEY) PROVIDERS.openai.apiKey = process.env.OPENAI_API_KEY;
-        if (process.env.SILICONFLOW_API_KEY) PROVIDERS.siliconflow.apiKey = process.env.SILICONFLOW_API_KEY;
-        if (process.env.OPENROUTER_API_KEY) PROVIDERS.openrouter.apiKey = process.env.OPENROUTER_API_KEY;
-        console.log('[CodeGuard] Environment configurations reloaded.');
-    }
+/**
+ * Reload configurations from process.env
+ * Useful after loading .env file in extension activation
+ */
+export function reloadEnvConfig() {
+    if (process.env.KIMI_API_KEY) PROVIDERS.kimi.apiKey = process.env.KIMI_API_KEY;
+    if (process.env.OPENAI_API_KEY) PROVIDERS.openai.apiKey = process.env.OPENAI_API_KEY;
+    if (process.env.SILICONFLOW_API_KEY) PROVIDERS.siliconflow.apiKey = process.env.SILICONFLOW_API_KEY;
+    if (process.env.OPENROUTER_API_KEY) PROVIDERS.openrouter.apiKey = process.env.OPENROUTER_API_KEY;
+    console.log('[CodeGuard] Environment configurations reloaded.');
+}

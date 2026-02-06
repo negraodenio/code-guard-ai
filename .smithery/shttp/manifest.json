@@ -1,0 +1,54 @@
+{
+  "type": "hosted",
+  "stateful": false,
+  "serverCard": {
+    "serverInfo": {
+      "name": "codeguard-ai",
+      "version": "1.2.1"
+    },
+    "tools": [
+      {
+        "name": "codeguard_audit",
+        "description": "Runs deep compliance audit (GDPR/LGPD/PCI) on the current repository",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        },
+        "annotations": {},
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "codeguard_graph",
+        "description": "Generates Dependency & Sensitivity Graph (Repo Intelligence)",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        },
+        "annotations": {},
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "detect_shadow_apis",
+        "description": "Detects undocumented API endpoints (Shadow APIs) and security risks",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        },
+        "annotations": {},
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      }
+    ],
+    "resources": [],
+    "prompts": []
+  },
+  "source": {
+    "commit": "1f5c72973efd8283603cf3650c9ae041a354ea57",
+    "branch": "main"
+  }
+}

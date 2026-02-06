@@ -16,341 +16,226 @@ function escapeHtml(unsafe: string): string {
 
 export function getWebviewContent(report: ComplianceReport): string {
     const isPaid = report.plan !== 'FREE';
-    const isTopTier = report.plan === 'PROFESSIONAL' || report.plan === 'ENTERPRISE';
-
     const effectivePlan = (report.plan === 'PROFESSIONAL' && (report as any).creditBalance > 0) ? 'CREDIT' : report.plan;
-    const creditBalance = (report as any).creditBalance || 0;
+
+    // Calculate Score (Mock logic based on violation density for now, or use real if available)
+    const violationCount = report.violations.length;
+    const score = Math.max(0, 100 - (violationCount * 5));
+    const scoreColor = score > 80 ? 'text-success' : (score > 50 ? 'text-warning' : 'text-danger');
+    const scoreGradient = score > 80 ? 'from-success to-primary' : (score > 50 ? 'from-warning to-danger' : 'from-danger to-purple-900');
+
+    // Safe serialization
+    const safeReport = JSON.stringify(report).replace(/</g, '\\u003c').replace(/>/g, '\\u003e');
 
     return `<!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline';">
-    <title>CodeGuard AI Compliance</title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https: data:; style-src 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; script-src 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com;">
+    <title>CodeGuard AI Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1337ec",
+                        "accent-cyan": "#00f2ff",
+                        "accent-purple": "#7c3aed",
+                        "surface-dark": "#111111",
+                        "border-dark": "#232948",
+                        "background-dark": "#0a0a0a",
+                        "danger": "#ef4444",
+                        "warning": "#f59e0b",
+                        "success": "#10b981",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --code-font: 'Consolas', 'Monaco', 'Courier New', monospace;
+        .glass-panel {
+            background: rgba(17, 17, 17, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(35, 41, 72, 0.5);
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 20px; color: var(--vscode-editor-foreground); background-color: var(--vscode-editor-background); line-height: 1.6; }
-        
-        /* Banners */
-        .banner { padding: 12px; border-radius: 6px; margin-bottom: 25px; text-align: center; font-weight: 500; }
-        .banner.free { background-color: #e65100; color: white; border: 1px solid #ff9800; }
-        .banner.paid { background-color: #2e7d32; color: white; }
-        .banner.credit { background-color: #1565c0; color: white; border: 1px solid #42a5f5; }
-        
-        /* ... existing styles ... */
-        .card { background: var(--vscode-sideBar-background); border: 1px solid var(--vscode-panel-border); border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .card h2 { margin-top: 0; border-bottom: 1px solid var(--vscode-panel-border); padding-bottom: 10px; font-size: 1.2em; }
-        
-        /* Compliance Grid */
-        .compliance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
-        .compliance-item { background: var(--vscode-editor-background); border: 1px solid var(--vscode-panel-border); padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
-        .status-icon { font-size: 1.2em; }
-        
-        /* Table */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95em; }
-        th { text-align: left; padding: 12px 8px; border-bottom: 2px solid var(--vscode-panel-border); color: var(--vscode-descriptionForeground); font-weight: 600; }
-        td { padding: 10px 8px; border-bottom: 1px solid var(--vscode-panel-border); vertical-align: middle; }
-        tr:nth-child(even) { background-color: var(--vscode-list-hoverBackground); }
-        tr:hover { background-color: var(--vscode-list-activeSelectionBackground); color: var(--vscode-list-activeSelectionForeground); }
-        
-        /* Severity Badges */
-        .badge { padding: 3px 8px; border-radius: 12px; font-size: 0.85em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .badge.CRITICAL { background-color: #d32f2f; color: white; }
-        .badge.HIGH { background-color: #ef6c00; color: white; }
-        .badge.MEDIUM { background-color: #fdd835; color: black; }
-        .badge.LOW { background-color: #4caf50; color: white; }
-        
-        /* Buttons */
-        button { border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer; font-size: 0.9em; transition: opacity 0.2s; }
-        button:hover { opacity: 0.9; }
-        .btn-fix { background-color: #007acc; color: white; }
-        .btn-upgrade { background-color: #9c27b0; color: white; font-weight: bold; }
-        .btn-primary { background-color: #007acc; color: white; padding: 10px 20px; font-size: 1em; }
-        .btn-outline { background-color: transparent; border: 1px solid var(--vscode-button-background); color: var(--vscode-button-foreground); }
-
-        /* Premium Card */
-        .premium-card { background: linear-gradient(135deg, rgba(156, 39, 176, 0.1) 0%, rgba(33, 150, 243, 0.1) 100%); border: 1px solid #9c27b0; }
-        .premium-features { list-style: none; padding: 0; margin: 15px 0; }
-        .premium-features li { margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
-        
-        /* Modern Premium Card */
-        .premium-card-modern {
-            background: linear-gradient(135deg, rgba(19, 55, 236, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
-            border: 2px solid rgba(19, 55, 236, 0.3);
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 24px rgba(19, 55, 236, 0.15);
-        }
-        
-        .premium-header { text-align: center; margin-bottom: 25px; }
-        
-        .premium-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #1337ec, #7c3aed);
-            color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.75em;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        
-        .comparison-table { margin: 25px 0; }
-        
-        .pricing-table { border: 1px solid var(--vscode-panel-border); border-radius: 8px; overflow: hidden; }
-        .pricing-table th { background: var(--vscode-sideBar-background); padding: 12px; font-weight: 600; }
-        .pricing-table td { padding: 12px; border-bottom: 1px solid var(--vscode-panel-border); }
-        .pricing-table tr:last-child td { border-bottom: none; }
-        
-        .pricing-cta { text-align: center; margin-top: 30px; }
-        
-        .price-display { margin-bottom: 10px; }
-        .price-amount {
-            font-size: 3em;
-            font-weight: 900;
-            background: linear-gradient(135deg, #1337ec, #7c3aed);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .price-period { font-size: 1em; color: var(--vscode-descriptionForeground); }
-        
-        .price-subtitle { 
-            color: var(--vscode-descriptionForeground); 
-            font-size: 0.9em; 
-            margin: 5px 0 20px 0;
-        }
-        
-        .btn-upgrade-modern {
-            background: linear-gradient(135deg, #1337ec, #7c3aed);
-            color: white;
-            border: none;
-            padding: 14px 32px;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 16px rgba(19, 55, 236, 0.3);
-        }
-        
-        .btn-upgrade-modern:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(19, 55, 236, 0.5);
-        }
-        
-        .btn-icon { font-size: 1.2em; }
-        .btn-text { letter-spacing: 0.5px; }
-        
-        .trust-badge {
-            color: #4caf50;
-            font-size: 0.85em;
-            margin-top: 12px;
-            font-weight: 600;
-        }
-        
-        .urgency-message {
-            background: rgba(255, 152, 0, 0.1);
-            border: 1px solid rgba(255, 152, 0, 0.3);
-            border-radius: 8px;
-            padding: 12px;
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.9em;
-        }
-        
-        .hidden-count { text-align: center; color: var(--vscode-textLink-foreground); margin-top: 15px; font-style: italic; }
-        a { color: var(--vscode-textLink-foreground); text-decoration: none; cursor: pointer; }
-        a:hover { text-decoration: underline; }
-        
-        /* Code Preview */
-        .preview-box { background: #1e1e1e; color: #d4d4d4; padding: 10px; border-radius: 4px; font-family: var(--code-font); margin-top: 5px; white-space: pre-wrap; font-size: 0.9em; border: 1px solid #333; display: none; }
-        .preview-box.visible { display: block; animation: fadeIn 0.3s; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .blurred { filter: blur(4px); user-select: none; opacity: 0.6; transition: filter 0.3s; }
-        .blurred:hover { filter: blur(2px); cursor: pointer; }
-        
-        .preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; color: #888; font-size: 0.8em; text-transform: uppercase; }
-        .diff-add { color: #4caf50; }
-        .diff-rem { color: #f44336; text-decoration: line-through; opacity: 0.7; }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #232948; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #1337ec; }
     </style>
 </head>
-<body>
 
-    <div class="banner ${isPaid ? (effectivePlan === 'CREDIT' ? 'credit' : 'paid') : 'free'}">
-        Plan: <strong>${effectivePlan === 'CREDIT' ? 'PAY-PER-USE' : report.plan}</strong> 
-        ${effectivePlan === 'CREDIT' ? `(Balance: ${creditBalance} credits)` : ''}
-        ${!isPaid ? `<br><small>Showing max 5 violations. <a href="#" onclick="upgrade()">Upgrade for full coverage</a></small>` : ''}
-    </div>
-
-    <div class="card">
-        <h2>📊 Executive Summary</h2>
-        <p>${report.executiveSummary}</p>
-        <div class="compliance-grid">
-            ${renderComplianceItem('GDPR', report.complianceMapping.GDPR)}
-            ${renderComplianceItem('LGPD', report.complianceMapping.LGPD)}
-            ${renderComplianceItem('CCPA', report.complianceMapping.CCPA || '⚪ N/A')}
-            ${renderComplianceItem('AI Act', report.complianceMapping.AI_ACT)}
+<body class="bg-background-dark text-white font-display antialiased overflow-hidden h-screen flex">
+    <!-- Sidebar -->
+    <aside class="w-20 lg:w-64 border-r border-border-dark flex flex-col bg-surface-dark/50 hidden md:flex">
+        <div class="h-16 flex items-center gap-3 px-6 border-b border-border-dark">
+            <span class="material-symbols-outlined text-primary text-2xl">shield_lock</span>
+            <span class="font-bold text-lg hidden lg:block">CodeGuard</span>
         </div>
-    </div>
-
-    <div class="card">
-        <h2>🔍 Detected Violations</h2>
-        ${report.violations.length > 0 ? `
-            <table>
-                <thead>
-                    <tr>
-                        <th>SEVERITY</th>
-                        <th>RULE</th>
-                        <th>LINE</th>
-                        <th>MESSAGE</th>
-                        <th style="width: 140px;">ACTION</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${report.violations.map((v, i) => `
-                        <tr>
-                            <td><span class="badge ${v.severity}">${v.severity}</span></td>
-                            <td><small>${escapeHtml(v.rule)}</small></td>
-                            <td>${v.line}</td>
-                            <td>${escapeHtml(v.message)}</td>
-                            <td>
-                                ${v.suggestedFix ?
-            `<button class="btn-outline" onclick="togglePreview(${i})">👁️ Preview</button>` :
-            (isPaid ? `<button class="btn-fix" onclick="fix('${v.message}')">Auto-Fix</button>` : `<button class="btn-upgrade" onclick="upgrade()">Upgrade</button>`)
-        }
-                            </td>
-                        </tr>
-                        ${v.suggestedFix ? `
-                        <tr id="preview-row-${i}" style="display: none; background: rgba(0,0,0,0.2);">
-                            <td colspan="5" style="padding: 15px;">
-                                <div class="preview-header">
-                                    <strong>Smart Fix Preview</strong>
-                                    ${!isPaid ? '<span style="color: #ff9800;">🔒 LOCKED (UPGRADE TO APPLY)</span>' : '<span style="color: #4caf50;">✅ READY TO APPLY</span>'}
-                                </div>
-                                <div class="preview-box visible ${!isPaid ? 'blurred' : ''}" onclick="${!isPaid ? 'upgrade()' : ''}">
-                                    <div class="diff-rem">- ${v.match}</div>
-                                    <div class="diff-add">+ ${v.suggestedFix}</div>
-                                </div>
-                                ${!isPaid ? `
-                                    <div style="text-align: center; margin-top: 10px;">
-                                        <button class="btn-upgrade" onclick="upgrade()">🔓 Unlock Smart Fixes</button>
-                                    </div>
-                                ` : `
-                                    <div style="text-align: right; margin-top: 10px;">
-                                        <button class="btn-fix" onclick="applyFix('${v.suggestedFix}')">Apply Fix Now</button>
-                                    </div>
-                                `}
-                            </td>
-                        </tr>
-                        ` : ''}
-                    `).join('')}
-                </tbody>
-            </table>
-            
-           ${report.summaryCounts.total > report.violations.length ? `
-                <div class="hidden-count">
-                    ⚠️ <strong>${report.summaryCounts.total - report.violations.length} more violations hidden.</strong><br>
-                    Upgrade to Professional to see all.
+        <nav class="flex-1 py-6 px-3 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-medium">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="hidden lg:block">Overview</span>
+            </a>
+            <div class="mt-auto p-4 border-t border-border-dark">
+                 <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-accent-purple flex items-center justify-center text-xs font-bold">U</div>
+                    <div class="hidden lg:block">
+                        <div class="text-sm font-medium">${effectivePlan} Plan</div>
+                    </div>
                 </div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden relative">
+        <!-- Header -->
+        <header class="h-16 border-b border-border-dark flex items-center justify-between px-8 bg-background-dark/80 backdrop-blur-md z-10">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <span class="material-symbols-outlined md:hidden text-primary">shield_lock</span>
+                Compliance Overview
+            </h1>
+            <div class="flex items-center gap-4">
+               ${!isPaid ?
+            `<button onclick="upgrade()" class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:shadow-lg transition-all">
+                    <span class="material-symbols-outlined text-lg">rocket_launch</span>
+                    Upgrade Plan
+                </button>` :
+            `<span class="text-xs text-success bg-success/10 px-2 py-1 rounded border border-success/20">PRO ACTIVE</span>`
+        }
+            </div>
+        </header>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto p-8">
+
+            <!-- Top Metrics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <!-- Compliance Score -->
+                <div class="glass-panel p-6 rounded-xl relative overflow-hidden group">
+                    <div class="text-sm text-gray-400 mb-1">Overall Security Score</div>
+                    <div class="flex items-end gap-3">
+                        <span class="text-4xl font-bold ${scoreColor}">${score}</span>
+                        <span class="text-sm text-gray-400 mb-1">/ 100</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-gray-800 rounded-full mt-4 overflow-hidden">
+                        <div class="h-full bg-gradient-to-r ${scoreGradient}" style="width: ${score}%"></div>
+                    </div>
+                </div>
+
+                <!-- Critical Issues -->
+                <div class="glass-panel p-6 rounded-xl relative overflow-hidden">
+                    <div class="text-sm text-gray-400 mb-1">Critical Issues</div>
+                    <div class="flex items-end gap-3">
+                        <span class="text-4xl font-bold text-danger">${report.summaryCounts.critical}</span>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-2">Requires immediate attention</div>
+                </div>
+
+                 <!-- Total Issues -->
+                <div class="glass-panel p-6 rounded-xl relative overflow-hidden">
+                    <div class="text-sm text-gray-400 mb-1">Total Violations</div>
+                    <div class="flex items-end gap-3">
+                        <span class="text-4xl font-bold text-white">${report.violations.length}</span>
+                    </div>
+                     <div class="text-xs text-gray-500 mt-2">Across scanned files</div>
+                </div>
+
+                <!-- Coverage -->
+                <div class="glass-panel p-6 rounded-xl relative overflow-hidden">
+                    <div class="text-sm text-gray-400 mb-1">Regulations Checked</div>
+                    <div class="flex items-end gap-3">
+                         <div class="flex gap-1 mt-2">
+                            <span class="px-1.5 py-0.5 rounded text-[10px] bg-blue-900/30 text-blue-400 border border-blue-800">GDPR</span>
+                            <span class="px-1.5 py-0.5 rounded text-[10px] bg-purple-900/30 text-purple-400 border border-purple-800">LGPD</span>
+                             <span class="px-1.5 py-0.5 rounded text-[10px] bg-green-900/30 text-green-400 border border-green-800">AI Act</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Violations Table -->
+            <div class="glass-panel rounded-xl overflow-hidden">
+                <div class="px-6 py-4 border-b border-border-dark flex items-center justify-between">
+                    <h3 class="font-bold text-lg">Active Violations</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-400">
+                        <thead class="text-xs text-gray-500 uppercase bg-surface-dark border-b border-border-dark">
+                            <tr>
+                                <th class="px-6 py-3">Severity</th>
+                                <th class="px-6 py-3">Rule</th>
+                                <th class="px-6 py-3">Message</th>
+                                <th class="px-6 py-3">Location</th>
+                                <th class="px-6 py-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${report.violations.map((v, i) => `
+                            <tr class="bg-surface-dark/20 border-b border-border-dark/50 hover:bg-surface-dark/40 transition-colors">
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 rounded-full text-xs font-bold ${v.severity === 'CRITICAL' ? 'bg-danger/10 text-danger border border-danger/20' : (v.severity === 'HIGH' ? 'bg-warning/10 text-warning border border-warning/20' : 'bg-success/10 text-success border border-success/20')}">${v.severity}</span>
+                                </td>
+                                <td class="px-6 py-4 font-mono text-xs text-white">${escapeHtml(v.rule)}</td>
+                                <td class="px-6 py-4 font-medium">${escapeHtml(v.message)}</td>
+                                <td class="px-6 py-4 font-mono text-xs opacity-70">Ln ${v.line}</td>
+                                <td class="px-6 py-4 text-right">
+                                    ${v.suggestedFix ?
+                `<button onclick="applyFix('${escapeHtml(v.suggestedFix.replace(/'/g, "\\'"))}')" class="text-primary hover:text-white font-medium hover:underline bg-primary/10 px-3 py-1.5 rounded border border-primary/30 transition-all hover:bg-primary hover:border-primary">Auto-Fix</button>` :
+                `<span class="text-gray-600 italic">Manual</span>`
+            }
+                                </td>
+                            </tr>
+                            `).join('')}
+                             
+                            ${report.violations.length === 0 ? `
+                            <tr>
+                                <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                                    <span class="material-symbols-outlined text-4xl mb-2 text-success">check_circle</span>
+                                    <p>Great job! No violations detected.</p>
+                                </td>
+                            </tr>
+                            ` : ''}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer Upgrade Call -->
+            ${!isPaid ? `
+            <div class="mt-8 bg-gradient-to-r from-surface-dark to-purple-900/20 border border-border-dark rounded-xl p-8 text-center">
+                <h2 class="text-2xl font-bold text-white mb-2">Detailed Compliance Reports</h2>
+                <p class="text-gray-400 mb-6 max-w-xl mx-auto">Upgrade to Professional to export PDF audit reports, unlock AI-powered automated fixes for complex issues, and access full history.</p>
+                <div class="flex justify-center gap-4">
+                     <button onclick="upgrade()" class="bg-primary hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-colors shadow-lg shadow-blue-900/30">
+                        Start 14-Day Free Trial
+                    </button>
+                </div>
+            </div>
             ` : ''}
 
-        ` : '<p style="text-align: center; color: var(--vscode-disabledForeground);">✅ No obvious violations detected.</p>'}
-    </div>
-
-    ${!isPaid ? `
-    <div class="premium-card-modern">
-        <div class="premium-header">
-            <div class="premium-badge">🚀 UPGRADE</div>
-            <h2 style="margin: 15px 0 10px 0; font-size: 1.8em; font-weight: 900;">Unlock Full Compliance Power</h2>
-            <p style="color: var(--vscode-descriptionForeground); font-size: 0.95em;">You're using the Free plan. Unlock enterprise-grade compliance scanning.</p>
         </div>
-
-        <div class="comparison-table">
-            <table class="pricing-table">
-                <thead>
-                    <tr>
-                        <th style="text-align: left;">Feature</th>
-                        <th style="text-align: center; color: #ff9800;">Free</th>
-                        <th style="text-align: center; background: linear-gradient(135deg, #1337ec, #7c3aed); color: white; border-radius: 8px 8px 0 0;">Pro</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>GDPR Scans</strong></td>
-                        <td style="text-align: center;">Max 5 results</td>
-                        <td style="text-align: center; font-weight: bold; color: #4caf50;">✓ Unlimited</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Global Compliance (GDPR, LGPD, CCPA, AI Act)</strong></td>
-                        <td style="text-align: center; color: #ef4444;">✗</td>
-                        <td style="text-align: center; font-weight: bold; color: #4caf50;">✓ Full Support</td>
-                    </tr>
-                    <tr>
-                        <td><strong>AI-Powered Deep Analysis</strong></td>
-                        <td style="text-align: center; color: #ef4444;">✗</td>
-                        <td style="text-align: center; font-weight: bold; color: #4caf50;">✓ Included</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Auto-Fix Violations</strong></td>
-                        <td style="text-align: center; color: #ef4444;">✗</td>
-                        <td style="text-align: center; font-weight: bold; color: #4caf50;">✓ One-Click</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Audit Reports (PDF)</strong></td>
-                        <td style="text-align: center; color: #ef4444;">✗</td>
-                        <td style="text-align: center; font-weight: bold; color: #4caf50;">✓ Export Ready</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="pricing-cta">
-            <div class="price-display">
-                <span class="price-amount">$49</span>
-                <span class="price-period">/user/month</span>
-            </div>
-            <p class="price-subtitle">First 14 days free • Cancel anytime</p>
-            <button class="btn-upgrade-modern" onclick="upgrade()">
-                <span class="btn-icon">🔓</span>
-                <span class="btn-text">Start Free Trial</span>
-            </button>
-            <p class="trust-badge">✓ No credit card required</p>
-        </div>
-
-        <div class="urgency-message">
-            <span style="color: #ff9800; font-weight: 600;">⚡ Limited Offer:</span>
-            First 100 beta testers get <strong>30% off</strong> for life.
-        </div>
-    </div>
-    ` : ''}
+    </main>
 
     <script>
         const vscode = acquireVsCodeApi();
-        
         function upgrade() { vscode.postMessage({ command: 'upgrade' }); }
-        
-        function fix(id) { vscode.postMessage({ command: 'fixViolation', id: id }); }
-        
-        function applyFix(code) { vscode.postMessage({ command: 'fixViolation', id: code }); }
-
-        function togglePreview(index) {
-            const row = document.getElementById('preview-row-' + index);
-            if (row.style.display === 'none') {
-                row.style.display = 'table-row';
-            } else {
-                row.style.display = 'none';
-            }
+        function applyFix(fixCode) { 
+            // In a real scenario we'd pass IDs, here we pass the code for the MVP handler
+            vscode.postMessage({ command: 'fixViolation', id: fixCode }); 
         }
     </script>
 </body>
