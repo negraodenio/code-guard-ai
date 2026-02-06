@@ -20,3 +20,10 @@ configSchema:
       description: "OpenAI API Key (Required for AI Analysis)"
   required:
     - OPENAI_API_KEY
+
+deploy:
+  runtime: node
+  entrypoint: server.js
+  env:
+    - name: PORT
+      value: "3000"
