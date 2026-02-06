@@ -1,0 +1,11 @@
+{
+    "$schema": "https://smithery.ai/schemas/server-card-v1.json",
+    "name": "CodeGuard AI",
+    "description": "Autonomous Compliance Officer for GDPR/LGPD/PCI auditing and auto-fixing.",
+    "transport": "stdio",
+    "features": [
+        "audit",
+        "auto-fix",
+        "shadow-api"
+    ]
+}
