@@ -356,16 +356,11 @@ async function main() {
                 // But properly we should use server.connect with transport
                 res.status(501).send("SSE Message handling requires full transport adapter implementation");
             });
-
-            app.listen(PORT, () => {
-                console.error(`CodeGuard Universal MCP Server running in SSE mode on port ${PORT}`);
-            });
-        } else {
-            const transport = new StdioServerTransport();
-            await server.connect(transport);
-            console.error("CodeGuard Universal MCP Server running in STDIO mode...");
         }
+        const transport = process.env.TRANSPORT_MODE || 'stdio';
+        // Use console.error purely for logs to keep stdout clean for JSON-RPC
+        console.error(`CodeGuard Universal MCP Server running in ${transport.toUpperCase()} mode...`);
+        runServer(transport as 'stdio' | 'sse').catch(console.error);
     }
-}
 
-main().catch(console.error);
+    main().catch(console.error);
