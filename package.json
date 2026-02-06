@@ -152,7 +152,8 @@
     "package.json",
     "README.md",
     "LICENSE",
-    "icon.png"
+    "icon.png",
+    ".well-known"
   ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
