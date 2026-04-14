@@ -1,116 +1,67 @@
-# 🛡️ CodeGuard AI
+# CodeGuard AI — AI Compliance & Code Intelligence System
 
-**Stop Shadow APIs from reaching production. Automate LGPD/GDPR compliance in your CI/CD.**
+https://code-guard.eu
 
-[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://marketplace.visualstudio.com/items?itemName=codeguard.codeguard-ai)
-[![License](https://img.shields.io/badge/license-Proprietary-lightgrey.svg)](LICENSE)
-<a href="https://glama.ai/mcp/servers/@negraodenio/code-guard-ai"><img src="https://glama.ai/mcp/servers/@negraodenio/code-guard-ai/badge" /></a>
-[![Smithery Badge](https://smithery.ai/badge/@negraodenio/code-guard-ai)](https://smithery.ai/server/@negraodenio/code-guard-ai)
+## 🚨 Problem
 
-> **Stop wasting hours in code reviews hunting for PII leaks.**
-> CodeGuard scans your code in seconds and **auto-fixes** compliance risks — so you ship faster and avoid €20M GDPR fines.
+AI-generated code introduces security, compliance, and regulatory risks.
 
----
-
-## 🚀 Works Everywhere You Code
-
-CodeGuard runs where you need it:
-
-### 1. 💻 **VS Code / Cursor**
-Instant feedback while you type.
-```bash
-Ctrl+Shift+P → "CodeGuard: Scan for Compliance"
-```
-[Install Extension](https://marketplace.visualstudio.com/items?itemName=codeguard.codeguard-ai)
-
-### 2. 🤖 **Claude Desktop (MCP)**
-Give your AI Agent a "Compliance Brain".
-```bash
-npx -y codeguard-ai start:mcp
-```
-
-### 3. 🔄 **CI/CD (GitHub Actions / GitLab)**
-Block non-compliant PRs automatically.
-```yaml
-# .github/workflows/security.yml
-- run: npx codeguard-ai scan . --fail-on-violation
-```
-
-### 4. ⚡ **CLI (Terminal)**
-```bash
-npm install -g codeguard-ai
-codeguard scan .
-```
+Companies lack tools to:
+- audit AI-generated code
+- ensure GDPR / AI Act compliance
+- maintain code quality at scale
 
 ---
 
-## ⚡ Why Developers Love CodeGuard
+## 💡 Solution
 
-| ❌ Without CodeGuard | ✅ With CodeGuard |
-|:---|:---|
-| Manual review for PII leaks | Instant detection in milliseconds |
-| Guess if code is compliant | Clear risk score + fine estimates |
-| Fix issues yourself | **AI auto-fix** applied with one click |
-| Risk €20M GDPR fines | Ship with confidence |
+CodeGuard AI is a system that analyzes, audits, and validates code using AI + deterministic rules.
 
 ---
 
-## 🧠 Multi-LLM Orchestrator
-We don't just wrap ChatGPT. We orchestrate a team of experts:
+## ⚙️ What it does
 
-*   **🧠 Security Specialist**: Uses **GPT-4o** for vulnerability detection.
-*   **⚖️ Legal Expert**: Uses **Claude 3.5 Sonnet** for nuanced compliance (GDPR/LGPD).
-*   **⚡ High-Speed Linter**: Uses **DeepSeek** for instant regex pres-canning.
-
----
-
-## 💰 Pricing & Plans
-
-| Feature | **Free (Local)** | **Pro (€79/mo)** | **Enterprise** |
-| :--- | :---: | :---: | :---: |
-| **Persona** | Indie Dev / Junior | Tech Lead / Teams | CTO / DPO |
-| **Goal** | Fix my own code | Fix the team's PRs | Pass the Audit |
-| **Shadow API Scan** | ✅ Unlimited | ✅ Unlimited | ✅ Unlimited |
-| **Deep Compliance Audit** | ❌ | ✅ LGPD/GDPR | ✅ All Frameworks |
-| **CI/CD Blocking** | ⚠️ Manual (No Exit Code) | ✅ **Automated (Exit 1)** | ✅ **Automated (Exit 1)** |
-| **Auto-Fix** | ❌ | ✅ Included | ✅ Included |
-| **Reports (PDF)** | ❌ | ❌ | ✅ Included |
-| **Support** | Community | Priority Email | Dedicated Slack |
-
-> **BYOK (Bring Your Own Key):** You can use the Pro AI features for free if you bring your own OpenAI/Anthropic API Key. (Manual setup required).
-
-[Start Pro Trial](https://code-guard.eu/pricing) | [Contact Enterprise Sales](https://code-guard.eu/enterprise)
+- Detects vulnerabilities and unsafe patterns  
+- Validates compliance (GDPR, AI Act, security standards)  
+- Audits AI-generated code before deployment  
+- Provides structured, actionable feedback  
 
 ---
 
-## 🏢 CodeGuard Enterprise
+## 🧠 Architecture
 
-For companies with 20+ developers or regulated industries (Finance, Health, Fintech).
-
-✅ **Everything in Pro, plus:**
-*   **Custom Frameworks:** PCI-DSS, HIPAA, SOC2, ISO 27001.
-*   **Governance Dashboard:** See risk posture across all repos.
-*   **Single Sign-On (SSO):** Okta, Azure AD, Google Workspace.
-*   **On-Premise:** Run CodeGuard inside your VPC (Air-gapped).
+- Multi-LLM analysis layer  
+- Rule-based validation layer  
+- Context-aware code understanding  
+- Diff-based auditing (Patch & Diff Engine)  
 
 ---
 
-## ❓ FAQ
+## 📈 Why this matters
 
-**Q: Is it free?**
-A: **Yes!** The basic Shadow API scanner is **free forever**. You can identify risks locally without paying anything.
+AI is writing more code than ever.
 
-**Q: What is the difference between Free and Pro?**
-A: Free is for **Discovery** (finding problems). Pro is for **Action** (blocking problems in CI/CD and auto-fixing them).
+Without control, this creates risk.
 
-**Q: Can I use my own API Keys (BYOK)?**
-A: Yes! If you want to use the Deep Audit features without a Pro subscription, you can configure your own OpenAI/Anthropic keys. However, CI/CD blocking features require a Pro license.
+CodeGuard turns AI-generated code into something:
+- safe  
+- compliant  
+- production-ready  
 
 ---
 
-## 📧 Support
+## 🛠 Stack
 
-*   **Email:** support@code-guard.eu
-*   **Docs:** [code-guard.eu/docs](https://code-guard.eu/docs)
+- TypeScript / Node.js
+- LLM APIs (multi-provider)
+- Static + AI analysis
+- API-first architecture
 
-Made with ❤️ by **CodeGuard** — Protect your code. Avoid fines. Ship with confidence.
+---
+
+## 🔥 Positioning
+
+Not a linter.  
+Not a scanner.  
+
+A system for governing AI-generated code.
