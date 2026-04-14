@@ -2,60 +2,80 @@
 
 https://code-guard.eu
 
+AI system for auditing, validating, and governing AI-generated code in production environments.
+
+---
+
 ## 🚨 Problem
 
-AI-generated code introduces security, compliance, and regulatory risks.
+AI is writing more code than ever.
 
-Companies lack tools to:
-- audit AI-generated code
-- ensure GDPR / AI Act compliance
-- maintain code quality at scale
+But:
+
+- Generated code introduces hidden security risks  
+- Compliance (GDPR, AI Act) is often ignored  
+- Teams lack visibility and control  
+- Errors scale faster than traditional review processes  
 
 ---
 
 ## 💡 Solution
 
-CodeGuard AI is a system that analyzes, audits, and validates code using AI + deterministic rules.
+CodeGuard AI analyzes and validates code using a hybrid approach:
+
+- AI reasoning (multi-LLM)
+- Deterministic validation rules
+- Context-aware code analysis
+
+This ensures that code is not just generated — but **safe, compliant, and production-ready**.
 
 ---
 
-## ⚙️ What it does
+## ⚙️ Core Capabilities
 
-- Detects vulnerabilities and unsafe patterns  
-- Validates compliance (GDPR, AI Act, security standards)  
-- Audits AI-generated code before deployment  
-- Provides structured, actionable feedback  
+- 🔍 Detect vulnerabilities and unsafe patterns  
+- 🛡 Validate compliance (GDPR, AI Act, security standards)  
+- 🧠 Audit AI-generated code before deployment  
+- 📊 Provide structured, actionable feedback  
+- 🔄 Analyze code changes using diff-based auditing  
 
 ---
 
 ## 🧠 Architecture
 
-- Multi-LLM analysis layer  
-- Rule-based validation layer  
+- Multi-LLM analysis layer (reasoning + detection)  
+- Rule-based validation layer (compliance + security)  
 - Context-aware code understanding  
-- Diff-based auditing (Patch & Diff Engine)  
+- Patch & Diff Engine (change-based auditing)  
 
 ---
 
 ## 📈 Why this matters
 
-AI is writing more code than ever.
+AI-generated code without governance creates systemic risk.
 
-Without control, this creates risk.
+CodeGuard transforms code generation into a controlled process:
 
-CodeGuard turns AI-generated code into something:
-- safe  
+- safer  
 - compliant  
-- production-ready  
+- scalable  
 
 ---
 
-## 🛠 Stack
+## 🛠 Tech Stack
 
-- TypeScript / Node.js
-- LLM APIs (multi-provider)
-- Static + AI analysis
-- API-first architecture
+- TypeScript / Node.js  
+- Multi-provider LLM APIs  
+- Static + AI analysis  
+- API-first architecture  
+
+---
+
+## 👥 Who is this for
+
+- Engineering teams using AI-generated code  
+- Companies operating under GDPR / AI Act  
+- Platforms integrating LLM-based development workflows  
 
 ---
 
