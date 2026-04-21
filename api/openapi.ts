@@ -24,7 +24,7 @@ export async function GET(request: Request) {
             },
             servers: [
                 {
-                    url: "https://your-app.vercel.app",
+                    url: "https://code-guard.eu",
                     description: "Production server"
                 }
             ],

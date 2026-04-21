@@ -1,10 +1,10 @@
 /**
  * CodeGuard AI - Production API Examples
  *
- * Replace 'https://your-app.vercel.app' with your actual Vercel deployment URL
+ * Official Base URL: https://code-guard.eu
  */
 
-const BASE_URL = 'https://your-app.vercel.app';
+const BASE_URL = 'https://code-guard.eu';
 const API_KEY = 'your-production-api-key';
 
 // ===========================================

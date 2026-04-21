@@ -30,7 +30,7 @@ jobs:
       id: codeguard
       run: |
         # Usar API do CodeGuard
-        RESPONSE=$(curl -X POST https://your-app.vercel.app/api/scan \
+        RESPONSE=$(curl -X POST https://code-guard.eu/api/scan \
           -H "x-api-key: ${{ secrets.CODEGUARD_API_KEY }}" \
           -H "Content-Type: application/json" \
           -d '{
@@ -81,7 +81,7 @@ jobs:
             }
           }
 
-          comment += '\n📊 [View full report](https://your-app.vercel.app/web/api-dashboard.html)';
+          comment += '\n📊 [View full report](https://code-guard.eu/web/api-dashboard.html)';
 
           github.rest.issues.createComment({
             issue_number: context.issue.number,
@@ -100,7 +100,7 @@ pipeline {
 
     environment {
         CODEGUARD_API_KEY = credentials('codeguard-api-key')
-        CODEGUARD_URL = 'https://your-app.vercel.app'
+        CODEGUARD_URL = 'https://code-guard.eu'
     }
 
     stages {
@@ -172,7 +172,7 @@ compliance_scan:
       echo "🔍 Running CodeGuard compliance scan..."
 
       # Fazer scan via API
-      RESPONSE=$(curl -X POST https://your-app.vercel.app/api/scan \
+      RESPONSE=$(curl -X POST https://code-guard.eu/api/scan \
         -H "x-api-key: $CODEGUARD_API_KEY" \
         -H "Content-Type: application/json" \
         -d "{
@@ -210,7 +210,7 @@ nightly_full_scan:
       echo "🌙 Running full nightly compliance scan..."
 
       # Scan mais profundo para master/develop
-      curl -X POST https://your-app.vercel.app/api/scan \
+      curl -X POST https://code-guard.eu/api/scan \
         -H "x-api-key: $CODEGUARD_API_KEY" \
         -H "Content-Type: application/json" \
         -d "{
@@ -246,7 +246,7 @@ steps:
     echo "🔍 Running CodeGuard compliance scan..."
 
     # Scan via API
-    response=$(curl -X POST https://your-app.vercel.app/api/scan \
+    response=$(curl -X POST https://code-guard.eu/api/scan \
       -H "x-api-key: $(CODEGUARD_API_KEY)" \
       -H "Content-Type: application/json" \
       -d '{
@@ -304,7 +304,7 @@ Para receber callbacks assíncronos:
 const webhookHandler = require('./examples/webhook-handler');
 
 // Configurar webhook URL no Vercel
-// https://your-app.vercel.app/api/webhook/configure
+// https://code-guard.eu/api/webhook/configure
 ```
 
 ## Estratégias de Blocking
