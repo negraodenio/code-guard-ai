@@ -1,28 +1,30 @@
 // Vercel API Route: app/api/codeguard/scan/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+// Standards: Web API Request/Response (Compat with Edge/Node)
 
 const CODEGUARD_API = 'https://api.codeguard.ai/v1';
 
 export const runtime = 'edge';
 export const maxDuration = 30;
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
+    const headers = { 'Content-Type': 'application/json' };
+    
     try {
         const { code, filename, frameworks = ['lgpd', 'gdpr'] } = await request.json();
 
         if (!code || !filename) {
-            return NextResponse.json(
-                { error: 'code and filename required' },
-                { status: 400 }
-            );
+            return new Response(JSON.stringify({ error: 'code and filename required' }), {
+                status: 400,
+                headers
+            });
         }
 
         const apiKey = process.env.CODEGUARD_API_KEY;
         if (!apiKey) {
-            return NextResponse.json(
-                { error: 'CODEGUARD_API_KEY not configured' },
-                { status: 500 }
-            );
+            return new Response(JSON.stringify({ error: 'CODEGUARD_API_KEY not configured' }), {
+                status: 500,
+                headers
+            });
         }
 
         const response = await fetch(`${CODEGUARD_API}/scan`, {
@@ -32,7 +34,7 @@ export async function POST(request: NextRequest) {
                 'x-api-key': apiKey,
             },
             body: JSON.stringify({
-                content: Buffer.from(code).toString('base64'),
+                content: btoa(code), // Standard btoa instead of Buffer for Edge
                 filename,
                 frameworks,
             }),
@@ -40,18 +42,21 @@ export async function POST(request: NextRequest) {
 
         if (!response.ok) {
             const error = await response.json();
-            return NextResponse.json(
-                { error: error.error || 'Scan failed' },
-                { status: response.status }
-            );
+            return new Response(JSON.stringify({ error: error.error || 'Scan failed' }), {
+                status: response.status,
+                headers
+            });
         }
 
         const data = await response.json();
-        return NextResponse.json(data);
+        return new Response(JSON.stringify(data), { status: 200, headers });
     } catch (error) {
-        return NextResponse.json(
-            { error: 'Scan failed', message: error instanceof Error ? error.message : 'Unknown' },
-            { status: 500 }
-        );
+        return new Response(JSON.stringify({ 
+            error: 'Scan failed', 
+            message: error instanceof Error ? error.message : 'Unknown' 
+        }), {
+            status: 500,
+            headers
+        });
     }
 }
