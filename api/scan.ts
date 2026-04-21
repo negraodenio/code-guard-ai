@@ -1,4 +1,6 @@
+import '../src/core/bootstrap';
 import { AuditDispatcher } from '../src/core/dispatcher';
+
 import { UnifiedAuthenticator } from '../src/core/auth';
 
 // Use Node.js runtime to allow FS operations via the shim
