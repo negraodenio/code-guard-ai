@@ -40,6 +40,14 @@
         {
             "src": "/api/docs",
             "dest": "/api/docs.ts"
+        },
+        {
+            "src": "/",
+            "dest": "/out/index.html"
+        },
+        {
+            "src": "/(.*\.(?:png|jpg|jpeg|gif|svg|css|js|json|html|ico))",
+            "dest": "/out/$1"
         }
     ]
 }
