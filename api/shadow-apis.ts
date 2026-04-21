@@ -50,7 +50,7 @@ export async function POST(request: Request) {
         }
 
         // Scan for shadow APIs
-        let violations = [];
+        let violations: any[] = [];
 
         if (content) {
             violations = ShadowAPIScanner.scan(content);
