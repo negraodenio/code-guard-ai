@@ -46,5 +46,5 @@
             "src": "/api/docs",
             "dest": "/api/docs.ts"
         }
-    ],
-}
+    ]
+}
