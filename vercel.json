@@ -46,7 +46,7 @@
             "dest": "/out/index.html"
         },
         {
-            "src": "/(.*\.(?:png|jpg|jpeg|gif|svg|css|js|json|html|ico))",
+            "src": "/(.*\\.(?:png|jpg|jpeg|gif|svg|css|js|json|html|ico))",
             "dest": "/out/$1"
         }
     ]
