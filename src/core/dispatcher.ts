@@ -44,7 +44,7 @@ export class AuditDispatcher {
         }
 
         // 2. Credit Check & Deduction (For non-Enterprise users)
-        const isEnterprise = license.plan === 'ENTERPRISE' || license.plan === 'PROFESSIONAL';
+        const isEnterprise = license.plan === 'ENTERPRISE' || license.plan === 'PRO';
         
         if (toolName === 'codeguard_audit' && !isEnterprise && !context.bypassCredits) {
             if (!context.userEmail) {

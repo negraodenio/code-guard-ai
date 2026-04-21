@@ -16,6 +16,7 @@ import express from 'express';
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
+import { z } from "zod";
 import { AuditDispatcher } from './core/dispatcher';
 import { UnifiedAuthenticator } from './core/auth';
 import { SecurityGuard } from './core/security';
@@ -47,9 +48,9 @@ function createMcpServer() {
         "codeguard_audit",
         "Runs deep compliance audit (GDPR/LGPD/PCI) on the current repository",
         {
-            region: { type: "string", enum: ["BR", "EU"], description: "Regulatory Region" },
-            frameworks: { type: "array", items: { type: "string" }, description: "Specific Framework IDs" },
-            filePath: { type: "string", description: "Optional: Specific path to scan" }
+            region: z.enum(["BR", "EU"]).describe("Regulatory Region"),
+            frameworks: z.array(z.string()).describe("Specific Framework IDs"),
+            filePath: z.string().optional().describe("Optional: Specific path to scan")
         },
         async (args) => {
             const result = await dispatcher.dispatch('codeguard_audit', args);
@@ -65,7 +66,7 @@ function createMcpServer() {
         "codeguard_graph",
         "Generates Dependency & Sensitivity Graph using Repo Intelligence Layer",
         {
-            filePath: { type: "string", description: "Optional: Target directory for graph generation" }
+            filePath: z.string().optional().describe("Optional: Target directory for graph generation")
         },
         async (args) => {
             const result = await dispatcher.dispatch('codeguard_graph', args);
@@ -81,8 +82,8 @@ function createMcpServer() {
         "detect_shadow_apis",
         "Detects undocumented API endpoints and security risks in source code",
         {
-            content: { type: "string", description: "Direct code content to analyze" },
-            filePath: { type: "string", description: "File path or directory to scan" }
+            content: z.string().optional().describe("Direct code content to analyze"),
+            filePath: z.string().optional().describe("File path or directory to scan")
         },
         async (args) => {
             const result = await dispatcher.dispatch('detect_shadow_apis', args);
