@@ -1,4 +1,3 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { AuditDispatcher } from '../src/core/dispatcher';
 import { UnifiedAuthenticator } from '../src/core/auth';
 
@@ -8,21 +7,20 @@ export const runtime = 'nodejs';
 // Singleton instance to minimize overhead in Serverless
 const dispatcher = new AuditDispatcher();
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
+    const headers = { 'Content-Type': 'application/json' };
+    
     try {
         // 1. Unified Authentication
         const authHeader = request.headers.get('authorization') || request.headers.get('x-api-key') || '';
         const auth = UnifiedAuthenticator.authenticate(authHeader);
 
         if (!auth.authenticated) {
-            return NextResponse.json(
-                {
-                    error: 'Unauthorized',
-                    message: 'Valid API key required in authorization header',
-                    docs: 'https://docs.codeguard.ai/api'
-                },
-                { status: 401 }
-            );
+            return new Response(JSON.stringify({
+                error: 'Unauthorized',
+                message: 'Valid API key required in authorization header',
+                docs: 'https://docs.codeguard.ai/api'
+            }), { status: 401, headers });
         }
 
         UnifiedAuthenticator.logAccess('POST', '/api/scan', auth.fingerprint!);
@@ -31,7 +29,6 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         
         // 3. Dispatch to Tool
-        // The API defaults to 'codeguard_audit' tool
         const result = await dispatcher.dispatch('codeguard_audit', {
             ...body,
             filePath: body.filePath || process.cwd() // Default to project root
@@ -40,22 +37,19 @@ export async function POST(request: NextRequest) {
         // 4. Handle tool response
         if (result.error) {
             const status = result.error === 'PREMIUM_FEATURE_LOCKED' ? 403 : 500;
-            return NextResponse.json(result, { status });
+            return new Response(JSON.stringify(result), { status, headers });
         }
 
-        return NextResponse.json({
+        return new Response(JSON.stringify({
             success: true,
             ...result
-        });
+        }), { status: 200, headers });
 
     } catch (error) {
         console.error('[API Scan Error]:', error);
-        return NextResponse.json(
-            { 
-                error: 'INTERNAL_ERROR',
-                message: error instanceof Error ? error.message : String(error)
-            },
-            { status: 500 }
-        );
+        return new Response(JSON.stringify({ 
+            error: 'INTERNAL_ERROR',
+            message: error instanceof Error ? error.message : String(error)
+        }), { status: 500, headers });
     }
-}
+}

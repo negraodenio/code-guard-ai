@@ -1,14 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import * as fs from 'fs';
-import * as path from 'path';
-
 // Edge Runtime for Vercel
 export const runtime = 'edge';
 
-export async function GET(request: NextRequest) {
+export async function GET(request: Request) {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, x-api-key, authorization'
+    };
+
     try {
-        // In Vercel, we need to read the file from the project root
-        // Since Edge Runtime has limitations, we'll serve a static response
         const openapiSpec = {
             openapi: "3.0.3",
             info: {
@@ -69,11 +70,7 @@ export async function GET(request: NextRequest) {
                                         schema: { $ref: "#/components/schemas/ScanResult" }
                                     }
                                 }
-                            },
-                            "400": { description: "Invalid input" },
-                            "401": { description: "Unauthorized" },
-                            "429": { description: "Rate limit exceeded" },
-                            "500": { description: "Internal server error" }
+                            }
                         }
                     }
                 },
@@ -90,10 +87,7 @@ export async function GET(request: NextRequest) {
                                         schema: { $ref: "#/components/schemas/GraphResult" }
                                     }
                                 }
-                            },
-                            "401": { description: "Unauthorized" },
-                            "429": { description: "Rate limit exceeded" },
-                            "500": { description: "Internal server error" }
+                            }
                         }
                     }
                 },
@@ -125,11 +119,7 @@ export async function GET(request: NextRequest) {
                                         schema: { $ref: "#/components/schemas/ShadowAPIResult" }
                                     }
                                 }
-                            },
-                            "400": { description: "Invalid input" },
-                            "401": { description: "Unauthorized" },
-                            "429": { description: "Rate limit exceeded" },
-                            "500": { description: "Internal server error" }
+                            }
                         }
                     }
                 }
@@ -194,20 +184,13 @@ export async function GET(request: NextRequest) {
             }
         };
 
-        return new NextResponse(JSON.stringify(openapiSpec, null, 2), {
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, x-api-key, authorization'
-            }
+        return new Response(JSON.stringify(openapiSpec, null, 2), { 
+            status: 200, 
+            headers 
         });
 
     } catch (error) {
         console.error('[API Error]', error);
-        return NextResponse.json(
-            { error: 'Internal server error' },
-            { status: 500 }
-        );
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers });
     }
 }

@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-
 // Edge Runtime for Vercel
 export const runtime = 'edge';
 
-export async function GET(request: NextRequest) {
+export async function GET(request: Request) {
     // Redirect to external documentation
-    return NextResponse.redirect('https://code-guard.eu/api-docs', { status: 302 });
+    return new Response(null, { 
+        status: 302, 
+        headers: { 'Location': 'https://code-guard.eu/api-docs' } 
+    });
 }

@@ -1,29 +1,27 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { ShadowAPIScanner } from '../../src/scanner/shadowApi';
-import { LicenseManager } from '../../src/license/LicenseManager';
+import { ShadowAPIScanner } from '../src/scanner/shadowApi';
+import { LicenseManager } from '../src/license/LicenseManager';
 
 // Edge Runtime for Vercel
 export const runtime = 'edge';
 
-async function authenticateApiKey(request: NextRequest): Promise<boolean> {
+async function authenticateApiKey(request: Request): Promise<boolean> {
     const apiKey = request.headers.get('x-api-key') || request.headers.get('authorization')?.replace('Bearer ', '');
     const validKeys = process.env.CODEGUARD_API_KEYS?.split(',') || [];
 
     return apiKey ? validKeys.includes(apiKey) : false;
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
+    const headers = { 'Content-Type': 'application/json' };
+
     try {
         // Check authentication
         if (!await authenticateApiKey(request)) {
-            return NextResponse.json(
-                {
-                    error: 'Unauthorized',
-                    message: 'Valid API key required',
-                    docs: 'https://code-guard.eu/api-docs'
-                },
-                { status: 401 }
-            );
+            return new Response(JSON.stringify({
+                error: 'Unauthorized',
+                message: 'Valid API key required',
+                docs: 'https://code-guard.eu/api-docs'
+            }), { status: 401, headers });
         }
 
         // Parse request body
@@ -32,33 +30,10 @@ export async function POST(request: NextRequest) {
 
         // Validate input
         if (!content && !filePath) {
-            return NextResponse.json(
-                {
-                    error: 'Validation failed',
-                    details: [{ msg: 'Either content or filePath must be provided', param: 'content,filePath' }]
-                },
-                { status: 400 }
-            );
-        }
-
-        if (content && typeof content !== 'string') {
-            return NextResponse.json(
-                {
-                    error: 'Validation failed',
-                    details: [{ msg: 'Content must be a string', param: 'content' }]
-                },
-                { status: 400 }
-            );
-        }
-
-        if (filePath && typeof filePath !== 'string') {
-            return NextResponse.json(
-                {
-                    error: 'Validation failed',
-                    details: [{ msg: 'File path must be a string', param: 'filePath' }]
-                },
-                { status: 400 }
-            );
+            return new Response(JSON.stringify({
+                error: 'Validation failed',
+                details: [{ msg: 'Either content or filePath must be provided', param: 'content,filePath' }]
+            }), { status: 400, headers });
         }
 
         // Check license
@@ -66,15 +41,12 @@ export async function POST(request: NextRequest) {
         const isAllowed = LicenseManager.checkGate('detect_shadow_apis', license.plan);
 
         if (!isAllowed) {
-            return NextResponse.json(
-                {
-                    error: "PREMIUM_FEATURE_LOCKED",
-                    message: `The shadow API detection requires a PRO license.`,
-                    upgrade_url: "https://code-guard.eu/enterprise",
-                    current_plan: license.plan
-                },
-                { status: 403 }
-            );
+            return new Response(JSON.stringify({
+                error: "PREMIUM_FEATURE_LOCKED",
+                message: `The shadow API detection requires a PRO license.`,
+                upgrade_url: "https://code-guard.eu/enterprise",
+                current_plan: license.plan
+            }), { status: 403, headers });
         }
 
         // Scan for shadow APIs
@@ -84,14 +56,10 @@ export async function POST(request: NextRequest) {
             violations = ShadowAPIScanner.scan(content);
         } else if (filePath) {
             // In Vercel Edge Runtime, we can't access the file system directly
-            // This would need to be adapted for serverless environment
-            return NextResponse.json(
-                {
-                    error: 'File system access not available',
-                    message: 'Use the content parameter instead of filePath in serverless environment'
-                },
-                { status: 400 }
-            );
+            return new Response(JSON.stringify({
+                error: 'File system access not available',
+                message: 'Use the content parameter instead of filePath in serverless environment'
+            }), { status: 400, headers });
         }
 
         const result = {
@@ -109,13 +77,10 @@ export async function POST(request: NextRequest) {
             }]
         };
 
-        return NextResponse.json(result);
+        return new Response(JSON.stringify(result), { status: 200, headers });
 
     } catch (error) {
         console.error('[API Error]', error);
-        return NextResponse.json(
-            { error: 'Internal server error' },
-            { status: 500 }
-        );
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500, headers });
     }
 }
