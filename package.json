@@ -158,7 +158,7 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "build": "npm run compile",
-    "compile": "tsc -p ./ && node -e \"require('fs').cpSync('.well-known', 'out/.well-known', {recursive: true})\"",
+    "compile": "tsc -p ./ && node -e \"require('fs').cpSync('index.html', 'out/index.html'); require('fs').cpSync('.well-known', 'out/.well-known', {recursive: true}); require('fs').cpSync('codeguard_enterprise_dashboard_1776795226536.png', 'out/codeguard_enterprise_dashboard_1776795226536.png'); require('fs').cpSync('codeguard_audit_report_1776795244790.png', 'out/codeguard_audit_report_1776795244790.png')\"",
     "watch": "tsc -watch -p ./",
     "start:mcp": "node out/src/mcp-server.js",
     "test": "mocha out/test/api.test.js --timeout 10000",
