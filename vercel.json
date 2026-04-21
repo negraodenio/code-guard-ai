@@ -47,12 +47,4 @@
             "dest": "/api/docs.ts"
         }
     ],
-    "env": {
-        "SILICONFLOW_API_KEY": "@siliconflow_api_key",
-        "KIMI_API_KEY": "@kimi_api_key",
-        "OPENAI_API_KEY": "@openai_api_key",
-        "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret",
-        "CODEGUARD_API_KEYS": "@codeguard_api_keys",
-        "CODEGUARD_LICENSE_KEY": "@codeguard_license_key"
-    }
-}
+}
