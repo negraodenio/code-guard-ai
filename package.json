@@ -172,6 +172,7 @@
     "@types/mocha": "^10.0.10",
     "@types/morgan": "^1.9.10",
     "@types/supertest": "^7.2.0",
+    "@vercel/node": "^5.7.12",
     "chai": "^6.2.2",
     "mocha": "^11.7.5",
     "supabase": "^2.72.8",
