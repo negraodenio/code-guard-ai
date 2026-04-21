@@ -47,7 +47,7 @@ const mockVscode = {
 
 (global as any).vscode = mockVscode;
 
-import { PatchEngine, Violation } from '../src/intelligence/patch';
+import { PatchEngine, Violation } from '../../src/intelligence/patch';
 
 export async function handler(req: Request): Promise<Response> {
     const headers = {

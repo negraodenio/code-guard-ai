@@ -6,7 +6,7 @@
  * Retorna saldo de créditos do usuário.
  */
 
-import { getSupabaseClient } from '../src/supabase/client';
+import { getSupabaseClient } from '../../src/supabase/client';
 
 export async function handler(req: Request): Promise<Response> {
     const headers = {

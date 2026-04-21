@@ -7,7 +7,7 @@
  * Handles 'checkout.session.completed'.
  */
 
-import { getSupabaseClient } from '../src/supabase/client';
+import { getSupabaseClient } from '../../src/supabase/client';
 
 // Simple Stripe Signature Verification (Mock for Edge, use 'stripe' npm in Node)
 // In production Vercel Edge, we'd use 'stripe-edge' or similar

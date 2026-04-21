@@ -52,9 +52,9 @@ const mockVscode = {
 (global as any).vscode = mockVscode;
 
 // Import after mock
-import { ComplianceOrchestrator } from '../src/intelligence/orchestrator';
-import { ContextBatcher } from '../src/intelligence/batcher';
-import { costAnalytics } from '../src/dashboard/cost-analytics';
+import { ComplianceOrchestrator } from '../../src/intelligence/orchestrator';
+import { ContextBatcher } from '../../src/intelligence/batcher';
+import { costAnalytics } from '../../src/dashboard/cost-analytics';
 
 /**
  * Main handler for HTTP requests
