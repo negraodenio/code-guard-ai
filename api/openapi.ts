@@ -15,7 +15,7 @@ export async function GET(request: Request) {
             info: {
                 title: "CodeGuard AI API",
                 description: "REST API for CodeGuard AI compliance scanning and analysis",
-                version: "1.0.0",
+                version: "1.2.0",
                 contact: {
                     name: "CodeGuard AI Support",
                     url: "https://code-guard.eu",
