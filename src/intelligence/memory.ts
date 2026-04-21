@@ -54,6 +54,7 @@ export class CodingMemory {
     private router = getLLMRouter();
     private readonly CHUNK_SIZE = 1500; // tokens (~6000 chars)
     private readonly OVERLAP = 200; // tokens overlap between chunks
+    private readonly PERSIST_REMOTE = (process.env.CODEGUARD_MEMORY_PERSIST || '').toLowerCase() === 'true';
 
     /**
      * Initialize memory for a repo context
@@ -81,7 +82,7 @@ export class CodingMemory {
         }
 
         const chunks = this.chunkContent(content, filePath);
-        const supabase = getSupabaseClient();
+        const supabase = this.PERSIST_REMOTE ? getSupabaseClient() : null;
 
         for (let i = 0; i < chunks.length; i++) {
             const chunk = chunks[i];
@@ -94,7 +95,7 @@ export class CodingMemory {
                 // Store in cache
                 this.cache.set(`${filePath}:${i}`, embedding);
 
-                // Store in Supabase if available
+                // Store in Supabase only if explicitly enabled
                 if (supabase) {
                     await supabase.from('code_memory').upsert({
                         id: `${filePath}:${i}:${hash}`,

@@ -25,16 +25,6 @@ export class LicenseManager {
             return this.handleTrial(key, globalState);
         }
 
-        // ADMIN BYPASS
-        const userEmail = vscode.workspace.getConfiguration('codeguard').get<string>('userEmail');
-        if (userEmail && userEmail.trim().toLowerCase() === 'negraodenio@gmail.com') {
-            return {
-                plan: PlanType.Enterprise,
-                isValid: true,
-                maxViolations: Infinity
-            };
-        }
-
         // 2. Offline Fallback (Grace Period)
         // If we have a cached valid license state in globalState, respect it if within 7 days
         const cached = globalState.get<any>('vibe.license.cache');

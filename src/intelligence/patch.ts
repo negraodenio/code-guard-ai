@@ -455,6 +455,30 @@ Return ONLY the fixed line of code. Do not include markdown or explanations.`;
         edit.replace(document.uri, range, fixedCode);
         return await vscode.workspace.applyEdit(edit);
     }
+
+    static async applyFixRange(
+        document: vscodeTypes.TextDocument,
+        fixedCode: string,
+        lineStart: number,
+        lineEnd: number
+    ): Promise<boolean> {
+        const start = Math.max(1, Math.floor(lineStart || 1));
+        const end = Math.max(start, Math.floor(lineEnd || start));
+
+        const endLineText = document.lineAt(end - 1).text;
+        const range = new vscode.Range(
+            new vscode.Position(start - 1, 0),
+            new vscode.Position(end - 1, endLineText.length)
+        );
+
+        const edit = new vscode.WorkspaceEdit();
+        edit.replace(document.uri, range, fixedCode);
+        const ok = await vscode.workspace.applyEdit(edit);
+        if (ok) {
+            await document.save();
+        }
+        return ok;
+    }
 }
 
 export default PatchEngine;

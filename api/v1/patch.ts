@@ -68,11 +68,19 @@ export async function handler(req: Request): Promise<Response> {
     }
 
     try {
-        // Security: API Key Validation
-        const authHeader = req.headers.get('Authorization');
-        const internalKey = process.env.CODEGUARD_API_SECRET;
+        // Security: API Key Validation (FAIL-CLOSED)
+        const authHeader = req.headers.get('Authorization') || '';
+        const internalKey = process.env.CODEGUARD_API_SECRET; // REQUIRED in production
 
-        if (internalKey && (!authHeader || !authHeader.startsWith('Bearer ') || authHeader.split(' ')[1] !== internalKey)) {
+        if (!internalKey || internalKey.trim().length < 16) {
+            return new Response(JSON.stringify({ error: 'Service misconfigured: CODEGUARD_API_SECRET is required' }), {
+                status: 503,
+                headers
+            });
+        }
+
+        const token = authHeader.startsWith('Bearer ') ? authHeader.slice('Bearer '.length) : '';
+        if (!token || token !== internalKey) {
             return new Response(JSON.stringify({ error: 'Unauthorized: Invalid API Key' }), {
                 status: 401,
                 headers

@@ -12,10 +12,57 @@ import { getSupabaseClient } from '../src/supabase/client';
 // Simple Stripe Signature Verification (Mock for Edge, use 'stripe' npm in Node)
 // In production Vercel Edge, we'd use 'stripe-edge' or similar
 async function verifyStripeSignature(req: Request, secret: string) {
-    // This is a placeholder. Real implementation requires crypto/subtle
-    // For MVP/Demo correctness, verifying the secret in the payload or URL is easier
-    // but less secure. We'll assume the header presence for now.
-    return req.headers.get('stripe-signature') ? true : false;
+    const sigHeader = req.headers.get('stripe-signature');
+    if (!sigHeader) return false;
+
+    // Stripe-Signature: t=timestamp,v1=signature[,v1=signature2...]
+    const parts = sigHeader.split(',').map(s => s.trim());
+    const tPart = parts.find(p => p.startsWith('t='));
+    const v1Parts = parts.filter(p => p.startsWith('v1='));
+    if (!tPart || v1Parts.length === 0) return false;
+
+    const timestamp = tPart.slice(2);
+    const signatures = v1Parts.map(p => p.slice(3)).filter(Boolean);
+    if (!timestamp || signatures.length === 0) return false;
+
+    // Replay protection (default 5 minutes)
+    const toleranceSec = parseInt(process.env.STRIPE_WEBHOOK_TOLERANCE_SEC || '300', 10);
+    const nowSec = Math.floor(Date.now() / 1000);
+    const ts = parseInt(timestamp, 10);
+    if (!Number.isFinite(ts) || Math.abs(nowSec - ts) > toleranceSec) return false;
+
+    // Body must be the raw payload used to compute signature. We'll accept it as req text read by caller.
+    const rawBody = (req as any).__rawBody as string | undefined;
+    if (!rawBody) return false;
+
+    const signedPayload = `${timestamp}.${rawBody}`;
+    const enc = new TextEncoder();
+
+    const key = await crypto.subtle.importKey(
+        'raw',
+        enc.encode(secret),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign']
+    );
+
+    const mac = await crypto.subtle.sign('HMAC', key, enc.encode(signedPayload));
+    const bytes = new Uint8Array(mac);
+    let hex = '';
+    for (const b of bytes) hex += b.toString(16).padStart(2, '0');
+
+    // Constant-time-ish compare against any provided v1 signature
+    const expected = hex.toLowerCase();
+    for (const provided of signatures) {
+        const a = expected;
+        const b = (provided || '').toLowerCase();
+        if (a.length !== b.length) continue;
+        let diff = 0;
+        for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+        if (diff === 0) return true;
+    }
+
+    return false;
 }
 
 export async function handler(req: Request): Promise<Response> {
@@ -37,6 +84,7 @@ export async function handler(req: Request): Promise<Response> {
         }
 
         const text = await req.text();
+        (req as any).__rawBody = text;
         const event = JSON.parse(text);
 
         // Security check: Verify Stripe Signature

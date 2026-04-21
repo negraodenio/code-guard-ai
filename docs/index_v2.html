@@ -90,16 +90,16 @@
                     Support</span>
             </div>
             <h1 class="text-slate-900 dark:text-white text-4xl font-black leading-[1.1] tracking-tight mb-6">
-                Compliance that feels like <span class="text-primary">Magic.</span>
+                One Engine.<br><span class="text-primary">Three Ways to Secure.</span>
             </h1>
-            <p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-relaxed max-w-[320px] mb-8">
-                Automate GDPR, HIPAA, and EU AI Act compliance directly in your IDE with AI-powered security fixes.
+            <p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-relaxed max-w-md mb-8">
+                The ultimate compliance infrastructure for modern engineering. Secure your code via <strong>IDE, API, or MCP Server.</strong>
             </p>
             <div class="flex flex-col w-full gap-3 sm:flex-row sm:justify-center">
                 <button
                     class="w-full sm:w-auto bg-primary text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-primary/25 flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined">download</span>
-                    Install Extension
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    Buy License Pack
                 </button>
                 <button
                     class="w-full sm:w-auto bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2">
@@ -234,6 +234,69 @@
             </div>
         </div>
     </section>
+
+    <!-- Unified Access: MCP & API (NEW) -->
+    <section class="px-4 py-16 bg-slate-900 text-white overflow-hidden relative">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[80px] rounded-full"></div>
+        <div class="relative z-10">
+            <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 mb-6">
+                <span class="text-[10px] font-bold uppercase tracking-wider">Enterprise Ready</span>
+            </div>
+            <h2 class="text-3xl font-black mb-4 leading-tight">Triple-Channel Protection</h2>
+            <p class="text-slate-400 text-sm mb-10 max-w-sm">One license. Total coverage. Secure your entire SDLC across three powerful interfaces.</p>
+            
+            <div class="space-y-8">
+                <!-- IDE Option -->
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white">code</span>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold mb-1">1. IDE Extension (VS Code & Cursor)</h4>
+                        <p class="text-slate-400 text-xs leading-relaxed">The frontend for your developers. Real-time scanning, inline fixes, and total control within the editor.</p>
+                    </div>
+                </div>
+                <!-- MCP Option -->
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0 w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white">hub</span>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold mb-1">2. MCP Server (AI Agents)</h4>
+                        <p class="text-slate-400 text-xs leading-relaxed">The interface for your AI Agents. Give <strong>Claude Desktop</strong> and <strong>Cursor</strong> the memory to follow your company standards.</p>
+                    </div>
+                </div>
+                <!-- API Option -->
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0 w-10 h-10 bg-emerald-accent rounded-lg flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white">api</span>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold mb-1">3. REST API & CLI</h4>
+                        <p class="text-slate-400 text-xs leading-relaxed">The backbone for your **CI/CD Pipeline**. Automate compliance in Vercel, GitHub Actions, and Jenkins.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Snippet Area -->
+            <div class="mt-12 p-1 bg-white/5 border border-white/10 rounded-xl">
+                <div class="bg-black/40 rounded-lg p-4 font-mono text-[10px] text-slate-300">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-slate-500">example-request.sh</span>
+                        <div class="flex gap-1.5">
+                            <div class="w-1.5 h-1.5 rounded-full bg-white/20"></div>
+                            <div class="w-1.5 h-1.5 rounded-full bg-white/20"></div>
+                        </div>
+                    </div>
+                    <code class="block">
+                        <span class="text-primary">curl</span> -X POST https://api.codeguard.ai/scan \<br>
+                        &nbsp;&nbsp;-H <span class="text-emerald-accent">"Authorization: Bearer CG_KEY"</span> \<br>
+                        &nbsp;&nbsp;-d '{ "region": "EU", "frameworks": ["GDPR"] }'
+                    </code>
+                </div>
+            </div>
+        </div>
+    </section>
     <!-- Compliance Section -->
     <section class="bg-primary/5 px-4 py-16 border-y border-primary/10">
         <div class="text-center mb-8">
@@ -318,6 +381,10 @@
                     <li class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
                         <span class="material-symbols-outlined text-emerald-accent text-lg">bolt</span>
                         <strong>One-Click Auto-Fix</strong>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-emerald-accent text-lg">public</span>
+                        <strong>Triple Channel Access:</strong> IDE, API & MCP Server
                     </li>
                     <li class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
                         <span class="material-symbols-outlined text-emerald-accent text-lg">check_circle</span>

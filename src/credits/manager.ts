@@ -20,11 +20,6 @@ export class CreditsManager {
             return { balance: 0, hasCredits: false };
         }
 
-        // ADMIN BYPASS
-        if (email.trim().toLowerCase() === 'negraodenio@gmail.com') {
-            return { balance: 999999, hasCredits: true };
-        }
-
         try {
             const { data, error } = await supabase
                 .rpc('get_credits', { user_email: email });

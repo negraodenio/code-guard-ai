@@ -9,28 +9,25 @@ import { vscode } from '../utils/vscode-compat';
  * 
  * DECISÕES CRÍTICAS:
  * 
- * 1. SCAN: Kimi K2.5
-    * - Custo: $0.15 / M input, $2.50 / M output
-        * - Contexto: 262k tokens(2x maior que GPT - 4o)
-            * - Ideal para análise de arquivos inteiros
-                * 
- * 2. PATCH: GPT - 4o - mini
-    * - Custo: $0.15 / M input, $0.60 / M output
-        * - 85 % mais barato que Claude Haiku($4.00 / M output)
-            * - Qualidade suficiente para geração de código
-                * 
+ * 1. SCAN: MiniMax 2.7 (MiniMax-Text-01)
+ * - Custo: $0.30 / M input, $1.20 / M output
+ * - Contexto: 205k tokens (Otimizado para Coding)
+ * - Ideal para análise profunda e agentic workflows
+ * 
+ * 2. PATCH: GPT-4o-mini
+ * - Custo: $0.15 / M input, $0.60 / M output
+ * - 85% mais barato que Claude Haiku ($4.00 / M output)
+ * - Qualidade suficiente para geração de código
+ * 
  * 3. EMBEDDINGS: SiliconFlow
-    * - Custo: ~$0.01 / M tokens
-        * - 10x mais barato que OpenAI($0.10 / M)
-            * - Performance 2.3x mais rápida
-                * 
- * 4. EXPLAIN: Kimi K2.5
-    * - Contexto 262k permite análise de projetos inteiros
-        * - Melhor para explicações detalhadas
-            * 
- * 5. FALLBACK: OpenRouter
-    * - Markup de 5.5 % sobre APIs diretas
-        * - Usar APENAS quando APIs diretas falharem
+ * - Custo: ~$0.01 / M tokens
+ * - 10x mais barato que OpenAI ($0.10 / M)
+ * 
+ * 4. EXPLAIN: MiniMax 2.7
+ * - Contexto de 205k e alta inteligência para códigos complexos
+ * 
+ * 5. FALLBACK: Kimi K2.5 / OpenRouter
+ * - Kimi mantido como redundância de contexto longo (262k)
             * 
  * ECONOMIA MENSAL(1M scans):
  * - Config anterior: $3, 650 / mês
@@ -60,13 +57,36 @@ export interface LLMProviderConfig {
 }
 
 /**
- * Provider configurations with real pricing data (Jan 2026)
+ * Provider configurations with real pricing data (Early 2026)
  */
 export const PROVIDERS: Record<string, LLMProviderConfig> = {
     /**
-     * 🥇 PRIMÁRIO: Kimi K2.5 (Moonshot AI)
-     * Melhor custo-benefício para scan e explain
-     * Contexto gigante: 262k tokens
+     * 🥇 SCAN & EXPLAIN: MiniMax 2.7 (MiniMax-Text-01)
+     * Melhor desempenho para codificação e lógica agentic
+     * ContextWindow: 205k tokens
+     */
+    minimax: {
+        name: 'MiniMax 2.7',
+        apiKey: process.env.MINIMAX_API_KEY || '',
+        baseUrl: 'https://api.minimax.chat/v1',
+        models: {
+            scan: 'minimax-text-01',
+            patch: 'minimax-text-01',
+            embeddings: 'embo-01',
+            explain: 'minimax-text-01',
+        },
+        pricing: {
+            inputPer1M: 0.30,   // $0.30 per 1M input
+            outputPer1M: 1.20,  // $1.20 per 1M output
+        },
+        contextWindow: 205_000,
+        maxRetries: 3,
+        priority: 1,
+    },
+
+    /**
+     * 🥈 FALLBACK / CONTEXT: Kimi K2.5 (Moonshot AI)
+     * Maior contexto disponível: 262k
      */
     kimi: {
         name: 'Kimi K2.5',
@@ -84,7 +104,7 @@ export const PROVIDERS: Record<string, LLMProviderConfig> = {
         },
         contextWindow: 262_144, // 262k tokens
         maxRetries: 3,
-        priority: 1,
+        priority: 2,
     },
 
     /**
@@ -108,7 +128,7 @@ export const PROVIDERS: Record<string, LLMProviderConfig> = {
         },
         contextWindow: 128_000,
         maxRetries: 3,
-        priority: 2,
+        priority: 3,
     },
 
     /**
@@ -132,7 +152,7 @@ export const PROVIDERS: Record<string, LLMProviderConfig> = {
         },
         contextWindow: 128_000,
         maxRetries: 3,
-        priority: 3,
+        priority: 4,
     },
 
     /**
@@ -172,18 +192,18 @@ export const PROVIDERS: Record<string, LLMProviderConfig> = {
 export const ROUTING_CONFIG = {
     // Provider primário por tarefa
     primary: {
-        scan: 'kimi',
+        scan: 'minimax',
         patch: 'openai',
         embeddings: 'siliconflow',
-        explain: 'kimi',
+        explain: 'minimax',
     } as const,
 
     // Fallbacks ordenados por custo
     fallbacks: {
-        scan: ['openai', 'siliconflow', 'openrouter'],
-        patch: ['kimi', 'siliconflow', 'openrouter'],
+        scan: ['kimi', 'openai', 'siliconflow', 'openrouter'],
+        patch: ['minimax', 'kimi', 'siliconflow', 'openrouter'],
         embeddings: ['openai', 'openrouter'],
-        explain: ['openai', 'siliconflow', 'openrouter'],
+        explain: ['kimi', 'openai', 'siliconflow', 'openrouter'],
     } as const,
 
     // Limites de custo (alertas)
@@ -195,7 +215,7 @@ export const ROUTING_CONFIG = {
         maxMonthly: 1000,      // $1000/mês (trigger alerta)
     },
 
-    // Estimativas de tokens por operação
+    // Estimativas de tokens por operaçãoção
     tokenEstimates: {
         scan: { input: 2000, output: 500 },
         patch: { input: 1500, output: 800 },
@@ -300,6 +320,7 @@ export function checkCostLimit(task: TaskType, estimatedCost: number): boolean {
  * Useful after loading .env file in extension activation
  */
 export function reloadEnvConfig() {
+    if (process.env.MINIMAX_API_KEY) PROVIDERS.minimax.apiKey = process.env.MINIMAX_API_KEY;
     if (process.env.KIMI_API_KEY) PROVIDERS.kimi.apiKey = process.env.KIMI_API_KEY;
     if (process.env.OPENAI_API_KEY) PROVIDERS.openai.apiKey = process.env.OPENAI_API_KEY;
     if (process.env.SILICONFLOW_API_KEY) PROVIDERS.siliconflow.apiKey = process.env.SILICONFLOW_API_KEY;

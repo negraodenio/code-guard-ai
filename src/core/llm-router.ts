@@ -5,10 +5,10 @@
  * com fallback automático e tracking de custos.
  * 
  * ESTRATÉGIA:
- * 1. Kimi K2.5: Scan + Explain (contexto 262k, custo baixo)
+ * 1. MiniMax 2.7: Scan + Explain (contexto 205k, otimizado para coding)
  * 2. GPT-4o-mini: Patch (85% mais barato que Haiku)
  * 3. SiliconFlow: Embeddings (10x mais barato que OpenAI)
- * 4. OpenRouter: Fallback universal (5.5% markup)
+ * 4. Kimi K2.5: Fallback de contexto longo (262k)
  */
 
 import {
@@ -388,9 +388,9 @@ export class LLMRouter {
     private getRoutingReason(task: TaskType, provider: ProviderName): string {
         const reasons: Record<TaskType, Record<string, string>> = {
             scan: {
-                kimi: 'Kimi K2.5: Contexto 262k, $0.15/M input - ideal para análise completa',
+                minimax: 'MiniMax 2.7: Contexto 205k, otimizado para Deep Coding & Agents',
+                kimi: 'Kimi K2.5: Fallback de contexto longo (262k)',
                 openai: 'GPT-4o-mini: Fallback confiável, $0.15/M input',
-                siliconflow: 'DeepSeek: Custo mínimo, bom para scans simples',
                 openrouter: 'OpenRouter: Gateway universal (+5.5% markup)',
             },
             patch: {

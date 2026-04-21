@@ -53,10 +53,10 @@
         O Vibe Code automatiza auditorias, identifica violações, sugere correções e aplica auto-fix direto no VS Code.
     </p>
     <div class="features">
-        <div class="feature-card"><h3>AI-Powered Scanning</h3><p>Detecta padrões complexos de violações com inteligência artificial.</p></div>
-        <div class="feature-card"><h3>Compliance Packs</h3><p>GDPR, LGPD, PCI-DSS, HIPAA, OWASP e AI Act, prontos para uso.</p></div>
-        <div class="feature-card"><h3>Auto-Fix Inteligente</h3><p>Correções automáticas para planos Professional/Enterprise.</p></div>
-        <div class="feature-card"><h3>Dashboard Premium</h3><p>Visualize violações, gravidade e relatórios executivos detalhados.</p></div>
+        <div class="feature-card"><h3>Triple Play Access</h3><p>Proteção via <strong>IDE, MCP Server e API REST</strong>. Use onde quiser.</p></div>
+        <div class="feature-card"><h3>Compliance Packs</h3><p>GDPR, LGPD, PCI-DSS, HIPAA e AI Act, prontos para uso em escala.</p></div>
+        <div class="feature-card"><h3>Auto-Fix Inteligente</h3><p>Correções automáticas integradas no editor e via Agentes (MCP).</p></div>
+        <div class="feature-card"><h3>Enterprise Ready</h3><p>Dashboard centralizado e auditoria imutável via API dedicada.</p></div>
     </div>
 </section>
 
@@ -98,11 +98,40 @@
             <h3>ENTERPRISE</h3>
             <p class="plan-price">$1.999/mês</p>
             <ul class="plan-features">
-                <li>API dedicada</li>
+                <li>Acesso API & MCP Server</li>
                 <li>On-premise deployment</li>
-                <li>SLAs e Treinamento</li>
+                <li>Suporte 24/7 e Treinamento</li>
+                <li>Custom Compliance Rules</li>
             </ul>
             <a href="#contact" class="cta-primary">Solicite Demo</a>
+        </div>
+    </div>
+</section>
+
+<section id="mcp-api" style="background: #1e1e1e; color: white; padding: 80px 20px;">
+    <div style="max-width: 1200px; margin: auto; text-align: center;">
+        <span style="background: #667eea; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">Enterprise Ready</span>
+        <h2 style="margin-top: 20px; font-size: 2.5rem; color: white;">Acesso Unificado: MCP & REST API</h2>
+        <p style="color: #ccc; max-width: 700px; margin: 20px auto 40px;">Integre o CodeGuard AI em qualquer lugar. Do seu agente local ao seu pipeline CI/CD global.</p>
+        
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; text-align: left;">
+            <div style="flex: 1 1 300px; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <h4 style="color: #667eea; margin-top: 0; font-size: 1.2rem;">🚀 Suporte MCP (Model Context Protocol)</h4>
+                <p style="font-size: 0.9rem; color: #aaa;">Integração total com <strong>Cursor, Claude Desktop</strong> e agentes de IDE. Consciência de contexto em tempo real para auditorias instantâneas.</p>
+            </div>
+            <div style="flex: 1 1 300px; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <h4 style="color: #4caf50; margin-top: 0; font-size: 1.2rem;">🌐 API REST Universal</h4>
+                <p style="font-size: 0.9rem; color: #aaa;">Automatize o compliance no seu <strong>Vercel, GitHub Actions</strong> ou pipelines customizados. Relatórios JSON de nível empresarial.</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 50px; background: #000; padding: 20px; border-radius: 8px; font-family: monospace; text-align: left; border: 1px solid #333; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <p style="color: #667eea; margin: 0 0 10px 0;"># Exemplo de Requisição API</p>
+            <code style="color: #aaa; font-size: 0.85rem; line-height: 1.5;">
+                curl -X POST https://api.codeguard.ai/scan \<br>
+                &nbsp;&nbsp;-H "Authorization: Bearer CG_KEY" \<br>
+                &nbsp;&nbsp;-d '{ "region": "BR", "frameworks": ["LGPD"] }'
+            </code>
         </div>
     </div>
 </section>

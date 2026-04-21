@@ -1,0 +1,29 @@
+{
+  "name": "codeguard-sdk",
+  "version": "1.0.0",
+  "description": "Official SDK for CodeGuard AI API",
+  "main": "dist/client.js",
+  "types": "dist/client.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"SDK tests would go here\""
+  },
+  "keywords": [
+    "codeguard",
+    "compliance",
+    "gdpr",
+    "lgpd",
+    "security",
+    "api"
+  ],
+  "author": "CodeGuard AI",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/negraodenio/code-guard-ai"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "@types/node": "^20.0.0"
+  }
+}

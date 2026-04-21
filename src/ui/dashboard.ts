@@ -14,9 +14,17 @@ function escapeHtml(unsafe: string): string {
         .replace(/'/g, "&#039;");
 }
 
+function getNonce(): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let out = '';
+    for (let i = 0; i < 32; i++) out += chars.charAt(Math.floor(Math.random() * chars.length));
+    return out;
+}
+
 export function getWebviewContent(report: ComplianceReport): string {
     const isPaid = report.plan !== 'FREE';
     const effectivePlan = (report.plan === 'PROFESSIONAL' && (report as any).creditBalance > 0) ? 'CREDIT' : report.plan;
+    const nonce = getNonce();
 
     // Calculate Score (Mock logic based on violation density for now, or use real if available)
     const violationCount = report.violations.length;
@@ -32,14 +40,14 @@ export function getWebviewContent(report: ComplianceReport): string {
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https: data:; style-src 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; script-src 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https: data:; style-src 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; script-src 'nonce-${nonce}' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com;">
     <title>CodeGuard AI Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
+    <script nonce="${nonce}" src="https://cdn.tailwindcss.com"></script>
+    <script nonce="${nonce}" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script nonce="${nonce}">
         tailwind.config = {
             darkMode: "class",
             theme: {
@@ -110,7 +118,7 @@ export function getWebviewContent(report: ComplianceReport): string {
             </h1>
             <div class="flex items-center gap-4">
                ${!isPaid ?
-            `<button onclick="upgrade()" class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:shadow-lg transition-all">
+            `<button data-action="upgrade" class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:shadow-lg transition-all">
                     <span class="material-symbols-outlined text-lg">rocket_launch</span>
                     Upgrade Plan
                 </button>` :
@@ -194,7 +202,7 @@ export function getWebviewContent(report: ComplianceReport): string {
                                 <td class="px-6 py-4 font-mono text-xs opacity-70">Ln ${v.line}</td>
                                 <td class="px-6 py-4 text-right">
                                     ${v.suggestedFix ?
-                `<button onclick="applyFix('${escapeHtml(v.suggestedFix.replace(/'/g, "\\'"))}')" class="text-primary hover:text-white font-medium hover:underline bg-primary/10 px-3 py-1.5 rounded border border-primary/30 transition-all hover:bg-primary hover:border-primary">Auto-Fix</button>` :
+                `<button data-action="applyFix" data-fix="${encodeURIComponent(v.suggestedFix)}" class="text-primary hover:text-white font-medium hover:underline bg-primary/10 px-3 py-1.5 rounded border border-primary/30 transition-all hover:bg-primary hover:border-primary">Auto-Fix</button>` :
                 `<span class="text-gray-600 italic">Manual</span>`
             }
                                 </td>
@@ -220,9 +228,9 @@ export function getWebviewContent(report: ComplianceReport): string {
                 <h2 class="text-2xl font-bold text-white mb-2">Detailed Compliance Reports</h2>
                 <p class="text-gray-400 mb-6 max-w-xl mx-auto">Upgrade to Professional to export PDF audit reports, unlock AI-powered automated fixes for complex issues, and access full history.</p>
                 <div class="flex justify-center gap-4">
-                     <button onclick="upgrade()" class="bg-primary hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-colors shadow-lg shadow-blue-900/30">
-                        Start 14-Day Free Trial
-                    </button>
+                     <button data-action="upgrade" class="bg-primary hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-colors shadow-lg shadow-blue-900/30">
+                         Start 14-Day Free Trial
+                     </button>
                 </div>
             </div>
             ` : ''}
@@ -230,17 +238,30 @@ export function getWebviewContent(report: ComplianceReport): string {
         </div>
     </main>
 
-    <script>
+    <script nonce="${nonce}">
         const vscode = acquireVsCodeApi();
-        function upgrade() { vscode.postMessage({ command: 'upgrade' }); }
-        function applyFix(fixCode) { 
-            // In a real scenario we'd pass IDs, here we pass the code for the MVP handler
-            vscode.postMessage({ command: 'fixViolation', id: fixCode }); 
-        }
+
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            const btn = target && target.closest ? target.closest('button[data-action]') : null;
+            if (!btn) return;
+
+            const action = btn.getAttribute('data-action');
+            if (action === 'upgrade') {
+                vscode.postMessage({ command: 'upgrade' });
+            }
+
+            if (action === 'applyFix') {
+                const fixEnc = btn.getAttribute('data-fix') || '';
+                const fixCode = decodeURIComponent(fixEnc);
+                vscode.postMessage({ command: 'fixViolation', id: fixCode });
+            }
+        });
     </script>
 </body>
 </html>`;
 }
+
 
 function renderComplianceItem(name: string, status: string): string {
     const isRisk = status.includes('risk');
@@ -286,12 +307,14 @@ export function getComplianceAuditWebviewContent(result: any): string {
         'Baixa': '#4caf50'
     };
 
+    const nonce = getNonce();
+
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https: data:; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';">
     <title>CodeGuard Compliance Audit Report</title>
     <style>
         :root {
@@ -624,7 +647,6 @@ export function getComplianceAuditWebviewContent(result: any): string {
             animation: fall 3s linear infinite;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <div class="header">
@@ -633,34 +655,16 @@ export function getComplianceAuditWebviewContent(result: any): string {
                 <span class="logo">🛡️</span>
                 CodeGuard Compliance Audit
             </h1>
-            ${result.metadata?.clientName ? `<div style="color: var(--text-muted); font-size: 0.9em; margin-top: 5px;">Prepared for: <strong>${result.metadata.clientName}</strong> ${result.metadata.repoUrl ? `• ${result.metadata.repoUrl}` : ''}</div>` : ''}
+            ${result.metadata?.clientName ? `<div style="color: var(--text-muted); font-size: 0.9em; margin-top: 5px;">Prepared for: <strong>${escapeHtml(String(result.metadata.clientName))}</strong> ${result.metadata.repoUrl ? `• ${escapeHtml(String(result.metadata.repoUrl))}` : ''}</div>` : ''}
         </div>
         <div style="display: flex; gap: 10px; align-items: center;">
-            <button class="btn btn-primary" onclick="exportReport()">📥 Export Report</button>
+            <button class="btn btn-primary" data-action="exportReport">📥 Export Report</button>
             <span class="status-badge" style="background: ${statusColors[result.overall_status] || statusColors.fail}; color: white;">
                 ${statusEmojis[result.overall_status] || '❌'} ${result.overall_status.toUpperCase()}
             </span>
         </div>
     </div>
     
-    <!-- FIX PREVIEW MODAL -->
-    <div id="fixModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>🔮 Fix Preview</h2>
-                <span style="cursor: pointer; font-size: 1.5em;" onclick="closeModal()">×</span>
-            </div>
-            <div id="modalBody">
-                <div class="loader"></div>
-                <p style="text-align: center;">Generating intelligent fix with GPT-4o...</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn" onclick="closeModal()">Cancel</button>
-                <button id="btnConfirmFix" class="btn btn-success" style="display: none;" onclick="confirmFix()">✅ Apply Fix</button>
-            </div>
-        </div>
-    </div>
-
     ${result.overall_status === 'pass' ? `
     <div class="certificate-container" id="successBanner">
         <div class="cert-badge-icon">🏆</div>
@@ -668,13 +672,13 @@ export function getComplianceAuditWebviewContent(result: any): string {
         <p class="cert-desc">This repository has passed all CodeGuard AI compliance & security checks.</p>
         
         <div class="share-actions">
-            <a href="https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent('Just verified my code compliance with CodeGuard AI! 🛡️\n\nCertified secure and GDPR/LGPD compliant.\n\n#CodeGuard #DevSecOps #Compliance #CleanCode')}" target="_blank" class="btn-social btn-linkedin">
+            <a href="https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent('Just verified my code compliance with CodeGuard AI! 🛡️ \n\nCertified secure and GDPR/LGPD compliant.\n\n#CodeGuard #DevSecOps #Compliance #CleanCode')}" target="_blank" class="btn-social btn-linkedin">
                 <span>🔗</span> Share on LinkedIn
             </a>
-            <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent('Just verified my code compliance with CodeGuard AI! 🛡️ Certified secure and GDPR/LGPD compliant. #CodeGuard #DevSecOps')}" target="_blank" class="btn-social btn-twitter">
+            <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent('Just verified my code compliance with CodeGuard AI! 🛡️  Certified secure and GDPR/LGPD compliant. #CodeGuard #DevSecOps')}" target="_blank" class="btn-social btn-twitter">
                 <span>𝕏</span> Share on X
             </a>
-            <button class="btn-social btn-copy" onclick="copyBadge()">
+            <button class="btn-social btn-copy" data-action="copyBadge">
                 <span>📋</span> Copy Badge Markdown
             </button>
         </div>
@@ -706,14 +710,14 @@ export function getComplianceAuditWebviewContent(result: any): string {
     
     ${result.results.map((fw: any) => `
         <div class="framework-section">
-            <div class="framework-header" onclick="this.classList.toggle('collapsed')">
+            <div class="framework-header" data-action="toggleCollapse">
                 <div class="framework-name">
                     <span class="expand-icon">▼</span>
-                    ${statusEmojis[fw.status_overall] || '❌'} ${fw.frameworkName || fw.framework}
+                    ${statusEmojis[fw.status_overall] || '❌'} ${escapeHtml(String(fw.frameworkName || fw.framework || ''))}
                 </div>
                 <div class="framework-stats">
                     <span class="issue-count ${fw.issues.length === 0 ? 'zero' : ''}">${fw.issues.length} issues</span>
-                    <small style="color: var(--text-muted)">${fw.llm_used}</small>
+                    <small style="color: var(--text-muted)">${escapeHtml(String(fw.llm_used || ''))}</small>
                 </div>
             </div>
             <div class="framework-body">
@@ -725,25 +729,25 @@ export function getComplianceAuditWebviewContent(result: any): string {
         return `
                         <div class="issue-item ${severityClass}">
                             <div class="issue-header">
-                                <div class="issue-title">${issue.issue}</div>
+                                <div class="issue-title">${escapeHtml(String(issue.issue || ''))}</div>
                                 <span class="severity-badge" style="background: ${severityColors[issue.severity] || severityColors.Low}; color: white;">
-                                    ${issue.severity}
+                                    ${escapeHtml(String(issue.severity || ''))}
                                 </span>
                             </div>
                             <div class="issue-meta">
-                                <span>📁 ${issue.file_path}</span>
+                                <span>📍 ${escapeHtml(String(issue.file_path || ''))}</span>
                                 ${issue.line_start ? `<span>📍 Linha ${issue.line_start}${issue.line_end && issue.line_end !== issue.line_start ? '-' + issue.line_end : ''}</span>` : ''}
-                                ${issue.article || issue.control || issue.regulation ? `<span>📜 ${issue.article || issue.control || issue.regulation}</span>` : ''}
+                                ${issue.article || issue.control || issue.regulation ? `<span>📜 ${escapeHtml(String(issue.article || issue.control || issue.regulation || ''))}</span>` : ''}
                             </div>
                             ${issue.recommendation ? `
                                 <div class="issue-recommendation">
-                                    <strong>💡 Recomendação:</strong> ${issue.recommendation}
+                                    <strong>💡 Recomendação:</strong> ${escapeHtml(String(issue.recommendation || ''))}
                                 </div>
                             ` : ''}
                             ${issue.code_fix ? `
-                                <div class="code-fix">${issue.code_fix}</div>
+                                <div class="code-fix">${escapeHtml(String(issue.code_fix || ''))}</div>
                                 <div class="actions">
-                                    <button class="btn btn-success" onclick="applyFix('${encodeURIComponent(issue.code_fix)}', '${issue.file_path}')">✨ Aplicar Correção</button>
+                                    <button class="btn btn-success" data-action="applyFix" data-code="${encodeURIComponent(String(issue.code_fix || ''))}" data-file="${encodeURIComponent(String(issue.file_path || ''))}" data-line-start="${encodeURIComponent(String(issue.line_start || 1))}" data-line-end="${encodeURIComponent(String(issue.line_end || issue.line_start || 1))}">✨ Aplicar Correção</button>
                                 </div>
                             ` : ''}
                         </div>
@@ -752,7 +756,7 @@ export function getComplianceAuditWebviewContent(result: any): string {
                 
                 ${fw.summary ? `
                     <div class="summary-box">
-                        <strong>📋 Resumo:</strong> ${fw.summary}
+                        <strong>📋 Resumo:</strong> ${escapeHtml(String(fw.summary || ''))}
                     </div>
                 ` : ''}
             </div>
@@ -763,32 +767,58 @@ export function getComplianceAuditWebviewContent(result: any): string {
         Região: ${result.region} | Gerado em: ${new Date(result.timestamp).toLocaleString('pt-BR')}
     </div>
     
-    <script>
+    <script nonce="${nonce}">
         const vscode = acquireVsCodeApi();
-        
-        function applyFix(code, filePath) {
-            vscode.postMessage({ 
-                command: 'applyFix', 
-                code: decodeURIComponent(code),
-                filePath: filePath 
-            });
-        }
-        
-        function exportReport() {
-            vscode.postMessage({ command: 'exportReport' });
-        }
 
         function copyBadge() {
             const badgeMarkdown = '[![CodeGuard Compliance](https://img.shields.io/badge/CodeGuard-Certified-success?style=for-the-badge&logo=shield)](https://codeguard.ai)';
             navigator.clipboard.writeText(badgeMarkdown).then(() => {
                 const btn = document.querySelector('.btn-copy');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<span>✅</span> Copied!';
+                const originalText = btn ? btn.innerHTML : '';
+                if (btn) btn.innerHTML = '<span>✅</span> Copied!';
                 setTimeout(() => {
-                    btn.innerHTML = originalText;
+                    if (btn) btn.innerHTML = originalText;
                 }, 2000);
             });
         }
+
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            const el = target && target.closest ? target.closest('[data-action]') : null;
+            if (!el) return;
+
+            const action = el.getAttribute('data-action');
+
+            if (action === 'exportReport') {
+                vscode.postMessage({ command: 'exportReport' });
+                return;
+            }
+
+            if (action === 'copyBadge') {
+                copyBadge();
+                return;
+            }
+
+            if (action === 'toggleCollapse') {
+                el.classList.toggle('collapsed');
+                return;
+            }
+
+            if (action === 'applyFix') {
+                const code = decodeURIComponent(el.getAttribute('data-code') || '');
+                const filePath = decodeURIComponent(el.getAttribute('data-file') || '');
+                const lineStart = parseInt(decodeURIComponent(el.getAttribute('data-line-start') || '1'), 10) || 1;
+                const lineEnd = parseInt(decodeURIComponent(el.getAttribute('data-line-end') || String(lineStart)), 10) || lineStart;
+
+                vscode.postMessage({
+                    command: 'applyFix',
+                    code,
+                    filePath,
+                    lineStart,
+                    lineEnd
+                });
+            }
+        });
     </script>
 </body>
 </html>`;

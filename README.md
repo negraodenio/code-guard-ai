@@ -42,6 +42,21 @@ npm install -g codeguard-ai
 codeguard scan .
 ```
 
+### 5. 🌐 **REST API**
+Integrate compliance scanning into your applications.
+```bash
+# Start API server (development)
+npm run start:mcp
+
+# Deploy to Vercel (production)
+npm run vercel:deploy
+
+# Use the API
+curl -X POST https://your-app.vercel.app/api/scan \
+  -H "x-api-key: your-api-key" \
+  -d '{"region": "BR", "frameworks": ["gdpr", "lgpd"]}'
+```
+
 ---
 
 ## ⚡ Why Developers Love CodeGuard
@@ -92,6 +107,123 @@ For companies with 20+ developers or regulated industries (Finance, Health, Fint
 *   **Governance Dashboard:** See risk posture across all repos.
 *   **Single Sign-On (SSO):** Okta, Azure AD, Google Workspace.
 *   **On-Premise:** Run CodeGuard inside your VPC (Air-gapped).
+
+---
+
+## 🌐 REST API
+
+CodeGuard provides a secure REST API for integrating compliance scanning into your applications and workflows.
+
+### Quick Start
+
+```bash
+# 1. Set environment variables
+export CODEGUARD_API_KEYS="your-api-key-1,your-api-key-2"
+export TRANSPORT_MODE=sse
+export CODEGUARD_REQUEST_BODY_LIMIT=256kb
+export CODEGUARD_WORKSPACE_ROOT=.
+export CODEGUARD_CORS_ORIGINS="https://your-admin-ui.example.com"
+
+# 2. Start the API server
+npm run start:mcp
+
+# 3. Test the API
+curl -X POST http://localhost:3000/api/scan \
+  -H "x-api-key: your-api-key-1" \
+  -H "Content-Type: application/json" \
+  -d '{"region": "BR", "frameworks": ["gdpr", "lgpd"]}'
+```
+
+### Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/scan` | Run compliance audit |
+| `POST` | `/api/graph` | Generate dependency graph |
+| `POST` | `/api/shadow-apis` | Detect shadow APIs |
+| `GET` | `/api/docs` | API documentation |
+| `GET` | `/api/openapi.yaml` | OpenAPI specification |
+
+### Authentication
+
+All API requests require an API key in the `x-api-key` header:
+
+```bash
+curl -H "x-api-key: your-api-key" http://localhost:3000/api/scan
+```
+
+### API v1 (SDK) Authentication (Fail-Closed)
+
+The `/api/v1/*` endpoints require `Authorization: Bearer <CODEGUARD_API_SECRET>` and will return `503` if `CODEGUARD_API_SECRET` is not configured.
+
+### SDK
+
+Use our official SDK for easier integration:
+
+```bash
+npm install codeguard-sdk
+```
+
+```typescript
+import CodeGuardClient from 'codeguard-sdk';
+
+const client = new CodeGuardClient({
+    apiKey: 'your-api-key'
+});
+
+const result = await client.scan({
+    region: 'BR',
+    frameworks: ['gdpr', 'lgpd']
+});
+```
+
+### Security Features
+
+- **API Key Authentication**: Secure access control
+- **Rate Limiting**: 100 requests per 15 minutes per IP
+- **Input Validation**: Comprehensive parameter validation
+- **Audit Logging**: All API calls are logged for compliance
+- **HTTPS**: Always use HTTPS in production
+
+### Dashboard
+
+Access the API dashboard at `http://localhost:3000/web/api-dashboard.html` to:
+- Manage API keys
+- View usage statistics
+- Test endpoints interactively
+
+---
+
+## 🚀 **Deploy to Vercel**
+
+Deploy your CodeGuard API to production in minutes:
+
+### 1. Install Vercel CLI
+```bash
+npm i -g vercel
+vercel login
+```
+
+### 2. Deploy
+```bash
+npm run vercel:deploy
+```
+
+### 3. Configure Environment Variables
+Set these in your Vercel dashboard:
+- `CODEGUARD_API_KEYS` - Your production API keys
+- `CODEGUARD_LICENSE_KEY` - Your license key
+- `OPENAI_API_KEY` - For AI features (optional)
+
+### 4. Test Production APIs
+```bash
+node test-production.js https://your-app.vercel.app your-api-key
+```
+
+### Production URLs
+- API: `https://your-app.vercel.app/api/scan`
+- Docs: `https://your-app.vercel.app/api/docs`
+- OpenAPI: `https://your-app.vercel.app/api/openapi`
 
 ---
 
