@@ -1,53 +1,20 @@
 {
     "version": 2,
-    "routes": [
+    "buildCommand": "npm run build",
+    "outputDirectory": ".",
+    "cleanUrls": true,
+    "rewrites": [
         {
-            "src": "/api/v1/scan",
-            "dest": "/api/v1/scan.ts"
+            "source": "/api/v1/:path*",
+            "destination": "/api/v1/:path*"
         },
         {
-            "src": "/api/v1/patch",
-            "dest": "/api/v1/patch.ts"
+            "source": "/api/:path*",
+            "destination": "/api/:path*"
         },
         {
-            "src": "/api/v1/credits",
-            "dest": "/api/v1/credits.ts"
-        },
-        {
-            "src": "/api/v1/webhook",
-            "dest": "/api/v1/webhook.ts"
-        },
-        {
-            "src": "/api/v1/health",
-            "dest": "/api/v1/health.ts"
-        },
-        {
-            "src": "/api/scan",
-            "dest": "/api/scan.ts"
-        },
-        {
-            "src": "/api/graph",
-            "dest": "/api/graph.ts"
-        },
-        {
-            "src": "/api/shadow-apis",
-            "dest": "/api/shadow-apis.ts"
-        },
-        {
-            "src": "/api/openapi.yaml",
-            "dest": "/api/openapi.ts"
-        },
-        {
-            "src": "/api/docs",
-            "dest": "/api/docs.ts"
-        },
-        {
-            "src": "/",
-            "dest": "/out/index.html"
-        },
-        {
-            "src": "/(.*\\.(?:png|jpg|jpeg|gif|svg|css|js|json|html|ico))",
-            "dest": "/out/$1"
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
     ]
 }
