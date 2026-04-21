@@ -1,5 +1,5 @@
 // Edge Runtime for Vercel
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 export async function GET(request: Request) {
     // Redirect to external documentation

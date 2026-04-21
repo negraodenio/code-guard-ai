@@ -173,7 +173,7 @@ export async function handler(req: Request): Promise<Response> {
 
 // For Vercel Edge Functions
 export const config = {
-    runtime: 'edge'
+    runtime: 'nodejs'
 };
 
 export default handler;

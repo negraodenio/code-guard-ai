@@ -92,5 +92,5 @@ export async function handler(req: Request): Promise<Response> {
     }
 }
 
-export const config = { runtime: 'edge' };
+export const config = { runtime: 'nodejs' };
 export default handler;

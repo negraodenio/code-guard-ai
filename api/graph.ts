@@ -1,8 +1,8 @@
 import { RepoIntelligence } from '../src/intelligence/ril';
 import { LicenseManager } from '../src/license/LicenseManager';
 
-// Edge Runtime for Vercel
-export const runtime = 'edge';
+// Node.js Runtime for Vercel
+export const runtime = 'nodejs';
 
 async function authenticateApiKey(request: Request): Promise<boolean> {
     const apiKey = request.headers.get('x-api-key') || request.headers.get('authorization')?.replace('Bearer ', '');
