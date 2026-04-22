@@ -36,13 +36,14 @@
     "Formatters",
     "Other"
   ],
-  "main": "./out/src/mcp-server.js",
-  "module": "./out/src/mcp-server.js",
-  "bin": {
-    "codeguard": "out/bin/codeguard.js"
-  },
+  "main": "index.js",
   "contributes": {
+
+
+
+
     "commands": [
+
       {
         "command": "codeguard.scan",
         "title": "CodeGuard: Quick Scan (Local/Free)"
@@ -156,6 +157,7 @@
     ".well-known"
   ],
   "scripts": {
+    "postinstall": "node scripts/fix-production.js",
     "vscode:prepublish": "npm run compile",
     "build": "npm run compile",
     "compile": "tsc -p ./ && node -e \"require('fs').cpSync('.well-known', 'out/.well-known', {recursive: true})\"",
@@ -167,6 +169,7 @@
     "vercel:preview": "vercel"
   },
   "devDependencies": {
+
     "@types/chai": "^5.2.3",
     "@types/diff-match-patch": "^1.0.36",
     "@types/mocha": "^10.0.10",
@@ -205,3 +208,6 @@
     "typescript": "^5.3.3"
   }
 }
+
+
+

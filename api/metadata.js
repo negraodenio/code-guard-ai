@@ -3,7 +3,7 @@
  * This handler provide metadata and resolves the "Cannot GET /" error.
  */
 
-export default function handler(req, res) {
+module.exports = (req, res) => {
   res.status(200).json({
     status: 'Operational',
     version: '1.2.0',
@@ -16,6 +16,7 @@ export default function handler(req, res) {
       openapi: '/api/openapi',
       docs: '/api/docs'
     },
-    message: 'CodeGuard AI v1.2.0 is now live. For the full landing page, visit https://code-guard.eu'
+    message: 'CodeGuard AI v1.2.0 Platform is fully operational. Access the API via /api or the landing page at /'
   });
-}
+};
+

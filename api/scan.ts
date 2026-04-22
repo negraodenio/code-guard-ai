@@ -1,5 +1,7 @@
-import '../src/core/bootstrap';
+import './bootstrap';
+import './vscode-shim';
 import { AuditDispatcher } from '../src/core/dispatcher';
+
 
 import { UnifiedAuthenticator } from '../src/core/auth';
 
